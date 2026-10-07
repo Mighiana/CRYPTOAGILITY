@@ -44,7 +44,7 @@ def run(
     pol = policy.load_policy(policy_path)
     constraints = read_yaml(constraints_path or DEFAULT_CONSTRAINTS)
     results.mkdir(parents=True, exist_ok=True)
-    staging = Path(tempfile.mkdtemp(prefix=".lab-staging-", dir=results.parent))
+    staging = Path(tempfile.mkdtemp(prefix=".lab-staging-", dir=results))
     try:
         summary = _run(staging, pol, constraints, iterations, warmups, include_benchmark, log)
         _publish(staging, results)

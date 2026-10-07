@@ -197,7 +197,7 @@ def test_failed_lab_rerun_keeps_previous_results(
     with pytest.raises(RuntimeError):
         lab.run(results, policy_path=cli.DEFAULT_POLICY, log=lambda _: None)
     assert {p.name: p.read_text() for p in results.iterdir()} == previous
-    assert [p.name for p in tmp_path.iterdir() if p.name.startswith(".lab-staging-")] == []
+    assert [p.name for p in results.iterdir() if p.name.startswith(".lab-staging-")] == []
 
 
 @pytest.mark.integration
