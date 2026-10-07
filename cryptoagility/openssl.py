@@ -13,12 +13,30 @@ class OpenSSLError(RuntimeError):
 
 
 def executable() -> str:
+    """Resolve the pinned lab OpenSSL; never silently fall back to an unrelated build.
+
+    Order: CRYPTOAGILITY_OPENSSL, CRYPTOAGILITY_TOOLS_DIR (as used by setup-openssl.sh),
+    the checkout's .tools directory, then system OpenSSL only if explicitly allowed.
+    """
     configured = os.environ.get("CRYPTOAGILITY_OPENSSL")
-    local = Path(__file__).resolve().parent.parent / ".tools/openssl/bin/openssl"
-    candidate = configured or (str(local) if local.is_file() else shutil.which("openssl"))
-    if not candidate or not Path(candidate).is_file():
-        raise OpenSSLError("OpenSSL executable unavailable; run make setup")
-    return candidate
+    if configured:
+        if not Path(configured).is_file():
+            raise OpenSSLError("CRYPTOAGILITY_OPENSSL does not point to a file")
+        return configured
+    tools_dir = os.environ.get("CRYPTOAGILITY_TOOLS_DIR")
+    roots = [Path(tools_dir)] if tools_dir else []
+    roots.append(Path(__file__).resolve().parent.parent / ".tools")
+    for root in roots:
+        candidate = root / "openssl" / "bin" / "openssl"
+        if candidate.is_file():
+            return str(candidate)
+    if os.environ.get("CRYPTOAGILITY_ALLOW_SYSTEM_OPENSSL") == "1":
+        system = shutil.which("openssl")
+        if system:
+            return system
+    raise OpenSSLError(
+        "Pinned OpenSSL not found; run make setup or set CRYPTOAGILITY_TOOLS_DIR"
+    )
 
 
 def run(args: list[str], *, input: bytes | None = None, timeout: float = 15) -> bytes:

@@ -10,12 +10,22 @@ if [[ -x "$PREFIX/bin/openssl" ]] && "$PREFIX/bin/openssl" version | grep -q "Op
 fi
 mkdir -p "$TOOLS/cache"
 ARCHIVE="$TOOLS/cache/openssl-$VERSION.tar.gz"
+verify() { printf '%s  %s\n' "$SHA256" "$1" | sha256sum --check --status -; }
+if [[ -f "$ARCHIVE" ]] && ! verify "$ARCHIVE"; then
+    echo "Cached OpenSSL archive failed checksum; re-downloading" >&2
+    rm -f "$ARCHIVE"
+fi
 if [[ ! -f "$ARCHIVE" ]]; then
+    PARTIAL="$(mktemp "$TOOLS/cache/openssl-$VERSION.XXXXXX.part")"
+    trap 'rm -f "$PARTIAL"' EXIT
     curl --fail --location --retry 3 --max-time 180 \
         "https://github.com/openssl/openssl/releases/download/openssl-$VERSION/openssl-$VERSION.tar.gz" \
-        --output "$ARCHIVE"
+        --output "$PARTIAL"
+    verify "$PARTIAL" || { echo "Downloaded OpenSSL archive failed checksum" >&2; exit 1; }
+    mv "$PARTIAL" "$ARCHIVE"
+    trap - EXIT
 fi
-printf '%s  %s\n' "$SHA256" "$ARCHIVE" | sha256sum --check -
+rm -rf "$TOOLS/cache/openssl-$VERSION"
 tar -xzf "$ARCHIVE" -C "$TOOLS/cache"
 cd "$TOOLS/cache/openssl-$VERSION"
 ./Configure --prefix="$PREFIX" --openssldir="$PREFIX/ssl" no-shared no-tests
