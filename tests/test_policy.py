@@ -266,6 +266,17 @@ def test_naive_expiry_is_reported_as_utc_assumption(policy: dict) -> None:
     assert any("interpreted as UTC" in r for r in finding["reasons"])
 
 
+def test_not_yet_valid_certificate_is_not_accepted(policy: dict) -> None:
+    future = cert(evidence={"not_before": "2026-06-01T00:00:00Z"})
+    finding = one(policy, future)
+    assert finding["outcome"] == "DEPRECATED"
+    assert finding["compliant"] is False
+    assert finding["expiry_status"] == "not_yet_valid"
+    assert any("not valid until 2026-06-01" in r for r in finding["reasons"])
+    started = one(policy, cert(evidence={"not_before": "2025-06-01T00:00:00Z"}))
+    assert started["expiry_status"] == "valid"
+
+
 def test_certificate_missing_signature_evidence_fails_closed(policy: dict) -> None:
     finding = one(policy, cert(signature_algorithm=None))
     assert finding["outcome"] == "UNSUPPORTED"
@@ -312,6 +323,27 @@ def test_required_hybrid_group_rejects_successful_x25519_negotiation(policy: dic
     assert finding["compliant"] is False
     assert any("successful handshake is not policy compliance" in r for r in finding["reasons"])
     assert one(required, endpoint(negotiated_group="x25519mlkem768"))["compliant"] is True
+
+
+def test_required_hybrid_group_applies_to_configured_groups(policy: dict) -> None:
+    required = copy.deepcopy(policy)
+    required["tls"]["required_groups"] = ["X25519MLKEM768"]
+
+    def configured(group: str) -> Asset:
+        return Asset(
+            asset_id="cfg",
+            asset_type="openssl_config",
+            source="s",
+            algorithm=group,
+            evidence={"purpose": "tls_key_establishment"},
+        )
+
+    finding = one(required, configured("X25519"))
+    assert finding["outcome"] == "MIGRATION_REQUIRED"
+    assert finding["compliant"] is False
+    assert any("configured X25519 but policy requires" in r for r in finding["reasons"])
+    assert one(required, configured("X25519MLKEM768"))["compliant"] is True
+    assert one(policy, configured("X25519"))["outcome"] == "ACCEPTABLE_FOR_NOW"
 
 
 def test_requested_hybrid_downgraded_to_x25519_is_detected(policy: dict) -> None:

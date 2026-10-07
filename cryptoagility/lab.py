@@ -7,6 +7,8 @@ run from local measurements; nothing is copied from a previous run.
 
 from __future__ import annotations
 
+import os
+import shutil
 import sys
 import tempfile
 import time
@@ -18,6 +20,8 @@ from cryptoagility import benchmark, cbom, inventory, migration, policy, reporti
 from cryptoagility.cli import read_yaml, write_json, write_text
 
 DEFAULT_CONSTRAINTS = scenario.ROOT / "scenario" / "constraints.yaml"
+REPORT_NAME = "report.html"
+EXTRA_OUTPUTS = ("cbom.csv", "migration-plan.md", REPORT_NAME)
 
 
 def _stderr(message: str) -> None:
@@ -37,11 +41,37 @@ def run(
     results = Path(results)
     if results.is_symlink() or (results.exists() and not results.is_dir()):
         raise ValueError("results must be a directory, not a symlink or file")
-    results.mkdir(parents=True, exist_ok=True)
-    for stale in reporting.EVIDENCE_FILES.values():
-        (results / stale).unlink(missing_ok=True)
     pol = policy.load_policy(policy_path)
     constraints = read_yaml(constraints_path or DEFAULT_CONSTRAINTS)
+    results.mkdir(parents=True, exist_ok=True)
+    staging = Path(tempfile.mkdtemp(prefix=".lab-staging-", dir=results.parent))
+    try:
+        summary = _run(staging, pol, constraints, iterations, warmups, include_benchmark, log)
+        _publish(staging, results)
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+    summary["results"] = str(results)
+    summary["report"] = str(results / REPORT_NAME)
+    return summary
+
+
+def _publish(staging: Path, results: Path) -> None:
+    """Replace the previous result set only once a complete new one exists."""
+    for stale in (*reporting.EVIDENCE_FILES.values(), *EXTRA_OUTPUTS):
+        (results / stale).unlink(missing_ok=True)
+    for produced in sorted(staging.iterdir()):
+        os.replace(produced, results / produced.name)
+
+
+def _run(
+    results: Path,
+    pol: dict[str, Any],
+    constraints: Any,
+    iterations: int,
+    warmups: int,
+    include_benchmark: bool,
+    log: Callable[[str], None],
+) -> dict[str, Any]:
     started = time.monotonic()
 
     def step(name: str) -> None:
@@ -81,7 +111,7 @@ def run(
     write_text(results / "migration-plan.md", migration.render_markdown(plan))
 
     step("rendering offline report")
-    report = reporting.render_report(results, results / "report.html")
+    report = reporting.render_report(results, results / REPORT_NAME)
     step("done")
     statuses: dict[str, int] = {}
     for row in matrix["rows"]:

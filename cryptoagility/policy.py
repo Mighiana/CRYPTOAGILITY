@@ -124,6 +124,16 @@ def load_policy(path: Path) -> dict[str, Any]:
 # --------------------------------------------------------------------------- validation
 
 
+def _parse_time(value: Any) -> datetime | None:
+    if not isinstance(value, str):
+        return None
+    try:
+        moment = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    return moment if moment.tzinfo else moment.replace(tzinfo=UTC)
+
+
 def _short(value: Any, limit: int = 60) -> str:
     text = repr(value)
     return text if len(text) <= limit else text[: limit - 3] + "..."
@@ -463,11 +473,14 @@ def validate_policy(data: Any) -> dict[str, Any]:
         top["certificates"],
         "policy.certificates",
         ("renewal_window_days", "valid", "expiring", "expired"),
+        ("not_yet_valid",),
     )
     _int(certs["renewal_window_days"], "policy.certificates.renewal_window_days", 0, 3650)
     _decision(certs["valid"], "policy.certificates.valid")
     _decision(certs["expiring"], "policy.certificates.expiring")
     _decision(certs["expired"], "policy.certificates.expired", non_compliant=True)
+    if "not_yet_valid" in certs:
+        _decision(certs["not_yet_valid"], "policy.certificates.not_yet_valid", non_compliant=True)
 
     planning = _mapping(
         top["planning"],
@@ -823,21 +836,9 @@ class PolicyEngine:
 
     def group(self, name: str, requested: Any, type_name: str | None) -> list[_Check]:
         checks = self.table_check("negotiated_group", "groups", name, type_name)
+        checks.extend(self._required_group(name, "negotiated"))
         match = self.index.lookup("groups", name)
         violation = self.policy["tls"]["negotiation_violation"]
-        required = self.index.required_groups
-        if match and required and match.rule["id"] not in required:
-            names = ", ".join(self.policy["tls"]["required_groups"])
-            checks.append(
-                self.decision(
-                    "required_group",
-                    name,
-                    violation,
-                    f"negotiated {_display(name)} but policy requires one of [{names}]; a "
-                    "successful handshake is not policy compliance",
-                    match.rule["id"],
-                )
-            )
         requested_name = _observed(requested)
         if requested_name is _INVALID:
             checks.append(
@@ -872,7 +873,28 @@ class PolicyEngine:
                 )
         return checks
 
-    def expiry(self, value: str) -> list[_Check]:
+    def _required_group(self, name: str, verb: str) -> list[_Check]:
+        match = self.index.lookup("groups", name)
+        required = self.index.required_groups
+        if not (match and required and match.rule["id"] not in required):
+            return []
+        names = ", ".join(self.policy["tls"]["required_groups"])
+        consequence = (
+            "a successful handshake is not policy compliance"
+            if verb == "negotiated"
+            else "configuring it permits a negotiation the policy does not allow"
+        )
+        return [
+            self.decision(
+                "required_group",
+                name,
+                self.policy["tls"]["negotiation_violation"],
+                f"{verb} {_display(name)} but policy requires one of [{names}]; {consequence}",
+                match.rule["id"],
+            )
+        ]
+
+    def expiry(self, value: str, not_before: Any = None) -> list[_Check]:
         try:
             expires = datetime.fromisoformat(value)
         except ValueError:
@@ -886,6 +908,17 @@ class PolicyEngine:
             expires = expires.replace(tzinfo=UTC)
             note = " (no timezone; interpreted as UTC)"
         certs = self.policy["certificates"]
+        starts = _parse_time(not_before)
+        if starts is not None and self.now < starts:
+            return [
+                self.decision(
+                    "expiry",
+                    value,
+                    certs.get("not_yet_valid", certs["expired"]),
+                    f"certificate is not valid until {starts.isoformat()}",
+                    state="not_yet_valid",
+                )
+            ]
         remaining = (expires - self.now).total_seconds() / 86400
         if remaining <= 0:
             return [
@@ -984,7 +1017,8 @@ class PolicyEngine:
         if name == "signature_algorithm":
             return self.table_check(name, "signature_algorithms", value, type_name)
         if name == "expiry":
-            return self.expiry(value)
+            evidence = asset.evidence if isinstance(asset.evidence, dict) else {}
+            return self.expiry(value, evidence.get("not_before"))
         if name == "tls_version":
             return self.tls_version(value, type_name)
         if name == "negotiated_group":
@@ -1005,7 +1039,10 @@ class PolicyEngine:
             return None
         purpose = asset.evidence.get("purpose")
         if purpose == "tls_key_establishment":
-            return self.table_check("configured_group", "groups", value, type_name)
+            return [
+                *self.table_check("configured_group", "groups", value, type_name),
+                *self._required_group(value, "configured"),
+            ]
         if purpose == "signature":
             return self.table_check(
                 "configured_signature", "signature_algorithms", value, type_name

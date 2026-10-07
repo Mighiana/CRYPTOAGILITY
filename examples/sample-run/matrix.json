@@ -1,7 +1,7 @@
 {
   "environment": {
     "bind_address": "127.0.0.1",
-    "generated_at": "2026-10-07T12:14:18Z",
+    "generated_at": "2026-10-07T14:35:40Z",
     "hostname": "localhost.test",
     "latency_semantics": "client_process_ms is wall-clock time of one complete s_client process: start-up, trust loading, TCP connect, TLS 1.3 handshake, certificate verification and shutdown. It is not an isolated in-library handshake latency.",
     "legacy_client": "OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)",
@@ -71,7 +71,7 @@
       "client_groups": [
         "X25519"
       ],
-      "client_process_ms": 7.398,
+      "client_process_ms": 5.345,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -105,7 +105,7 @@
       "client_groups": [
         "X25519MLKEM768"
       ],
-      "client_process_ms": 4.294,
+      "client_process_ms": 3.361,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -139,7 +139,7 @@
       "client_groups": [
         "MLKEM768"
       ],
-      "client_process_ms": 5.255,
+      "client_process_ms": 3.198,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -175,7 +175,7 @@
         "MLKEM768",
         "X25519"
       ],
-      "client_process_ms": 7.235,
+      "client_process_ms": 4.558,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -207,7 +207,7 @@
       "client": "system-legacy",
       "client_binary_version": "OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)",
       "client_groups": null,
-      "client_process_ms": 7.028,
+      "client_process_ms": 6.194,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -241,7 +241,7 @@
       "client_groups": [
         "X25519"
       ],
-      "client_process_ms": 4.766,
+      "client_process_ms": 3.49,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -275,7 +275,7 @@
       "client_groups": [
         "X25519MLKEM768"
       ],
-      "client_process_ms": 7.312,
+      "client_process_ms": 6.01,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -307,7 +307,7 @@
       "client_groups": [
         "MLKEM768"
       ],
-      "client_process_ms": 3.869,
+      "client_process_ms": 3.283,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -343,7 +343,7 @@
         "MLKEM768",
         "X25519"
       ],
-      "client_process_ms": 5.83,
+      "client_process_ms": 4.932,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -373,7 +373,7 @@
       "client": "system-legacy",
       "client_binary_version": "OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)",
       "client_groups": null,
-      "client_process_ms": 4.602,
+      "client_process_ms": 3.791,
       "error_reason": "sslv3 alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -407,7 +407,7 @@
       "client_groups": [
         "X25519"
       ],
-      "client_process_ms": 3.929,
+      "client_process_ms": 3.549,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -441,7 +441,7 @@
       "client_groups": [
         "X25519MLKEM768"
       ],
-      "client_process_ms": 4.08,
+      "client_process_ms": 3.579,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -475,7 +475,7 @@
       "client_groups": [
         "MLKEM768"
       ],
-      "client_process_ms": 5.553,
+      "client_process_ms": 4.449,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -511,7 +511,7 @@
         "MLKEM768",
         "X25519"
       ],
-      "client_process_ms": 5.431,
+      "client_process_ms": 4.6,
       "error_reason": null,
       "experiment": "interop",
       "failure_kind": null,
@@ -543,7 +543,7 @@
       "client": "system-legacy",
       "client_binary_version": "OpenSSL 3.0.2 15 Mar 2022 (Library: OpenSSL 3.0.2 15 Mar 2022)",
       "client_groups": null,
-      "client_process_ms": 4.747,
+      "client_process_ms": 4.196,
       "error_reason": "sslv3 alert handshake failure (alert 40) server: no suitable key share",
       "experiment": "interop",
       "failure_kind": "group_disjoint",
@@ -577,7 +577,7 @@
       "client_groups": [
         "X25519"
       ],
-      "client_process_ms": 6.556,
+      "client_process_ms": 5.15,
       "error_reason": "verify error 10: certificate has expired certificate verify failed server: ssl tls alert certificate expired (alert 45)",
       "experiment": "negative",
       "failure_kind": "certificate_expired",
@@ -611,7 +611,7 @@
       "client_groups": [
         "X25519"
       ],
-      "client_process_ms": 11.562,
+      "client_process_ms": 8.818,
       "error_reason": "verify error 62: hostname mismatch certificate verify failed server: ssl tls alert bad certificate (alert 42)",
       "experiment": "negative",
       "failure_kind": "hostname_mismatch",
@@ -645,7 +645,7 @@
       "client_groups": [
         "X25519"
       ],
-      "client_process_ms": 7.08,
+      "client_process_ms": 5.825,
       "error_reason": "verify error 20: unable to get local issuer certificate certificate verify failed server: tlsv1 alert unknown ca (alert 48)",
       "experiment": "negative",
       "failure_kind": "untrusted_issuer",
@@ -679,7 +679,7 @@
       "client_groups": [
         "MLKEM768"
       ],
-      "client_process_ms": 4.309,
+      "client_process_ms": 3.704,
       "error_reason": "ssl tls alert handshake failure (alert 40) server: no suitable signature algorithm",
       "experiment": "negative",
       "failure_kind": "signature_disjoint",
@@ -715,7 +715,7 @@
         "MLKEM768",
         "X25519"
       ],
-      "client_process_ms": 7.225,
+      "client_process_ms": 5.509,
       "error_reason": "certificate type RSA-3072 differs from profile ML-DSA-65",
       "experiment": "negative",
       "failure_kind": "profile_mismatch",

@@ -89,7 +89,7 @@ local stack cannot provide it, the command exits `3` with
 
 ## Results in this lab environment
 
-From the committed [`examples/sample-run/`](examples/sample-run/) (2026-10-07): Intel Xeon Platinum 8375C (8 vCPU, KVM), Ubuntu 22.04,
+From the committed [`examples/sample-run/`](examples/sample-run/) (2026-10-07): Intel Xeon Platinum 8559C (8 vCPU, KVM), Ubuntu 22.04,
 OpenSSL 3.5.9 default provider (no oqs-provider), 20 iterations + 3 warmups. Re-run `make lab`
 to reproduce on your hardware; numbers will differ.
 
@@ -113,10 +113,12 @@ Negative controls all fail as intended: expired cert, wrong hostname, untrusted 
 
 **Cost.** Handshake bytes read by the client: classical 3,056 B, hybrid 4,144 B (+36 %),
 PQC with ML-DSA-65 chain 15,986 B (≈5.2×, dominated by the 11.3 kB certificate chain).
+Read + written totals (3,342 / 5,606 / 17,408 B) are what the migration planner reports as the
+measured footprint.
 ML-KEM-768 ciphertext 1,088 B; ML-DSA-65 signature 3,309 B; SLH-DSA-SHA2-128s signature 7,856 B
 vs RSA-3072 384 B / ECDSA P-256 ~71 B. Timings are whole `openssl` process wall-clock (a bare
-`openssl version` costs ~1.6 ms), so they compare end-to-end CLI cost, not library speed:
-median handshake classical 5.4 ms, hybrid 5.9 ms, PQC 5.8 ms; SLH-DSA-SHA2-128s signing 379 ms.
+`openssl version` costs ~1.4 ms), so they compare end-to-end CLI cost, not library speed:
+median handshake classical 4.6 ms, hybrid 4.8 ms, PQC 4.6 ms; SLH-DSA-SHA2-128s signing 261 ms.
 
 ### Research questions
 

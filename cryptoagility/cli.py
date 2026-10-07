@@ -281,7 +281,10 @@ def cmd_test(args: argparse.Namespace) -> int:
             policy=_tls_policy(args.tls_policy),
         )
     emit(result, args.output, args.json, lambda: render_matrix(result))
-    return 0 if result["rows"][0]["status"] == tls.SUCCESS else EXIT_GATE
+    row = result["rows"][0]
+    if row["status"] != tls.SUCCESS:
+        return EXIT_GATE
+    return EXIT_GATE if args.fail_on_noncompliant and row["policy_pass"] is not True else 0
 
 
 def cmd_matrix(args: argparse.Namespace) -> int:
@@ -440,6 +443,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="client variant (default: the profile's own strict client)",
     )
     p.add_argument("--tls-policy", type=Path, help="TLS negotiation policy (YAML/JSON)")
+    p.add_argument(
+        "--fail-on-noncompliant",
+        action="store_true",
+        help="exit 1 when the handshake succeeds but does not satisfy the TLS policy",
+    )
 
     p = command("matrix", cmd_matrix, "Run the client x server interoperability matrix")
     p.add_argument("--server", action="append", choices=tuple(tls.SERVER_SPECS))

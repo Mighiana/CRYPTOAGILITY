@@ -179,6 +179,11 @@ def _matrix_evidence(engine: PolicyEngine, rows: list[dict[str, Any]]) -> dict[s
         handshake = row.get("handshake_bytes")
         if handshake is not None:
             handshake = _bounded_int(handshake, f"matrix.rows[{index}].handshake_bytes", MAX_BYTES)
+        elif row.get("handshake_bytes_read") is not None:
+            handshake = sum(
+                _bounded_int(row.get(key), f"matrix.rows[{index}].{key}", MAX_BYTES)
+                for key in ("handshake_bytes_read", "handshake_bytes_written")
+            )
         reported = row.get("policy_pass")
         evaluated.append(
             {
