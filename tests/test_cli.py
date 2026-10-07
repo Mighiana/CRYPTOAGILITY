@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from pathlib import Path
 
 import pytest
@@ -226,8 +227,8 @@ def test_failed_publish_restores_previous_results(
 
     monkeypatch.setattr(lab.os, "replace", flaky)
     with pytest.raises(OSError, match="disk full"):
-        lab._publish(staging, results)
-    kept = {p.name: p.read_text() for p in results.iterdir() if p.is_file()}
+        lab._publish(staging, results, lambda _: None)
+    kept = {p.name: p.read_text() for p in results.iterdir() if not p.name.startswith(".lab-")}
     assert kept == previous
     assert [p.name for p in results.iterdir() if p.name.startswith(".lab-previous-")] == []
 
@@ -235,15 +236,41 @@ def test_failed_publish_restores_previous_results(
 def test_publish_replaces_stale_directory_in_place_of_output(tmp_path: Path) -> None:
     results, staging, _ = _publish_fixture(tmp_path)
     (results / "benchmark.json").mkdir()
-    lab._publish(staging, results)
-    published = {p.name: p.read_text() for p in results.iterdir() if p.is_file()}
+    lab._publish(staging, results, lambda _: None)
+    published = {p.name: p.read_text() for p in results.iterdir() if not p.name.startswith(".")}
     assert published == dict.fromkeys(
         ("inventory.json", "matrix.json", "policy.json", "report.html"), "new"
     )
     assert not (results / "benchmark.json").exists()
-    assert [p.name for p in results.iterdir() if p.name.startswith(".lab-")] == [
-        ".lab-staging-test"
+    assert sorted(p.name for p in results.iterdir() if p.name.startswith(".lab-")) == [
+        lab.PUBLISH_LOCK,
+        ".lab-staging-test",
     ]
+
+
+def test_backup_cleanup_failure_warns_without_failing_published_run(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    results, staging, _ = _publish_fixture(tmp_path)
+    monkeypatch.setattr(lab.shutil, "rmtree", lambda *_, **__: None)
+    warnings: list[str] = []
+    lab._publish(staging, results, warnings.append)
+    assert (results / "policy.json").read_text() == "new"
+    assert len(warnings) == 1
+    assert "was not removed" in warnings[0]
+
+
+def test_concurrent_publish_waits_for_lock(tmp_path: Path) -> None:
+    results, staging, _ = _publish_fixture(tmp_path)
+    worker = threading.Thread(target=lab._publish, args=(staging, results, lambda _: None))
+    with lab._exclusive(results):
+        worker.start()
+        worker.join(timeout=0.3)
+        assert worker.is_alive()
+        assert (results / "policy.json").read_text() == "old"
+    worker.join(timeout=5)
+    assert not worker.is_alive()
+    assert (results / "policy.json").read_text() == "new"
 
 
 @pytest.mark.integration
