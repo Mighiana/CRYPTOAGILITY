@@ -1,0 +1,5 @@
+# Declared constraints for the synthetic fictional organization (operator statements, not
+# measurements). Used by `cryptoagility lab` and `make lab`.
+data_confidentiality_years: 12
+system_lifetime_years: 15
+update_difficulty: medium

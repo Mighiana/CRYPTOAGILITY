@@ -1,0 +1,9 @@
+# Synthetic service in a fictional organization. Not a real system.
+service: pqc-pilot
+hostname: pqc-pilot.fictional.test
+crypto_profile: pqc
+tls:
+  min_tls_version: TLSv1.3
+  groups: [MLKEM768]
+  signature_algorithms: [mldsa65]
+  cipher_suites: [TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256]

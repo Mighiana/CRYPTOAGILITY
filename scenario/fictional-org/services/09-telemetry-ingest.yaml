@@ -1,0 +1,9 @@
+# Synthetic service in a fictional organization. Not a real system.
+service: telemetry-ingest
+hostname: telemetry.fictional.test
+crypto_profile: classical
+tls:
+  min_tls_version: TLSv1.2
+  groups: [secp256r1]
+  signature_algorithms: [ecdsa_secp256r1_sha256]
+  cipher_suites: [TLS_AES_128_GCM_SHA256, AES-256-GCM]

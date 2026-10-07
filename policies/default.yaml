@@ -1,0 +1,618 @@
+# CryptoAgility Lab default policy (laboratory policy, not an organisational compliance baseline).
+# Every conclusion the evaluator reaches comes from the rules below. Names are matched
+# case-insensitively with spaces, hyphens and underscores ignored. Anything not listed
+# fails closed as UNSUPPORTED.
+schema_version: "1.0"
+policy_id: default
+title: CryptoAgility Lab default migration policy
+description: >-
+  General-purpose laboratory policy for planning migration from quantum-vulnerable public-key
+  cryptography to standardized post-quantum algorithms (NIST FIPS 203, 204, 205). Algorithm
+  standardization is distinguished from TLS group and X.509 integrations, which this policy
+  treats as laboratory experiments. Thresholds are policy choices made for this lab.
+profile:
+  name: general
+  description: >-
+    General systems. Long confidentiality or lifetime declared in constraints escalates
+    quantum-vulnerable dependencies by one planning step; no update-difficulty escalation.
+  long_confidentiality_years: 10
+  long_system_lifetime_years: 15
+  escalate_update_difficulty: []
+  require_footprint_evidence: false
+compliant_outcomes: [APPROVED, ACCEPTABLE_FOR_NOW, EXPERIMENTAL]
+unknown_evidence:
+  reason: >-
+    Evidence is missing, unrecognised or conflicting, so this policy cannot classify the
+    dependency and fails closed.
+  migration_options:
+    - Re-run explicit discovery to record the missing algorithm, parameter or protocol evidence
+    - Add a reviewed policy rule if the dependency is legitimate but not yet covered
+  recommended_test: Re-run inventory discovery on the asset and confirm every required field is recorded
+
+asset_types:
+  certificate:
+    aliases: [x509_certificate, x509, cert, certificate_chain, x509_chain]
+    required_evidence: [algorithm, signature_algorithm, expiry]
+    dependency: >-
+      Issuing CA signature profile and every relying party's trust store and certificate parser
+    recommended_test: >-
+      Issue a synthetic certificate with the target key and signature algorithm and verify chain
+      validation in each client used with this certificate
+  public_key:
+    aliases: [key, pem_public_key, der_public_key, spki]
+    required_evidence: [algorithm]
+    dependency: Certificates, protocols and application code that consume this key
+    recommended_test: Generate a disposable key with the target algorithm and exercise each consumer
+  private_key:
+    aliases: [private_key_metadata, pem_private_key, key_pair]
+    required_evidence: [algorithm]
+    dependency: Certificate issuance, signing services and key storage that use this key
+    recommended_test: >-
+      Generate a disposable key with the target algorithm and confirm the storage and signing path
+      accept it (metadata only; private material is never reported)
+  tls_endpoint:
+    aliases: [endpoint, tls_service, tls_server]
+    required_evidence: [tls_version, negotiated_group]
+    dependency: TLS library and configuration on the server and on every connecting client
+    recommended_test: >-
+      Run the loopback interoperability matrix with the required group pinned and confirm no
+      fallback to a classical group
+  openssl_config:
+    aliases: [openssl_configuration, openssl_cnf]
+    required_evidence: []
+    dependency: Every process that loads this OpenSSL configuration
+    recommended_test: Load the configuration in an isolated test process and list the effective groups and algorithms
+  application_config:
+    aliases: [app_config, application_configuration, config]
+    required_evidence: [algorithm]
+    dependency: Application code paths that read this cryptographic setting
+    recommended_test: Switch the configured profile in a test deployment and run the application's test suite
+
+algorithms:
+  - id: rsa
+    names: [RSA, rsaEncryption, RSA-PSS, RSASSA-PSS]
+    family: classical
+    quantum_vulnerable: true
+    usage: [signature, key_establishment]
+    key_size:
+      bands:
+        - min_bits: 3072
+          outcome: ACCEPTABLE_FOR_NOW
+          reason: >-
+            Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key
+            cryptography and requires long-term PQ migration planning.
+        - min_bits: 2048
+          outcome: MIGRATION_REQUIRED
+          reason: >-
+            Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key
+            dependency identified; migration is required.
+        - min_bits: 0
+          outcome: DEPRECATED
+          reason: Below 2048 bits, which this policy no longer permits for any use.
+    migration_options:
+      - Re-issue with RSA-3072 or larger as an interim classical step
+      - Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths
+      - Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+      - Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
+    recommended_test: Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client
+  - id: dh
+    names: [DH, dhKeyAgreement, X9.42-DH, FFDH]
+    family: classical
+    quantum_vulnerable: true
+    usage: [key_establishment]
+    key_size:
+      bands:
+        - min_bits: 3072
+          outcome: ACCEPTABLE_FOR_NOW
+          reason: >-
+            Meets this policy's 3072-bit finite-field minimum; quantum-vulnerable key
+            establishment requiring long-term PQ migration planning.
+        - min_bits: 2048
+          outcome: MIGRATION_REQUIRED
+          reason: Below this policy's 3072-bit finite-field minimum.
+        - min_bits: 0
+          outcome: DEPRECATED
+          reason: Below 2048 bits, which this policy no longer permits.
+    migration_options:
+      - Move key establishment to TLS 1.3 with a hybrid ML-KEM group
+      - Use an elliptic-curve group as an interim classical step
+  - id: ec
+    names: [EC, ECDSA, ECDH, id-ecPublicKey, ECC]
+    family: classical
+    quantum_vulnerable: true
+    usage: [signature, key_establishment]
+    parameter_sets:
+      - names: [P-256, secp256r1, prime256v1]
+        outcome: ACCEPTABLE_FOR_NOW
+        reason: >-
+          Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key
+          cryptography and requires long-term PQ migration planning.
+      - names: [P-384, secp384r1]
+        outcome: ACCEPTABLE_FOR_NOW
+        reason: >-
+          Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term
+          PQ migration planning.
+      - names: [P-521, secp521r1]
+        outcome: ACCEPTABLE_FOR_NOW
+        reason: >-
+          Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term
+          PQ migration planning.
+      - names: [P-224, secp224r1, P-192, secp192r1, prime192v1]
+        outcome: DEPRECATED
+        reason: Curve below the minimum strength permitted by this policy.
+    migration_options:
+      - Keep the permitted curve as an interim classical step while PQ profiles are tested
+      - Plan a hybrid transition for key establishment (for example X25519MLKEM768 where supported)
+      - Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+  - id: eddsa
+    names: [Ed25519, Ed448, EdDSA]
+    family: classical
+    quantum_vulnerable: true
+    usage: [signature]
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Permitted classical signature algorithm; quantum-vulnerable and requires long-term PQ
+      migration planning.
+    migration_options:
+      - Evaluate ML-DSA signatures for the same use in the test environment
+      - Keep the algorithm configurable so the signer can be replaced without code changes
+  - id: xdh
+    names: [X25519, X448]
+    family: classical
+    quantum_vulnerable: true
+    usage: [key_establishment]
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Permitted classical key agreement; quantum-vulnerable and a harvest-now-decrypt-later
+      planning factor for long-lived confidential data.
+    migration_options:
+      - Test a hybrid group that combines this key agreement with ML-KEM
+      - Record data-confidentiality lifetime to prioritise migration
+  - id: dsa
+    names: [DSA]
+    family: classical
+    quantum_vulnerable: true
+    usage: [signature]
+    outcome: DEPRECATED
+    reason: DSA is not permitted by this policy for new or existing signatures.
+    migration_options:
+      - Replace with a permitted classical signature as an interim step
+      - Evaluate ML-DSA for the replacement profile
+  - id: ml-kem
+    names: [ML-KEM, id-alg-ml-kem]
+    family: post_quantum
+    quantum_vulnerable: false
+    usage: [key_establishment]
+    standard: NIST FIPS 203
+    parameter_sets:
+      - names: [ML-KEM-512, id-alg-ml-kem-512]
+        outcome: ACCEPTABLE_FOR_NOW
+        reason: >-
+          Standardized parameter set (NIST security category 1). This policy prefers ML-KEM-768
+          or ML-KEM-1024 for long-lived data.
+      - names: [ML-KEM-768, id-alg-ml-kem-768]
+        outcome: APPROVED
+        reason: Standardized parameter set (NIST security category 3) approved by this policy.
+      - names: [ML-KEM-1024, id-alg-ml-kem-1024]
+        outcome: APPROVED
+        reason: Standardized parameter set (NIST security category 5) approved by this policy.
+    contexts:
+      certificate:
+        outcome: EXPERIMENTAL
+        reason: >-
+          ML-KEM public keys in X.509 certificates are treated as a laboratory interoperability
+          experiment; algorithm standardization does not establish ecosystem support.
+    migration_options:
+      - No algorithm change required; keep the parameter set configurable
+      - Re-test interoperability whenever client or server TLS stacks change
+  - id: ml-dsa
+    names: [ML-DSA, id-ml-dsa]
+    family: post_quantum
+    quantum_vulnerable: false
+    usage: [signature]
+    standard: NIST FIPS 204
+    parameter_sets:
+      - names: [ML-DSA-44, id-ml-dsa-44]
+        outcome: ACCEPTABLE_FOR_NOW
+        reason: >-
+          Standardized parameter set (NIST security category 2). This policy prefers ML-DSA-65 or
+          ML-DSA-87 for long-lived signatures.
+      - names: [ML-DSA-65, id-ml-dsa-65]
+        outcome: APPROVED
+        reason: Standardized parameter set (NIST security category 3) approved by this policy.
+      - names: [ML-DSA-87, id-ml-dsa-87]
+        outcome: APPROVED
+        reason: Standardized parameter set (NIST security category 5) approved by this policy.
+    contexts:
+      certificate:
+        outcome: EXPERIMENTAL
+        reason: >-
+          PQ X.509 certificate profiles are treated as laboratory interoperability experiments;
+          FIPS 204 standardizes the algorithm, not every certificate or client implementation.
+      tls_endpoint:
+        outcome: EXPERIMENTAL
+        reason: PQ authentication in TLS is treated as a laboratory interoperability experiment.
+    migration_options:
+      - No algorithm change required; verify chain validation in every relying client
+      - Keep a classical certificate path available until client support is verified
+  - id: slh-dsa
+    names: [SLH-DSA]
+    family: post_quantum
+    quantum_vulnerable: false
+    usage: [signature]
+    standard: NIST FIPS 205
+    parameter_sets:
+      - names: [SLH-DSA-SHA2-128s, SLH-DSA-SHA2-128f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-128f]
+        outcome: ACCEPTABLE_FOR_NOW
+        reason: >-
+          Standardized parameter set (NIST security category 1). This policy prefers category 3
+          or 5 parameter sets for long-lived signatures.
+      - names: [SLH-DSA-SHA2-192s, SLH-DSA-SHA2-192f, SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-192f]
+        outcome: APPROVED
+        reason: Standardized parameter set (NIST security category 3) approved by this policy.
+      - names: [SLH-DSA-SHA2-256s, SLH-DSA-SHA2-256f, SLH-DSA-SHAKE-256s, SLH-DSA-SHAKE-256f]
+        outcome: APPROVED
+        reason: Standardized parameter set (NIST security category 5) approved by this policy.
+    contexts:
+      certificate:
+        outcome: EXPERIMENTAL
+        reason: >-
+          PQ X.509 certificate profiles are treated as laboratory interoperability experiments;
+          FIPS 205 standardizes the algorithm, not every certificate or client implementation.
+      tls_endpoint:
+        outcome: EXPERIMENTAL
+        reason: PQ authentication in TLS is treated as a laboratory interoperability experiment.
+    migration_options:
+      - No algorithm change required; measure signature size impact on constrained links
+      - Keep a classical certificate path available until client support is verified
+
+  - id: profile-classical
+    names: [classical]
+    family: classical
+    quantum_vulnerable: true
+    usage: [key_establishment, signature]
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Declared crypto profile "classical" selects quantum-vulnerable key establishment and
+      authentication; acceptable for now, with PQ migration planning required.
+    migration_options:
+      - Switch the declared profile to hybrid in a test deployment and run the interoperability matrix
+      - Keep the profile configurable so the switch needs no application code change
+  - id: profile-hybrid
+    names: [hybrid]
+    family: hybrid
+    quantum_vulnerable: false
+    usage: [key_establishment]
+    outcome: EXPERIMENTAL
+    reason: >-
+      Declared crypto profile "hybrid" combines classical and ML-KEM key establishment; the TLS
+      hybrid group integration is treated as a laboratory experiment. Authentication may still
+      be classical.
+    migration_options:
+      - Keep a pinned-group regression test so fallback to a classical group is detected
+      - Track the remaining classical authentication dependency separately
+  - id: profile-pqc
+    names: [pqc]
+    family: post_quantum
+    quantum_vulnerable: false
+    usage: [key_establishment, signature]
+    outcome: EXPERIMENTAL
+    reason: >-
+      Declared crypto profile "pqc" uses ML-KEM key establishment and PQ authentication; treated
+      as a laboratory experiment until every client is verified.
+    migration_options:
+      - Confirm every client supports the profile before relying on it
+      - Keep a hybrid fallback profile available and explicitly selected, never silent
+
+signature_algorithms:
+  - id: sig-rsa-sha2
+    names: [sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption,
+            RSASSA-PSS, rsassaPss, RSA-SHA256, RSA-SHA384, RSA-SHA512]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term
+      PQ migration planning for the issuing CA.
+    migration_options:
+      - Plan CA migration to an ML-DSA signature profile once relying parties are tested
+      - Keep issuance profiles configurable to allow a staged CA transition
+  - id: sig-ecdsa-sha2
+    names: [ecdsa-with-SHA256, ecdsa-with-SHA384, ecdsa-with-SHA512]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term
+      PQ migration planning for the issuing CA.
+    migration_options:
+      - Plan CA migration to an ML-DSA signature profile once relying parties are tested
+      - Keep issuance profiles configurable to allow a staged CA transition
+  - id: sig-eddsa
+    names: [Ed25519, Ed448]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: Permitted classical signature; quantum-vulnerable and requires long-term PQ migration planning.
+    migration_options:
+      - Plan CA migration to an ML-DSA signature profile once relying parties are tested
+  - id: sig-weak-hash
+    names: [sha1WithRSAEncryption, md5WithRSAEncryption, md2WithRSAEncryption, ecdsa-with-SHA1,
+            dsaWithSHA1, dsa-with-sha1, RSA-SHA1, RSA-MD5]
+    family: classical
+    quantum_vulnerable: true
+    outcome: DEPRECATED
+    reason: Signature uses a hash function this policy no longer permits for certificate signatures.
+    migration_options:
+      - Re-issue the certificate with a SHA-2 based signature immediately
+      - Identify and update any client that still requires the weak signature
+  - id: sig-dsa-sha2
+    names: [dsa_with_SHA256, dsa-with-sha256, dsaWithSHA256]
+    family: classical
+    quantum_vulnerable: true
+    outcome: DEPRECATED
+    reason: DSA signatures are not permitted by this policy.
+    migration_options:
+      - Re-issue with a permitted classical signature as an interim step
+      - Evaluate ML-DSA for the replacement profile
+  - id: sig-ml-dsa
+    names: [ML-DSA-44, ML-DSA-65, ML-DSA-87, id-ml-dsa-44, id-ml-dsa-65, id-ml-dsa-87]
+    family: post_quantum
+    quantum_vulnerable: false
+    standard: NIST FIPS 204
+    outcome: EXPERIMENTAL
+    reason: >-
+      Standardized PQ signature algorithm used in an X.509 certificate; this policy treats PQ
+      certificate profiles as laboratory interoperability experiments.
+    migration_options:
+      - Verify chain validation and handshake behaviour in every relying client
+      - Keep a classical certificate path available until client support is verified
+  - id: sig-slh-dsa
+    names: [SLH-DSA-SHA2-128s, SLH-DSA-SHA2-128f, SLH-DSA-SHA2-192s, SLH-DSA-SHA2-192f,
+            SLH-DSA-SHA2-256s, SLH-DSA-SHA2-256f, SLH-DSA-SHAKE-128s, SLH-DSA-SHAKE-128f,
+            SLH-DSA-SHAKE-192s, SLH-DSA-SHAKE-192f, SLH-DSA-SHAKE-256s, SLH-DSA-SHAKE-256f]
+    family: post_quantum
+    quantum_vulnerable: false
+    standard: NIST FIPS 205
+    outcome: EXPERIMENTAL
+    reason: >-
+      Standardized stateless hash-based PQ signature used in an X.509 certificate; this policy
+      treats PQ certificate profiles as laboratory interoperability experiments.
+    migration_options:
+      - Measure certificate and handshake size impact before wider use
+      - Keep a classical certificate path available until client support is verified
+
+  - id: sig-tls-rsa-sha2
+    names: [rsa_pss_rsae_sha256, rsa_pss_rsae_sha384, rsa_pss_rsae_sha512, rsa_pss_pss_sha256,
+            rsa_pss_pss_sha384, rsa_pss_pss_sha512, rsa_pkcs1_sha256, rsa_pkcs1_sha384,
+            rsa_pkcs1_sha512, RSA+SHA256, RSA+SHA384, RSA+SHA512, RSA-PSS+SHA256,
+            RSA-PSS+SHA384, RSA-PSS+SHA512]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication
+      requiring long-term PQ migration planning.
+    migration_options:
+      - Test an ML-DSA authentication profile in the lab with every client of this service
+      - Keep signature schemes configurable so they can be changed without code changes
+  - id: sig-tls-ecdsa-sha2
+    names: [ecdsa_secp256r1_sha256, ecdsa_secp384r1_sha384, ecdsa_secp521r1_sha512,
+            ECDSA+SHA256, ECDSA+SHA384, ECDSA+SHA512]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication
+      requiring long-term PQ migration planning.
+    migration_options:
+      - Test an ML-DSA authentication profile in the lab with every client of this service
+  - id: sig-tls-weak-hash
+    names: [rsa_pkcs1_sha1, ecdsa_sha1, RSA+SHA1, ECDSA+SHA1, RSA+SHA224, ECDSA+SHA224]
+    family: classical
+    quantum_vulnerable: true
+    outcome: DEPRECATED
+    reason: Configured TLS signature scheme uses a hash this policy no longer permits.
+    migration_options:
+      - Remove the scheme from the configuration and confirm every client still connects
+
+tls:
+  minimum_version: TLSv1.2
+  versions:  # ordered oldest to newest
+    - id: ssl3
+      names: [SSLv3, SSL3, SSL 3.0]
+      outcome: DEPRECATED
+      reason: Protocol version not permitted by this policy.
+      migration_options: [Disable SSLv3 and require TLS 1.3 where clients support it]
+    - id: tls1.0
+      names: [TLSv1, TLSv1.0, TLS 1.0, TLS1.0]
+      outcome: DEPRECATED
+      reason: Protocol version not permitted by this policy.
+      migration_options: [Disable TLS 1.0 and require TLS 1.3 where clients support it]
+    - id: tls1.1
+      names: [TLSv1.1, TLS 1.1, TLS1.1]
+      outcome: DEPRECATED
+      reason: Protocol version not permitted by this policy.
+      migration_options: [Disable TLS 1.1 and require TLS 1.3 where clients support it]
+    - id: tls1.2
+      names: [TLSv1.2, TLS 1.2, TLS1.2]
+      outcome: ACCEPTABLE_FOR_NOW
+      reason: >-
+        Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require
+        TLS 1.3.
+      migration_options:
+        - Enable TLS 1.3 and confirm every client negotiates it
+        - Keep TLS 1.2 only for clients documented as unable to upgrade
+    - id: tls1.3
+      names: [TLSv1.3, TLS 1.3, TLS1.3]
+      outcome: APPROVED
+      reason: Protocol version approved by this policy and required for the PQ groups tested in this lab.
+      migration_options: [No protocol version change required]
+  below_minimum:
+    outcome: DEPRECATED
+    reason: Negotiated protocol version is below the policy minimum.
+    migration_options:
+      - Raise the server minimum protocol version
+      - Upgrade or isolate clients that cannot negotiate the minimum version
+  groups:
+    - id: grp-x25519
+      names: [X25519, x448]
+      family: classical
+      quantum_vulnerable: true
+      outcome: ACCEPTABLE_FOR_NOW
+      reason: >-
+        Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning
+        factor for long-lived confidential traffic.
+      migration_options:
+        - Test X25519MLKEM768 hybrid key establishment with this endpoint's clients
+        - Pin the required group in tests to detect silent fallback
+      recommended_test: Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519
+    - id: grp-nist-ec
+      names: [secp256r1, P-256, prime256v1, secp384r1, P-384, secp521r1, P-521]
+      family: classical
+      quantum_vulnerable: true
+      outcome: ACCEPTABLE_FOR_NOW
+      reason: >-
+        Classical elliptic-curve key establishment; quantum-vulnerable and a
+        harvest-now-decrypt-later planning factor for long-lived confidential traffic.
+      migration_options:
+        - Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported
+        - Pin the required group in tests to detect silent fallback
+    - id: grp-ffdhe
+      names: [ffdhe3072, ffdhe4096, ffdhe6144, ffdhe8192]
+      family: classical
+      quantum_vulnerable: true
+      outcome: ACCEPTABLE_FOR_NOW
+      reason: Classical finite-field key establishment; quantum-vulnerable.
+      migration_options: [Test a hybrid ML-KEM group with this endpoint's clients]
+    - id: grp-ffdhe2048
+      names: [ffdhe2048]
+      family: classical
+      quantum_vulnerable: true
+      outcome: MIGRATION_REQUIRED
+      reason: Finite-field group below this policy's 3072-bit minimum.
+      migration_options: [Remove ffdhe2048 from the server group list and test a hybrid ML-KEM group]
+    - id: grp-hybrid-x25519-mlkem768
+      names: [X25519MLKEM768]
+      family: hybrid
+      quantum_vulnerable: false
+      standard: NIST FIPS 203 (ML-KEM component)
+      outcome: EXPERIMENTAL
+      reason: >-
+        Hybrid X25519 plus ML-KEM-768 key establishment. ML-KEM is standardized; this policy
+        treats the TLS hybrid group integration as a laboratory experiment.
+      migration_options:
+        - Keep a pinned-group regression test so fallback to a classical group is detected
+        - Measure handshake size impact on constrained links
+    - id: grp-hybrid-nist-mlkem
+      names: [SecP256r1MLKEM768, SecP384r1MLKEM1024]
+      family: hybrid
+      quantum_vulnerable: false
+      standard: NIST FIPS 203 (ML-KEM component)
+      outcome: EXPERIMENTAL
+      reason: >-
+        Hybrid NIST-curve plus ML-KEM key establishment. ML-KEM is standardized; this policy
+        treats the TLS hybrid group integration as a laboratory experiment.
+      migration_options:
+        - Keep a pinned-group regression test so fallback to a classical group is detected
+        - Measure handshake size impact on constrained links
+    - id: grp-mlkem
+      names: [MLKEM512, MLKEM768, MLKEM1024]
+      family: post_quantum
+      quantum_vulnerable: false
+      standard: NIST FIPS 203
+      outcome: EXPERIMENTAL
+      reason: >-
+        Pure ML-KEM key establishment without a classical component. ML-KEM is standardized;
+        this policy treats the pure-PQ TLS group integration as a laboratory experiment.
+      migration_options:
+        - Confirm every client supports the group before relying on it
+        - Compare with a hybrid group during the transition
+  required_groups: []
+  negotiation_violation:
+    outcome: MIGRATION_REQUIRED
+    reason: >-
+      The negotiated key-establishment group does not satisfy this policy even though the
+      connection succeeded.
+    migration_options:
+      - Configure the server and clients to offer only the required group and re-test
+      - Identify the peer that caused fallback and upgrade or isolate it
+  cipher_suites:
+    - id: cs-tls13-aead
+      names: [TLS_AES_128_GCM_SHA256, TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256,
+              TLS_AES_128_CCM_SHA256]
+      outcome: APPROVED
+      reason: TLS 1.3 AEAD cipher suite approved by this policy.
+      migration_options: [No cipher suite change required]
+    - id: cs-tls13-ccm8
+      names: [TLS_AES_128_CCM_8_SHA256]
+      outcome: DEPRECATED
+      reason: Truncated 8-byte authentication tag is not permitted by this policy.
+      migration_options: [Remove the CCM_8 suite from the server configuration]
+    - id: cs-tls12-ecdhe-aead
+      names: [ECDHE-ECDSA-AES128-GCM-SHA256, ECDHE-RSA-AES128-GCM-SHA256,
+              ECDHE-ECDSA-AES256-GCM-SHA384, ECDHE-RSA-AES256-GCM-SHA384,
+              ECDHE-ECDSA-CHACHA20-POLY1305, ECDHE-RSA-CHACHA20-POLY1305,
+              TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+              TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384]
+      outcome: ACCEPTABLE_FOR_NOW
+      reason: TLS 1.2 forward-secret AEAD cipher suite; permitted until TLS 1.3 is available.
+      migration_options: [Enable TLS 1.3 so a TLS 1.3 AEAD suite and PQ groups can be negotiated]
+    - id: cs-legacy
+      names: [AES128-SHA, AES256-SHA, AES128-GCM-SHA256, AES256-GCM-SHA384, DES-CBC3-SHA,
+              RC4-SHA, RC4-MD5, ECDHE-RSA-AES128-SHA, ECDHE-RSA-AES256-SHA,
+              TLS_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_3DES_EDE_CBC_SHA]
+      outcome: DEPRECATED
+      reason: Cipher suite without forward secrecy or with a legacy construction is not permitted by this policy.
+      migration_options: [Remove the suite and require a forward-secret AEAD suite]
+    - id: cs-aead-generic
+      names: [AES-128-GCM, AES-256-GCM, ChaCha20-Poly1305]
+      outcome: APPROVED
+      reason: >-
+        AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key
+        migration target of this lab.
+      migration_options: [No cipher change required]
+    - id: cs-legacy-generic
+      names: [AES-128-CBC, AES-256-CBC, 3DES, RC4]
+      outcome: DEPRECATED
+      reason: Non-AEAD or legacy symmetric cipher configuration is not permitted by this policy.
+      migration_options: [Remove the cipher and require an AEAD suite]
+
+certificates:
+  renewal_window_days: 90
+  valid:
+    outcome: APPROVED
+    reason: Certificate validity period is current.
+    migration_options: [No renewal action required yet]
+  expiring:
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Renewal is due soon; use the renewal as the opportunity to move to the target algorithm
+      profile.
+    migration_options:
+      - Renew with the target algorithm profile after testing it in the lab
+      - Confirm automated renewal works for the target profile
+  expired:
+    outcome: DEPRECATED
+    reason: An expired certificate is not a valid trust dependency under this policy.
+    migration_options:
+      - Replace the certificate immediately
+      - Investigate why expiry was not detected by certificate tracking
+
+planning:
+  outcome_priority:
+    APPROVED: MONITOR
+    ACCEPTABLE_FOR_NOW: MEDIUM_TERM
+    EXPERIMENTAL: MONITOR
+    MIGRATION_REQUIRED: SHORT_TERM
+    DEPRECATED: IMMEDIATE
+    UNSUPPORTED: IMMEDIATE
+  ready_outcomes: [APPROVED]
+  next_actions:
+    APPROVED: Monitor; re-evaluate when the policy or the asset changes.
+    ACCEPTABLE_FOR_NOW: Schedule PQ migration planning and add the target profile to the lab test matrix.
+    EXPERIMENTAL: Keep in the lab; track interoperability results before any production decision.
+    MIGRATION_REQUIRED: Test the policy-compliant target profile in the lab, then plan the change with the asset owner.
+    DEPRECATED: Replace or disable the dependency; it is below the policy minimum.
+    UNSUPPORTED: Remove the dependency or add a reviewed policy rule before any migration decision.
+  unknown_next_action: Complete inventory evidence for this asset before any migration decision.

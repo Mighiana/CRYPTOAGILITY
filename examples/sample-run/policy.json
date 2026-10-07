@@ -1,0 +1,3816 @@
+{
+  "evaluated_at": "2026-10-07T12:14:16.940454+00:00",
+  "findings": [
+    {
+      "asset_id": "cert-08ead4d20c1f853bf67c83bc",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "P-256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+          "rule_id": "ec"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "ecdsa-with-SHA256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed ecdsa-with-SHA256; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-ecdsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ECDSA / 256 bits / P-256",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Keep the permitted curve as an interim classical step while PQ profiles are tested",
+        "Plan a hybrid transition for key establishment (for example X25519MLKEM768 where supported)",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+        "signature_algorithm: observed ecdsa-with-SHA256; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "ec",
+        "sig-ecdsa-sha2"
+      ],
+      "source": "certs/ecdsa-p256-mobile.pem"
+    },
+    {
+      "asset_id": "cert-0949639e67c5b1a68da827ad",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "P-256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+          "rule_id": "ec"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "ecdsa-with-SHA256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed ecdsa-with-SHA256; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-ecdsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ECDSA / 256 bits / P-256",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Keep the permitted curve as an interim classical step while PQ profiles are tested",
+        "Plan a hybrid transition for key establishment (for example X25519MLKEM768 where supported)",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+        "signature_algorithm: observed ecdsa-with-SHA256; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "ec",
+        "sig-ecdsa-sha2"
+      ],
+      "source": "certs/ecdsa-p256-telemetry.pem"
+    },
+    {
+      "asset_id": "cert-dffa3c0f50f97f1264506537",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "P-384",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed ECDSA parameter set P-384; rule ec: Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term PQ migration planning.",
+          "rule_id": "ec"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "ecdsa-with-SHA384",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed ecdsa-with-SHA384; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-ecdsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ECDSA / 384 bits / P-384",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Keep the permitted curve as an interim classical step while PQ profiles are tested",
+        "Plan a hybrid transition for key establishment (for example X25519MLKEM768 where supported)",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed ECDSA parameter set P-384; rule ec: Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term PQ migration planning.",
+        "signature_algorithm: observed ecdsa-with-SHA384; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "ec",
+        "sig-ecdsa-sha2"
+      ],
+      "source": "certs/ecdsa-p384-admin.pem"
+    },
+    {
+      "asset_id": "cert-a4f07d27c5ddbf4674757d96",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "ML-DSA-65",
+          "outcome": "APPROVED",
+          "reason": "algorithm: observed ML-DSA-65 parameter set ML-DSA-65; rule ml-dsa: Standardized parameter set (NIST security category 3) approved by this policy. Reference: NIST FIPS 204.",
+          "rule_id": "ml-dsa"
+        },
+        {
+          "check": "algorithm_context",
+          "evidence": "complete",
+          "observed": "ML-DSA-65 in certificate",
+          "outcome": "EXPERIMENTAL",
+          "reason": "algorithm: certificate context; rule ml-dsa: PQ X.509 certificate profiles are treated as laboratory interoperability experiments; FIPS 204 standardizes the algorithm, not every certificate or client implementation.",
+          "rule_id": "ml-dsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "ML-DSA-65",
+          "outcome": "EXPERIMENTAL",
+          "reason": "signature_algorithm: observed ML-DSA-65; rule sig-ml-dsa: Standardized PQ signature algorithm used in an X.509 certificate; this policy treats PQ certificate profiles as laboratory interoperability experiments. Reference: NIST FIPS 204.",
+          "rule_id": "sig-ml-dsa"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ML-DSA-65 / ML-DSA-65",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "No algorithm change required; verify chain validation in every relying client",
+        "Keep a classical certificate path available until client support is verified",
+        "Verify chain validation and handshake behaviour in every relying client"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "algorithm: certificate context; rule ml-dsa: PQ X.509 certificate profiles are treated as laboratory interoperability experiments; FIPS 204 standardizes the algorithm, not every certificate or client implementation.",
+        "signature_algorithm: observed ML-DSA-65; rule sig-ml-dsa: Standardized PQ signature algorithm used in an X.509 certificate; this policy treats PQ certificate profiles as laboratory interoperability experiments. Reference: NIST FIPS 204.",
+        "algorithm: observed ML-DSA-65 parameter set ML-DSA-65; rule ml-dsa: Standardized parameter set (NIST security category 3) approved by this policy. Reference: NIST FIPS 204.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "ml-dsa",
+        "sig-ml-dsa"
+      ],
+      "source": "certs/mldsa65-pilot.pem"
+    },
+    {
+      "asset_id": "cert-8aabf8ad826eaf4f35a887e3",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 2048 bits",
+          "outcome": "MIGRATION_REQUIRED",
+          "reason": "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "RSA / 2048 bits / RSA-2048",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "MIGRATION_REQUIRED",
+      "migration_options": [
+        "Re-issue with RSA-3072 or larger as an interim classical step",
+        "Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Redesign the certificate/profile so the algorithm is configurable rather than hard-coded"
+      ],
+      "outcome": "MIGRATION_REQUIRED",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [
+        "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
+      ],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa2048-customer-api.pem"
+    },
+    {
+      "asset_id": "cert-14bfe518d75f015561144dbc",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 3072 bits",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2028-10-06T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2028-10-06T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "RSA / 3072 bits / RSA-3072",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Re-issue with RSA-3072 or larger as an interim classical step",
+        "Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Redesign the certificate/profile so the algorithm is configurable rather than hard-coded",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2028-10-06T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [
+        "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
+      ],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa2048-customer-api.pem"
+    },
+    {
+      "asset_id": "cert-417a0a1a9f96c7fb175d6020",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 2048 bits",
+          "outcome": "MIGRATION_REQUIRED",
+          "reason": "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2024-01-01T00:00:00Z",
+          "outcome": "DEPRECATED",
+          "reason": "expiry: certificate expired at 2024-01-01T00:00:00+00:00. An expired certificate is not a valid trust dependency under this policy.",
+          "rule_id": null
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "RSA / 2048 bits / RSA-2048",
+      "evidence_status": "complete",
+      "expiry_status": "expired",
+      "known_outcome": "DEPRECATED",
+      "migration_options": [
+        "Replace the certificate immediately",
+        "Investigate why expiry was not detected by certificate tracking"
+      ],
+      "outcome": "DEPRECATED",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "expiry: certificate expired at 2024-01-01T00:00:00+00:00. An expired certificate is not a valid trust dependency under this policy.",
+        "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa2048-expired-reporting.pem"
+    },
+    {
+      "asset_id": "cert-cfe5f0356153855d9710908c",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 2048 bits",
+          "outcome": "MIGRATION_REQUIRED",
+          "reason": "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha1WithRSAEncryption",
+          "outcome": "DEPRECATED",
+          "reason": "signature_algorithm: observed sha1WithRSAEncryption; rule sig-weak-hash: Signature uses a hash function this policy no longer permits for certificate signatures.",
+          "rule_id": "sig-weak-hash"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "RSA / 2048 bits / RSA-2048",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "DEPRECATED",
+      "migration_options": [
+        "Re-issue the certificate with a SHA-2 based signature immediately",
+        "Identify and update any client that still requires the weak signature"
+      ],
+      "outcome": "DEPRECATED",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "signature_algorithm: observed sha1WithRSAEncryption; rule sig-weak-hash: Signature uses a hash function this policy no longer permits for certificate signatures.",
+        "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "rsa",
+        "sig-weak-hash"
+      ],
+      "source": "certs/rsa2048-legacy-portal-sha1.pem"
+    },
+    {
+      "asset_id": "cert-ed909fe554de3a7eb6e6402f",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 2048 bits",
+          "outcome": "MIGRATION_REQUIRED",
+          "reason": "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "RSA / 2048 bits / RSA-2048",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "MIGRATION_REQUIRED",
+      "migration_options": [
+        "Re-issue with RSA-3072 or larger as an interim classical step",
+        "Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Redesign the certificate/profile so the algorithm is configurable rather than hard-coded"
+      ],
+      "outcome": "MIGRATION_REQUIRED",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [
+        "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
+      ],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa2048-public-web.pem"
+    },
+    {
+      "asset_id": "cert-a9779dadf66e253cbcfe840d",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 3072 bits",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "RSA / 3072 bits / RSA-3072",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Re-issue with RSA-3072 or larger as an interim classical step",
+        "Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Redesign the certificate/profile so the algorithm is configurable rather than hard-coded",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [
+        "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
+      ],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa3072-identity.pem"
+    },
+    {
+      "asset_id": "cert-668be2cac4b60b08a92853c5",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 3072 bits",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "RSA / 3072 bits / RSA-3072",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Re-issue with RSA-3072 or larger as an interim classical step",
+        "Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Redesign the certificate/profile so the algorithm is configurable rather than hard-coded",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [
+        "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
+      ],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa3072-payments.pem"
+    },
+    {
+      "asset_id": "cert-e5dce64304fdcccb2e089290",
+      "asset_type": "certificate",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "RSA 4096 bits",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed RSA with key_size=4096 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+          "rule_id": "rsa"
+        },
+        {
+          "check": "signature_algorithm",
+          "evidence": "complete",
+          "observed": "sha256WithRSAEncryption",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+          "rule_id": "sig-rsa-sha2"
+        },
+        {
+          "check": "expiry",
+          "evidence": "complete",
+          "observed": "2027-10-07T12:14:16Z",
+          "outcome": "APPROVED",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
+          "rule_id": null
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "RSA / 4096 bits / RSA-4096",
+      "evidence_status": "complete",
+      "expiry_status": "valid",
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Re-issue with RSA-3072 or larger as an interim classical step",
+        "Plan a hybrid transition (classical plus ML-KEM key establishment) for TLS paths",
+        "Evaluate an ML-DSA certificate profile in the PQC-capable test environment",
+        "Redesign the certificate/profile so the algorithm is configurable rather than hard-coded",
+        "Plan CA migration to an ML-DSA signature profile once relying parties are tested",
+        "Keep issuance profiles configurable to allow a staged CA transition"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed RSA with key_size=4096 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
+        "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
+      ],
+      "recommended_tests": [
+        "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
+      ],
+      "rule_ids": [
+        "rsa",
+        "sig-rsa-sha2"
+      ],
+      "source": "certs/rsa4096-backup.pem"
+    },
+    {
+      "asset_id": "cfg-7d081946612253cdbe8b698d",
+      "asset_type": "openssl_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "clients/legacy-batch-client.cnf"
+    },
+    {
+      "asset_id": "cfg-c3948c68f08641a067dbd666",
+      "asset_type": "openssl_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "clients/legacy-batch-client.cnf"
+    },
+    {
+      "asset_id": "cfg-cf56d76e0bc6b8b43023cfb6",
+      "asset_type": "openssl_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "clients/legacy-batch-client.cnf"
+    },
+    {
+      "asset_id": "cfg-d0043fea3fdf692011064964",
+      "asset_type": "openssl_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "RSA+SHA256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed RSA+SHA256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "RSA+SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed RSA+SHA256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "clients/legacy-batch-client.cnf"
+    },
+    {
+      "asset_id": "cfg-c80268a8bc924b81ba0a6ea2",
+      "asset_type": "openssl_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "ECDSA+SHA256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed ECDSA+SHA256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-ecdsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ECDSA+SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed ECDSA+SHA256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-ecdsa-sha2"
+      ],
+      "source": "clients/legacy-batch-client.cnf"
+    },
+    {
+      "asset_id": "cfg-7f2318daf340ae581fe10472",
+      "asset_type": "openssl_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "unrecognized",
+          "observed": "unrecognized",
+          "outcome": "UNSUPPORTED",
+          "reason": "algorithm: algorithm unrecognized is not recognised by this policy. Evidence is missing, unrecognised or conflicting, so this policy cannot classify the dependency and fails closed.",
+          "rule_id": null
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "unrecognized",
+      "evidence_status": "unrecognized",
+      "expiry_status": null,
+      "known_outcome": null,
+      "migration_options": [
+        "Re-run explicit discovery to record the missing algorithm, parameter or protocol evidence",
+        "Add a reviewed policy rule if the dependency is legitimate but not yet covered"
+      ],
+      "outcome": "UNSUPPORTED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "algorithm: algorithm unrecognized is not recognised by this policy. Evidence is missing, unrecognised or conflicting, so this policy cannot classify the dependency and fails closed."
+      ],
+      "recommended_tests": [
+        "Re-run inventory discovery on the asset and confirm every required field is recorded"
+      ],
+      "rule_ids": [],
+      "source": "clients/legacy-batch-client.cnf"
+    },
+    {
+      "asset_id": "cfg-2f505116b71eb4ef65d6bcf3",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-128-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-128-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-128-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-128-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "clients/legacy-field-gateway.yaml"
+    },
+    {
+      "asset_id": "cfg-6ea56e3933fb2a7097557bba",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "clients/legacy-field-gateway.yaml"
+    },
+    {
+      "asset_id": "cfg-d36ab6e62bb470f042ddd29d",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "clients/legacy-field-gateway.yaml"
+    },
+    {
+      "asset_id": "cfg-ee64e5ecb2de01dcfb234b18",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "clients/legacy-field-gateway.yaml"
+    },
+    {
+      "asset_id": "cfg-c5cbd421e2528e407f88561b",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pkcs1_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pkcs1_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pkcs1_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pkcs1_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "clients/legacy-field-gateway.yaml"
+    },
+    {
+      "asset_id": "cfg-508f0f9a10be42f225238bb5",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "ecdsa_secp256r1_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed ecdsa_secp256r1_sha256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-ecdsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ecdsa_secp256r1_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed ecdsa_secp256r1_sha256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-ecdsa-sha2"
+      ],
+      "source": "clients/legacy-field-gateway.yaml"
+    },
+    {
+      "asset_id": "cfg-f5084f7d9e35b2b04c82153f",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-d64beebfcf1289aba8fd4405",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-aaa05e61b362f08889b8eab8",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-256-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-256-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-d26a01c49e66f0bc4d3d3cfc",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-6a6105ce614ecbdf15c6e428",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-6477f32d02ac2f33f0def3a7",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-c9159c428d39c5640de22946",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pss_rsae_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pss_rsae_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/01-public-web.yaml"
+    },
+    {
+      "asset_id": "cfg-35fbedf06a4e14da3bdf0f09",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-561d7ca5815ce6b493a768c6",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-ee29a3cb189e6be4d2c223f3",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-256-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-256-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-583adf8061949c95d036ae3a",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-c754debf0f24b1aece11e89d",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-34eef6e45b87976217490b30",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-b0739879d8473120a4814aeb",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pss_rsae_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pss_rsae_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/02-customer-api.yaml"
+    },
+    {
+      "asset_id": "cfg-a3d7f40ae8e09ae95b5f4c05",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-65e8654e3892d1347c44b818",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-fa40e4f1b53a3071b9f2248d",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-128-CBC",
+          "outcome": "DEPRECATED",
+          "reason": "cipher_suite: observed AES-128-CBC; rule cs-legacy-generic: Non-AEAD or legacy symmetric cipher configuration is not permitted by this policy.",
+          "rule_id": "cs-legacy-generic"
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "AES-128-CBC",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "DEPRECATED",
+      "migration_options": [
+        "Remove the cipher and require an AEAD suite"
+      ],
+      "outcome": "DEPRECATED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-128-CBC; rule cs-legacy-generic: Non-AEAD or legacy symmetric cipher configuration is not permitted by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-legacy-generic"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-dfb4bf6c36a1e43cb75047f4",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "3DES",
+          "outcome": "DEPRECATED",
+          "reason": "cipher_suite: observed 3DES; rule cs-legacy-generic: Non-AEAD or legacy symmetric cipher configuration is not permitted by this policy.",
+          "rule_id": "cs-legacy-generic"
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "3DES",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "DEPRECATED",
+      "migration_options": [
+        "Remove the cipher and require an AEAD suite"
+      ],
+      "outcome": "DEPRECATED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed 3DES; rule cs-legacy-generic: Non-AEAD or legacy symmetric cipher configuration is not permitted by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-legacy-generic"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-053e6100185ca43f6803a03a",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-6805aec3378554525ce42c04",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.1",
+          "outcome": "DEPRECATED",
+          "reason": "tls_version: observed TLSv1.1; rule tls1.1: Protocol version not permitted by this policy.",
+          "rule_id": "tls1.1"
+        },
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.1",
+          "outcome": "DEPRECATED",
+          "reason": "tls_version: TLSv1.1 is below policy minimum TLSv1.2. Negotiated protocol version is below the policy minimum.",
+          "rule_id": "tls1.1"
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "TLSv1.1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "DEPRECATED",
+      "migration_options": [
+        "Disable TLS 1.1 and require TLS 1.3 where clients support it",
+        "Raise the server minimum protocol version",
+        "Upgrade or isolate clients that cannot negotiate the minimum version"
+      ],
+      "outcome": "DEPRECATED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.1; rule tls1.1: Protocol version not permitted by this policy.",
+        "tls_version: TLSv1.1 is below policy minimum TLSv1.2. Negotiated protocol version is below the policy minimum."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.1"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-e9e61ce0ce9d7f85ba0f85f3",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pkcs1_sha1",
+          "outcome": "DEPRECATED",
+          "reason": "configured_signature: observed rsa_pkcs1_sha1; rule sig-tls-weak-hash: Configured TLS signature scheme uses a hash this policy no longer permits.",
+          "rule_id": "sig-tls-weak-hash"
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "rsa_pkcs1_sha1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "DEPRECATED",
+      "migration_options": [
+        "Remove the scheme from the configuration and confirm every client still connects"
+      ],
+      "outcome": "DEPRECATED",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pkcs1_sha1; rule sig-tls-weak-hash: Configured TLS signature scheme uses a hash this policy no longer permits."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-weak-hash"
+      ],
+      "source": "services/03-legacy-portal.yaml"
+    },
+    {
+      "asset_id": "cfg-4e28fbe6ad058ee814dcf578",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/04-reporting.yaml"
+    },
+    {
+      "asset_id": "cfg-d43a18db57cb8ce16cc6abdb",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/04-reporting.yaml"
+    },
+    {
+      "asset_id": "cfg-3f734a49baacf8704a5bef59",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-256-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-256-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "services/04-reporting.yaml"
+    },
+    {
+      "asset_id": "cfg-fc12a21d2277eb7e20e56f70",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp384r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp384r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp384r1 / secp384r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp384r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/04-reporting.yaml"
+    },
+    {
+      "asset_id": "cfg-25d8e9880427c7cf37d21ca1",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "services/04-reporting.yaml"
+    },
+    {
+      "asset_id": "cfg-c3b4b5d15a8513982ce16281",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pkcs1_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pkcs1_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pkcs1_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pkcs1_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/04-reporting.yaml"
+    },
+    {
+      "asset_id": "cfg-55fb9809fe402b5c2af9bdfe",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "hybrid",
+          "outcome": "EXPERIMENTAL",
+          "reason": "algorithm: observed hybrid; rule profile-hybrid: Declared crypto profile \"hybrid\" combines classical and ML-KEM key establishment; the TLS hybrid group integration is treated as a laboratory experiment. Authentication may still be classical.",
+          "rule_id": "profile-hybrid"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "hybrid",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Keep a pinned-group regression test so fallback to a classical group is detected",
+        "Track the remaining classical authentication dependency separately"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "algorithm: observed hybrid; rule profile-hybrid: Declared crypto profile \"hybrid\" combines classical and ML-KEM key establishment; the TLS hybrid group integration is treated as a laboratory experiment. Authentication may still be classical."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-hybrid"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-5dfbd6b100beaff82616437e",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_256_GCM_SHA384",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_256_GCM_SHA384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-1aed3eaccb7ec20a013f13bd",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-3d73eed04502597bd3ece140",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519MLKEM768",
+          "outcome": "EXPERIMENTAL",
+          "reason": "configured_group: observed X25519MLKEM768; rule grp-hybrid-x25519-mlkem768: Hybrid X25519 plus ML-KEM-768 key establishment. ML-KEM is standardized; this policy treats the TLS hybrid group integration as a laboratory experiment. Reference: NIST FIPS 203 (ML-KEM component).",
+          "rule_id": "grp-hybrid-x25519-mlkem768"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519MLKEM768 / X25519MLKEM768",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Keep a pinned-group regression test so fallback to a classical group is detected",
+        "Measure handshake size impact on constrained links"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519MLKEM768; rule grp-hybrid-x25519-mlkem768: Hybrid X25519 plus ML-KEM-768 key establishment. ML-KEM is standardized; this policy treats the TLS hybrid group integration as a laboratory experiment. Reference: NIST FIPS 203 (ML-KEM component)."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-hybrid-x25519-mlkem768"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-f96a3452860e2c32ee6f6182",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-81a0a45f57c63044aee01559",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.3",
+          "outcome": "APPROVED",
+          "reason": "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab.",
+          "rule_id": "tls1.3"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.3",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No protocol version change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.3"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-cc62faa3f98aa2755ff1e32b",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pss_rsae_sha384",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pss_rsae_sha384; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pss_rsae_sha384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pss_rsae_sha384; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/05-identity-provider.yaml"
+    },
+    {
+      "asset_id": "cfg-344e45b49eda1cb6274c310d",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/06-payments.yaml"
+    },
+    {
+      "asset_id": "cfg-77486bda33a5bfd5c6a5dff0",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_256_GCM_SHA384",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_256_GCM_SHA384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/06-payments.yaml"
+    },
+    {
+      "asset_id": "cfg-040db8578ae6d4e03461c95a",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/06-payments.yaml"
+    },
+    {
+      "asset_id": "cfg-6254131c77f080b386d7e219",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "services/06-payments.yaml"
+    },
+    {
+      "asset_id": "cfg-3f44cc1fcc713ff8adb1eda5",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.3",
+          "outcome": "APPROVED",
+          "reason": "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab.",
+          "rule_id": "tls1.3"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.3",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No protocol version change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.3"
+      ],
+      "source": "services/06-payments.yaml"
+    },
+    {
+      "asset_id": "cfg-977c8d1a0a8975c28f382438",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pss_rsae_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pss_rsae_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/06-payments.yaml"
+    },
+    {
+      "asset_id": "cfg-7ea00bb222ef8c37414971b7",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/07-backup-archive.yaml"
+    },
+    {
+      "asset_id": "cfg-13f3757b759d1b51f54db3a9",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/07-backup-archive.yaml"
+    },
+    {
+      "asset_id": "cfg-942c9c8e8cf64aae82d59ea1",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-256-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-256-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "services/07-backup-archive.yaml"
+    },
+    {
+      "asset_id": "cfg-6b34ebc662aa9c3583f60637",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "ffdhe2048",
+          "outcome": "MIGRATION_REQUIRED",
+          "reason": "configured_group: observed ffdhe2048; rule grp-ffdhe2048: Finite-field group below this policy's 3072-bit minimum.",
+          "rule_id": "grp-ffdhe2048"
+        }
+      ],
+      "compliant": false,
+      "current_algorithm": "ffdhe2048 / ffdhe2048",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "MIGRATION_REQUIRED",
+      "migration_options": [
+        "Remove ffdhe2048 from the server group list and test a hybrid ML-KEM group"
+      ],
+      "outcome": "MIGRATION_REQUIRED",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed ffdhe2048; rule grp-ffdhe2048: Finite-field group below this policy's 3072-bit minimum."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-ffdhe2048"
+      ],
+      "source": "services/07-backup-archive.yaml"
+    },
+    {
+      "asset_id": "cfg-b57c730872980f8c7c560028",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "services/07-backup-archive.yaml"
+    },
+    {
+      "asset_id": "cfg-8e5aeb58d8aea8b4ec3a9b99",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pss_rsae_sha512",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pss_rsae_sha512; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pss_rsae_sha512",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pss_rsae_sha512; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/07-backup-archive.yaml"
+    },
+    {
+      "asset_id": "cfg-7ca3e9deca428e3cbd0f4b45",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-0ca58929ff7dcd3d597bfad1",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_256_GCM_SHA384",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_256_GCM_SHA384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-3b96a65e25026be67cfea50f",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-cab60df92e64ce4f8e9eb689",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-78e7e7f9de763bb89c6099c5",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-d9f0699b5188a3a55648a2da",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.3",
+          "outcome": "APPROVED",
+          "reason": "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab.",
+          "rule_id": "tls1.3"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.3",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No protocol version change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.3"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-3640e1379b8d83774b6536f7",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "ecdsa_secp256r1_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed ecdsa_secp256r1_sha256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-ecdsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ecdsa_secp256r1_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed ecdsa_secp256r1_sha256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-ecdsa-sha2"
+      ],
+      "source": "services/08-mobile-backend.yaml"
+    },
+    {
+      "asset_id": "cfg-f387a75c5f888b8534a0d1a5",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/09-telemetry-ingest.yaml"
+    },
+    {
+      "asset_id": "cfg-d3bc277f50ff6a1471635139",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/09-telemetry-ingest.yaml"
+    },
+    {
+      "asset_id": "cfg-e4aa836823f336f9418d55ab",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-256-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-256-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "services/09-telemetry-ingest.yaml"
+    },
+    {
+      "asset_id": "cfg-f0846b02846ec1ea559d871f",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/09-telemetry-ingest.yaml"
+    },
+    {
+      "asset_id": "cfg-520b35adf88530aaf557656e",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "services/09-telemetry-ingest.yaml"
+    },
+    {
+      "asset_id": "cfg-1dacdc8e1d9c3243f9a31dd4",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "ecdsa_secp256r1_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed ecdsa_secp256r1_sha256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-ecdsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ecdsa_secp256r1_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed ecdsa_secp256r1_sha256; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-ecdsa-sha2"
+      ],
+      "source": "services/09-telemetry-ingest.yaml"
+    },
+    {
+      "asset_id": "cfg-94652e95084f7720c9313a26",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "hybrid",
+          "outcome": "EXPERIMENTAL",
+          "reason": "algorithm: observed hybrid; rule profile-hybrid: Declared crypto profile \"hybrid\" combines classical and ML-KEM key establishment; the TLS hybrid group integration is treated as a laboratory experiment. Authentication may still be classical.",
+          "rule_id": "profile-hybrid"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "hybrid",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Keep a pinned-group regression test so fallback to a classical group is detected",
+        "Track the remaining classical authentication dependency separately"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "algorithm: observed hybrid; rule profile-hybrid: Declared crypto profile \"hybrid\" combines classical and ML-KEM key establishment; the TLS hybrid group integration is treated as a laboratory experiment. Authentication may still be classical."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-hybrid"
+      ],
+      "source": "services/10-admin-console.yaml"
+    },
+    {
+      "asset_id": "cfg-9f4e9e198068f6b7498f6af0",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_256_GCM_SHA384",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_256_GCM_SHA384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/10-admin-console.yaml"
+    },
+    {
+      "asset_id": "cfg-624cec9c08f076441d8cf887",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/10-admin-console.yaml"
+    },
+    {
+      "asset_id": "cfg-08635a3fed651474ad230150",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519MLKEM768",
+          "outcome": "EXPERIMENTAL",
+          "reason": "configured_group: observed X25519MLKEM768; rule grp-hybrid-x25519-mlkem768: Hybrid X25519 plus ML-KEM-768 key establishment. ML-KEM is standardized; this policy treats the TLS hybrid group integration as a laboratory experiment. Reference: NIST FIPS 203 (ML-KEM component).",
+          "rule_id": "grp-hybrid-x25519-mlkem768"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519MLKEM768 / X25519MLKEM768",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Keep a pinned-group regression test so fallback to a classical group is detected",
+        "Measure handshake size impact on constrained links"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519MLKEM768; rule grp-hybrid-x25519-mlkem768: Hybrid X25519 plus ML-KEM-768 key establishment. ML-KEM is standardized; this policy treats the TLS hybrid group integration as a laboratory experiment. Reference: NIST FIPS 203 (ML-KEM component)."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-hybrid-x25519-mlkem768"
+      ],
+      "source": "services/10-admin-console.yaml"
+    },
+    {
+      "asset_id": "cfg-6a562c2cf515a0e16de5645a",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.3",
+          "outcome": "APPROVED",
+          "reason": "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab.",
+          "rule_id": "tls1.3"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.3",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No protocol version change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.3"
+      ],
+      "source": "services/10-admin-console.yaml"
+    },
+    {
+      "asset_id": "cfg-86d9a1b15c7077b093866eb0",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "ecdsa_secp384r1_sha384",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed ecdsa_secp384r1_sha384; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-ecdsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "ecdsa_secp384r1_sha384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed ecdsa_secp384r1_sha384; rule sig-tls-ecdsa-sha2: Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-ecdsa-sha2"
+      ],
+      "source": "services/10-admin-console.yaml"
+    },
+    {
+      "asset_id": "cfg-eebd002e538f7540f983fc46",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "pqc",
+          "outcome": "EXPERIMENTAL",
+          "reason": "algorithm: observed pqc; rule profile-pqc: Declared crypto profile \"pqc\" uses ML-KEM key establishment and PQ authentication; treated as a laboratory experiment until every client is verified.",
+          "rule_id": "profile-pqc"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "pqc",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Confirm every client supports the profile before relying on it",
+        "Keep a hybrid fallback profile available and explicitly selected, never silent"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "algorithm: observed pqc; rule profile-pqc: Declared crypto profile \"pqc\" uses ML-KEM key establishment and PQ authentication; treated as a laboratory experiment until every client is verified."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-pqc"
+      ],
+      "source": "services/11-pqc-pilot.yaml"
+    },
+    {
+      "asset_id": "cfg-edc3ee29cebfed36a3f41641",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_256_GCM_SHA384",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_256_GCM_SHA384",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_256_GCM_SHA384; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/11-pqc-pilot.yaml"
+    },
+    {
+      "asset_id": "cfg-a3d81e4d32deb21beb8285cb",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/11-pqc-pilot.yaml"
+    },
+    {
+      "asset_id": "cfg-8feb80d2d5734e0b33ad8df3",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "MLKEM768",
+          "outcome": "EXPERIMENTAL",
+          "reason": "configured_group: observed MLKEM768; rule grp-mlkem: Pure ML-KEM key establishment without a classical component. ML-KEM is standardized; this policy treats the pure-PQ TLS group integration as a laboratory experiment. Reference: NIST FIPS 203.",
+          "rule_id": "grp-mlkem"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "MLKEM768 / MLKEM768",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Confirm every client supports the group before relying on it",
+        "Compare with a hybrid group during the transition"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed MLKEM768; rule grp-mlkem: Pure ML-KEM key establishment without a classical component. ML-KEM is standardized; this policy treats the pure-PQ TLS group integration as a laboratory experiment. Reference: NIST FIPS 203."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-mlkem"
+      ],
+      "source": "services/11-pqc-pilot.yaml"
+    },
+    {
+      "asset_id": "cfg-e1ae031c09f6053bd7902312",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.3",
+          "outcome": "APPROVED",
+          "reason": "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab.",
+          "rule_id": "tls1.3"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.3",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No protocol version change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.3; rule tls1.3: Protocol version approved by this policy and required for the PQ groups tested in this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.3"
+      ],
+      "source": "services/11-pqc-pilot.yaml"
+    },
+    {
+      "asset_id": "cfg-9c2498f6d81965d545b71f9f",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "mldsa65",
+          "outcome": "EXPERIMENTAL",
+          "reason": "configured_signature: observed mldsa65; rule sig-ml-dsa: Standardized PQ signature algorithm used in an X.509 certificate; this policy treats PQ certificate profiles as laboratory interoperability experiments. Reference: NIST FIPS 204.",
+          "rule_id": "sig-ml-dsa"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "mldsa65",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "EXPERIMENTAL",
+      "migration_options": [
+        "Verify chain validation and handshake behaviour in every relying client",
+        "Keep a classical certificate path available until client support is verified"
+      ],
+      "outcome": "EXPERIMENTAL",
+      "quantum_vulnerable": false,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed mldsa65; rule sig-ml-dsa: Standardized PQ signature algorithm used in an X.509 certificate; this policy treats PQ certificate profiles as laboratory interoperability experiments. Reference: NIST FIPS 204."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-ml-dsa"
+      ],
+      "source": "services/11-pqc-pilot.yaml"
+    },
+    {
+      "asset_id": "cfg-c4b30fc3ba81547f052587d3",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "algorithm",
+          "evidence": "complete",
+          "observed": "classical",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required.",
+          "rule_id": "profile-classical"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "classical",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Switch the declared profile to hybrid in a test deployment and run the interoperability matrix",
+        "Keep the profile configurable so the switch needs no application code change"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [
+        "key_establishment",
+        "signature"
+      ],
+      "reasons": [
+        "algorithm: observed classical; rule profile-classical: Declared crypto profile \"classical\" selects quantum-vulnerable key establishment and authentication; acceptable for now, with PQ migration planning required."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "profile-classical"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    },
+    {
+      "asset_id": "cfg-4c1296bece5dab27d04084ac",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "TLS_AES_128_GCM_SHA256",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy.",
+          "rule_id": "cs-tls13-aead"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLS_AES_128_GCM_SHA256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher suite change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed TLS_AES_128_GCM_SHA256; rule cs-tls13-aead: TLS 1.3 AEAD cipher suite approved by this policy."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-tls13-aead"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    },
+    {
+      "asset_id": "cfg-55ddefdf8b561c08d9459def",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "cipher_suite",
+          "evidence": "complete",
+          "observed": "AES-256-GCM",
+          "outcome": "APPROVED",
+          "reason": "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab.",
+          "rule_id": "cs-aead-generic"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "AES-256-GCM",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "APPROVED",
+      "migration_options": [
+        "No cipher change required"
+      ],
+      "outcome": "APPROVED",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "cipher_suite: observed AES-256-GCM; rule cs-aead-generic: AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key migration target of this lab."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "cs-aead-generic"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    },
+    {
+      "asset_id": "cfg-193ce6bec9fc75937dc22d48",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "X25519",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-x25519"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "X25519 / X25519",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test X25519MLKEM768 hybrid key establishment with this endpoint's clients",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed X25519; rule grp-x25519: Classical key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [
+        "Run the matrix with X25519MLKEM768 pinned and confirm the endpoint does not fall back to X25519"
+      ],
+      "rule_ids": [
+        "grp-x25519"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    },
+    {
+      "asset_id": "cfg-a31d32162096ef37e51b3a12",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_group",
+          "evidence": "complete",
+          "observed": "secp256r1",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic.",
+          "rule_id": "grp-nist-ec"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "secp256r1 / secp256r1",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test SecP256r1MLKEM768 or SecP384r1MLKEM1024 hybrid key establishment where supported",
+        "Pin the required group in tests to detect silent fallback"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_group: observed secp256r1; rule grp-nist-ec: Classical elliptic-curve key establishment; quantum-vulnerable and a harvest-now-decrypt-later planning factor for long-lived confidential traffic."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "grp-nist-ec"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    },
+    {
+      "asset_id": "cfg-05fab0f40ee1b997cd0f246f",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "tls_version",
+          "evidence": "complete",
+          "observed": "TLSv1.2",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3.",
+          "rule_id": "tls1.2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "TLSv1.2",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Enable TLS 1.3 and confirm every client negotiates it",
+        "Keep TLS 1.2 only for clients documented as unable to upgrade"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": null,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "tls_version: observed TLSv1.2; rule tls1.2: Permitted, but the hybrid and ML-KEM key-establishment groups tested in this lab require TLS 1.3."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "tls1.2"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    },
+    {
+      "asset_id": "cfg-90209189fcbec9e84dcda072",
+      "asset_type": "application_config",
+      "checks": [
+        {
+          "check": "configured_signature",
+          "evidence": "complete",
+          "observed": "rsa_pss_rsae_sha256",
+          "outcome": "ACCEPTABLE_FOR_NOW",
+          "reason": "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning.",
+          "rule_id": "sig-tls-rsa-sha2"
+        }
+      ],
+      "compliant": true,
+      "current_algorithm": "rsa_pss_rsae_sha256",
+      "evidence_status": "complete",
+      "expiry_status": null,
+      "known_outcome": "ACCEPTABLE_FOR_NOW",
+      "migration_options": [
+        "Test an ML-DSA authentication profile in the lab with every client of this service",
+        "Keep signature schemes configurable so they can be changed without code changes"
+      ],
+      "outcome": "ACCEPTABLE_FOR_NOW",
+      "quantum_vulnerable": true,
+      "quantum_vulnerable_usages": [],
+      "reasons": [
+        "configured_signature: observed rsa_pss_rsae_sha256; rule sig-tls-rsa-sha2: Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication requiring long-term PQ migration planning."
+      ],
+      "recommended_tests": [],
+      "rule_ids": [
+        "sig-tls-rsa-sha2"
+      ],
+      "source": "services/12-internal-messaging.yaml"
+    }
+  ],
+  "policy_digest": "a6201cb62c97039b3bb0af67ba81e0704a30a69d68036ffc8fab8fe056ef3870",
+  "policy_id": "default",
+  "schema_version": "1.0",
+  "summary": {
+    "by_outcome": {
+      "ACCEPTABLE_FOR_NOW": 55,
+      "APPROVED": 29,
+      "DEPRECATED": 6,
+      "EXPERIMENTAL": 8,
+      "MIGRATION_REQUIRED": 3,
+      "UNSUPPORTED": 1
+    },
+    "compliant": 92,
+    "evidence_incomplete": 1,
+    "inventory_errors": 0,
+    "quantum_vulnerable": 52,
+    "total_assets": 102
+  }
+}

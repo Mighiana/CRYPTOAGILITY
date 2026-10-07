@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cryptoagility-lab"
+version = "0.1.0"
+description = "Local crypto inventory, policy and post-quantum migration engineering lab"
+requires-python = ">=3.12"
+dependencies = ["cryptography==46.0.3", "PyYAML==6.0.3"]
+
+[project.optional-dependencies]
+dev = ["pytest==8.4.2", "ruff==0.14.0", "mypy==1.18.2", "types-PyYAML==6.0.12.20250915"]
+
+[project.scripts]
+cryptoagility = "cryptoagility.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["cryptoagility*"]
+
+[tool.setuptools.package-data]
+"cryptoagility.reporting" = ["shell.html"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["integration: real loopback TLS/OpenSSL experiments"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S"]
+ignore = ["S101", "S603", "S607"]
+
+[tool.mypy]
+python_version = "3.12"
+check_untyped_defs = true
+ignore_missing_imports = true

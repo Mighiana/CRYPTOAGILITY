@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint, tests and lab run
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache pinned OpenSSL build
+        uses: actions/cache@v4
+        with:
+          path: .tools/openssl
+          key: openssl-${{ runner.os }}-${{ hashFiles('scripts/setup-openssl.sh') }}
+      - name: Setup (venv + OpenSSL 3.5.9 LTS, checksum-verified)
+        run: make setup
+      - name: Lint and type check
+        run: make lint
+      - name: Unit tests (inventory, CBOM, policy, migration, report, CLI)
+        run: .venv/bin/pytest -q -m "not integration"
+      - name: Interoperability tests (real loopback TLS with the pinned OpenSSL)
+        run: .venv/bin/pytest -q -m integration
+      - name: Full lab pipeline (reduced iterations for CI time)
+        run: make lab ITERATIONS=5 WARMUPS=2
+      - name: Upload lab evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab-results
+          path: results/
+          if-no-files-found: warn
+
+  docker:
+    name: Docker build and container-network interop
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker compose build
+      - name: Classical/hybrid/PQC servers vs strict client
+        run: |
+          docker compose up --abort-on-container-exit --exit-code-from test-client \
+            classical-server hybrid-server pqc-server test-client
+      - name: Lab pipeline inside the container (no benchmark)
+        run: |
+          mkdir -p results && chmod 777 results
+          docker compose run --rm cryptoagility-tool lab /results --no-benchmark
+          test -s results/report.html
+      - name: Tear down
+        if: always()
+        run: docker compose down --volumes

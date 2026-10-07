@@ -1,0 +1,681 @@
+{
+  "kem_algorithms": [
+    {
+      "names": [
+        "RSA",
+        "rsaEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "EC",
+        "id-ecPublicKey"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "X25519"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "X448"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-alg-ml-kem-512",
+        "ML-KEM-512",
+        "MLKEM512"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-alg-ml-kem-768",
+        "ML-KEM-768",
+        "MLKEM768"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-alg-ml-kem-1024",
+        "ML-KEM-1024",
+        "MLKEM1024"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "X25519MLKEM768"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "X448MLKEM1024"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "SecP256r1MLKEM768"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "SecP384r1MLKEM1024"
+      ],
+      "provider": "default"
+    }
+  ],
+  "notes": "ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) are standardized algorithms; TLS 1.3 hybrid/PQC group code points and PQ X.509/TLS signature integrations are laboratory experiments. The OpenSSL default provider is not claimed FIPS 140 validated.",
+  "openssl": {
+    "built_on": "Wed Oct 7 10:25:33 2026 UTC",
+    "platform": "linux-x86_64",
+    "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+    "version_number": "3.5.9"
+  },
+  "oqs_provider_loaded": false,
+  "oqs_required": false,
+  "profiles": {
+    "classical": {
+      "authentication": "classical",
+      "certificate_key": "RSA-3072",
+      "group": "X25519",
+      "group_kind": "classical",
+      "missing": [],
+      "supported": true
+    },
+    "hybrid": {
+      "authentication": "classical",
+      "certificate_key": "RSA-3072",
+      "group": "X25519MLKEM768",
+      "group_kind": "hybrid",
+      "missing": [],
+      "supported": true
+    },
+    "pqc": {
+      "authentication": "pqc",
+      "certificate_key": "ML-DSA-65",
+      "group": "MLKEM768",
+      "group_kind": "pqc",
+      "missing": [],
+      "supported": true
+    }
+  },
+  "providers": [
+    {
+      "build_info": "3.5.9",
+      "id": "default",
+      "name": "OpenSSL Default Provider",
+      "status": "active",
+      "version": "3.5.9"
+    }
+  ],
+  "schema_version": "1.0",
+  "signature_algorithms": [
+    {
+      "names": [
+        "RSA",
+        "rsaEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA",
+        "DSA-old",
+        "dsaEncryption",
+        "dsaEncryption-old"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA",
+        "DSA-SHA-1",
+        "DSA-SHA1",
+        "DSA-SHA1-old",
+        "dsaWithSHA",
+        "dsaWithSHA1",
+        "dsaWithSHA1-old"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ED25519"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ED448"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "SM2"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA2-224",
+        "DSA-SHA224",
+        "dsa_with_SHA224"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA2-256",
+        "DSA-SHA256",
+        "dsa_with_SHA256"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA2-384",
+        "DSA-SHA384",
+        "dsa_with_SHA384",
+        "id-dsa-with-sha384"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA2-512",
+        "DSA-SHA512",
+        "dsa_with_SHA512",
+        "id-dsa-with-sha512"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA3-224",
+        "dsa_with_SHA3-224",
+        "id-dsa-with-sha3-224"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA3-256",
+        "dsa_with_SHA3-256",
+        "id-dsa-with-sha3-256"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA3-384",
+        "dsa_with_SHA3-384",
+        "id-dsa-with-sha3-384"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "DSA-SHA3-512",
+        "dsa_with_SHA3-512",
+        "id-dsa-with-sha3-512"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ripemd160WithRSA",
+        "RSA-RIPEMD160"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA-1",
+        "RSA-SHA1",
+        "sha1WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA2-224",
+        "RSA-SHA224",
+        "sha224WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA2-256",
+        "RSA-SHA256",
+        "sha256WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA2-384",
+        "RSA-SHA384",
+        "sha384WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA2-512",
+        "RSA-SHA512",
+        "sha512WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA2-512/224",
+        "RSA-SHA512-224",
+        "sha512-224WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SHA2-512/256",
+        "RSA-SHA512-256",
+        "sha512-256WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-rsassa-pkcs1-v1_5-with-sha3-224",
+        "RSA-SHA3-224"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-rsassa-pkcs1-v1_5-with-sha3-256",
+        "RSA-SHA3-256"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-rsassa-pkcs1-v1_5-with-sha3-384",
+        "RSA-SHA3-384"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-rsassa-pkcs1-v1_5-with-sha3-512",
+        "RSA-SHA3-512"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "RSA-SM3",
+        "sm3WithRSAEncryption"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ED25519ph"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ED25519ctx"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ED448ph"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA-1",
+        "ECDSA-SHA1",
+        "ecdsa-with-SHA1"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA2-224",
+        "ECDSA-SHA224",
+        "ecdsa-with-SHA224"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA2-256",
+        "ECDSA-SHA256",
+        "ecdsa-with-SHA256"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA2-384",
+        "ECDSA-SHA384",
+        "ecdsa-with-SHA384"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA2-512",
+        "ECDSA-SHA512",
+        "ecdsa-with-SHA512"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA3-224",
+        "ecdsa_with_SHA3-224",
+        "id-ecdsa-with-sha3-224"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA3-256",
+        "ecdsa_with_SHA3-256",
+        "id-ecdsa-with-sha3-256"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA3-384",
+        "ecdsa_with_SHA3-384",
+        "id-ecdsa-with-sha3-384"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "ECDSA-SHA3-512",
+        "ecdsa_with_SHA3-512",
+        "id-ecdsa-with-sha3-512"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-ml-dsa-44",
+        "ML-DSA-44",
+        "MLDSA44"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-ml-dsa-65",
+        "ML-DSA-65",
+        "MLDSA65"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-ml-dsa-87",
+        "ML-DSA-87",
+        "MLDSA87"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "HMAC"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "SIPHASH"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "POLY1305"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "CMAC"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-sha2-128s",
+        "SLH-DSA-SHA2-128s"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-sha2-128f",
+        "SLH-DSA-SHA2-128f"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-sha2-192s",
+        "SLH-DSA-SHA2-192s"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-sha2-192f",
+        "SLH-DSA-SHA2-192f"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-sha2-256s",
+        "SLH-DSA-SHA2-256s"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-sha2-256f",
+        "SLH-DSA-SHA2-256f"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-shake-128s",
+        "SLH-DSA-SHAKE-128s"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-shake-128f",
+        "SLH-DSA-SHAKE-128f"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-shake-192s",
+        "SLH-DSA-SHAKE-192s"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-shake-192f",
+        "SLH-DSA-SHAKE-192f"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-shake-256s",
+        "SLH-DSA-SHAKE-256s"
+      ],
+      "provider": "default"
+    },
+    {
+      "names": [
+        "id-slh-dsa-shake-256f",
+        "SLH-DSA-SHAKE-256f"
+      ],
+      "provider": "default"
+    }
+  ],
+  "standardized": {
+    "ml_dsa": [
+      "ML-DSA-44",
+      "ML-DSA-65",
+      "ML-DSA-87"
+    ],
+    "ml_kem": [
+      "ML-KEM-1024",
+      "ML-KEM-512",
+      "ML-KEM-768"
+    ],
+    "slh_dsa": [
+      "SLH-DSA-SHA2-128f",
+      "SLH-DSA-SHA2-128s",
+      "SLH-DSA-SHA2-192f",
+      "SLH-DSA-SHA2-192s",
+      "SLH-DSA-SHA2-256f",
+      "SLH-DSA-SHA2-256s",
+      "SLH-DSA-SHAKE-128f",
+      "SLH-DSA-SHAKE-128s",
+      "SLH-DSA-SHAKE-192f",
+      "SLH-DSA-SHAKE-192s",
+      "SLH-DSA-SHAKE-256f",
+      "SLH-DSA-SHAKE-256s"
+    ]
+  },
+  "tls13_groups": [
+    "secp256r1",
+    "secp384r1",
+    "secp521r1",
+    "x25519",
+    "x448",
+    "brainpoolP256r1tls13",
+    "brainpoolP384r1tls13",
+    "brainpoolP512r1tls13",
+    "ffdhe2048",
+    "ffdhe3072",
+    "ffdhe4096",
+    "ffdhe6144",
+    "ffdhe8192",
+    "MLKEM512",
+    "MLKEM768",
+    "MLKEM1024",
+    "SecP256r1MLKEM768",
+    "X25519MLKEM768",
+    "SecP384r1MLKEM1024"
+  ],
+  "tls_group_classes": {
+    "classical": [
+      "secp256r1",
+      "secp384r1",
+      "secp521r1",
+      "x25519",
+      "x448",
+      "brainpoolP256r1tls13",
+      "brainpoolP384r1tls13",
+      "brainpoolP512r1tls13",
+      "ffdhe2048",
+      "ffdhe3072",
+      "ffdhe4096",
+      "ffdhe6144",
+      "ffdhe8192"
+    ],
+    "hybrid": [
+      "SecP256r1MLKEM768",
+      "X25519MLKEM768",
+      "SecP384r1MLKEM1024"
+    ],
+    "pqc": [
+      "MLKEM512",
+      "MLKEM768",
+      "MLKEM1024"
+    ]
+  },
+  "tls_signature_algorithms": [
+    "ecdsa_secp256r1_sha256",
+    "ecdsa_secp384r1_sha384",
+    "ecdsa_secp521r1_sha512",
+    "ed25519",
+    "ed448",
+    "ecdsa_sha224",
+    "ecdsa_sha1",
+    "ecdsa_brainpoolP256r1tls13_sha256",
+    "ecdsa_brainpoolP384r1tls13_sha384",
+    "ecdsa_brainpoolP512r1tls13_sha512",
+    "rsa_pss_rsae_sha256",
+    "rsa_pss_rsae_sha384",
+    "rsa_pss_rsae_sha512",
+    "rsa_pss_pss_sha256",
+    "rsa_pss_pss_sha384",
+    "rsa_pss_pss_sha512",
+    "rsa_pkcs1_sha256",
+    "rsa_pkcs1_sha384",
+    "rsa_pkcs1_sha512",
+    "rsa_pkcs1_sha224",
+    "rsa_pkcs1_sha1",
+    "dsa_sha256",
+    "dsa_sha384",
+    "dsa_sha512",
+    "dsa_sha224",
+    "dsa_sha1",
+    "mldsa44",
+    "mldsa65",
+    "mldsa87"
+  ],
+  "unavailable_queries": [],
+  "x509": {
+    "ML-DSA-65": {
+      "certificate_type": "ML-DSA-65",
+      "signature_algorithm": "ML-DSA-65",
+      "supported": true
+    },
+    "RSA-3072": {
+      "certificate_type": "RSA-3072",
+      "signature_algorithm": "sha256WithRSAEncryption",
+      "supported": true
+    }
+  }
+}
