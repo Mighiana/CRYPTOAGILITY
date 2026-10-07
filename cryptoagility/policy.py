@@ -52,6 +52,7 @@ EVIDENCE_FIELDS = (
 FAMILIES = ("classical", "post_quantum", "hybrid")
 USAGES = ("signature", "key_establishment")
 DIFFICULTIES = ("low", "medium", "high")
+CONFIG_ASSET_TYPES = frozenset({"openssl_config", "application_config"})
 SUCCESS_STATUSES = frozenset({"SUCCESS", "PASS"})
 EVIDENCE_COMPLETE, EVIDENCE_MISSING, EVIDENCE_UNRECOGNIZED = "complete", "missing", "unrecognized"
 
@@ -766,6 +767,9 @@ class PolicyEngine:
 
     def _field(self, asset: Asset, name: str, value: str, type_name: str | None) -> list[_Check]:
         if name == "algorithm":
+            routed = self._configured_setting(asset, value, type_name)
+            if routed is not None:
+                return routed
             return self.algorithm(asset, value, type_name)
         if name == "signature_algorithm":
             return self.table_check(name, "signature_algorithms", value, type_name)
@@ -777,6 +781,29 @@ class PolicyEngine:
             evidence = asset.evidence if isinstance(asset.evidence, dict) else {}
             return self.group(value, evidence.get("requested_group"), type_name)
         return self.table_check(name, "cipher_suites", value, type_name)
+
+    def _configured_setting(self, asset: Asset, value: str,
+                            type_name: str | None) -> list[_Check] | None:
+        """Config tokens name a TLS group/version/suite/signature scheme, not a key algorithm.
+
+        Route them to the matching policy table. Protocol and suite tokens also populate
+        tls_version / cipher_suite, which are evaluated there, so the algorithm field adds
+        nothing. None means "evaluate as a key algorithm".
+        """
+        if type_name not in CONFIG_ASSET_TYPES or not isinstance(asset.evidence, dict):
+            return None
+        purpose = asset.evidence.get("purpose")
+        if purpose == "tls_key_establishment":
+            return self.table_check("configured_group", "groups", value, type_name)
+        if purpose == "signature":
+            return self.table_check("configured_signature", "signature_algorithms", value,
+                                    type_name)
+        if purpose == "tls_protocol_bound":
+            return [] if asset.tls_version else self.tls_version(value, type_name)
+        if purpose == "cipher_suite":
+            return [] if asset.cipher_suite else self.table_check(
+                "cipher_suite", "cipher_suites", value, type_name)
+        return None
 
     def finding(self, asset: Asset, type_name: str | None, checks: list[_Check]) -> dict[str, Any]:
         outcome = max((c.outcome for c in checks), key=SEVERITY.__getitem__)

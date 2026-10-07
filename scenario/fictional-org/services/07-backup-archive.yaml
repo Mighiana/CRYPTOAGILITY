@@ -1,0 +1,9 @@
+# Synthetic service in a fictional organization. Not a real system.
+service: backup-archive
+hostname: backup.fictional.test
+crypto_profile: classical
+tls:
+  min_tls_version: TLSv1.2
+  groups: [ffdhe2048]
+  signature_algorithms: [rsa_pss_rsae_sha512]
+  cipher_suites: [TLS_AES_128_GCM_SHA256, AES-256-GCM]

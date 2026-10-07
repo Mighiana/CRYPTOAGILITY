@@ -18,6 +18,9 @@ cryptoagility = "cryptoagility.cli:main"
 [tool.setuptools.packages.find]
 include = ["cryptoagility*"]
 
+[tool.setuptools.package-data]
+"cryptoagility.reporting" = ["shell.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["integration: real loopback TLS/OpenSSL experiments"]

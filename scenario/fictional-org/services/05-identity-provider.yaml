@@ -1,0 +1,9 @@
+# Synthetic service in a fictional organization. Not a real system.
+service: identity-provider
+hostname: idp.fictional.test
+crypto_profile: hybrid
+tls:
+  min_tls_version: TLSv1.3
+  groups: [X25519MLKEM768, X25519]
+  signature_algorithms: [rsa_pss_rsae_sha384]
+  cipher_suites: [TLS_AES_256_GCM_SHA384, TLS_AES_128_GCM_SHA256]

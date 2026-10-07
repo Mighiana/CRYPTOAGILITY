@@ -274,6 +274,44 @@ algorithms:
       - Compare with ML-DSA using measured sizes, not assumed sizes
       - Keep a classical certificate path available until client support is verified
 
+  - id: profile-classical
+    names: [classical]
+    family: classical
+    quantum_vulnerable: true
+    usage: [key_establishment, signature]
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Declared crypto profile "classical" selects quantum-vulnerable key establishment and
+      authentication; acceptable for now, with PQ migration planning required.
+    migration_options:
+      - Switch the declared profile to hybrid in a test deployment and run the interoperability matrix
+      - Keep the profile configurable so the switch needs no application code change
+  - id: profile-hybrid
+    names: [hybrid]
+    family: hybrid
+    quantum_vulnerable: false
+    usage: [key_establishment]
+    outcome: EXPERIMENTAL
+    reason: >-
+      Declared crypto profile "hybrid" combines classical and ML-KEM key establishment; the TLS
+      hybrid group integration is treated as a laboratory experiment. Authentication may still
+      be classical.
+    migration_options:
+      - Keep a pinned-group regression test so fallback to a classical group is detected
+      - Track the remaining classical authentication dependency separately
+  - id: profile-pqc
+    names: [pqc]
+    family: post_quantum
+    quantum_vulnerable: false
+    usage: [key_establishment, signature]
+    outcome: EXPERIMENTAL
+    reason: >-
+      Declared crypto profile "pqc" uses ML-KEM key establishment and PQ authentication; treated
+      as a laboratory experiment until every client is verified.
+    migration_options:
+      - Confirm every client supports the profile before relying on it
+      - Keep a hybrid fallback profile available and explicitly selected, never silent
+
 signature_algorithms:
   - id: sig-rsa-sha2
     names: [sha256WithRSAEncryption, sha384WithRSAEncryption, sha512WithRSAEncryption,
@@ -351,6 +389,40 @@ signature_algorithms:
     migration_options:
       - Measure certificate and handshake size impact before wider use
       - Keep a classical certificate path available until client support is verified
+
+  - id: sig-tls-rsa-sha2
+    names: [rsa_pss_rsae_sha256, rsa_pss_rsae_sha384, rsa_pss_rsae_sha512, rsa_pss_pss_sha256,
+            rsa_pss_pss_sha384, rsa_pss_pss_sha512, rsa_pkcs1_sha256, rsa_pkcs1_sha384,
+            rsa_pkcs1_sha512, RSA+SHA256, RSA+SHA384, RSA+SHA512, RSA-PSS+SHA256,
+            RSA-PSS+SHA384, RSA-PSS+SHA512]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Configured TLS RSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication
+      requiring long-term PQ migration planning.
+    migration_options:
+      - Test an ML-DSA authentication profile in the lab with every client of this service
+      - Keep signature schemes configurable so they can be changed without code changes
+  - id: sig-tls-ecdsa-sha2
+    names: [ecdsa_secp256r1_sha256, ecdsa_secp384r1_sha384, ecdsa_secp521r1_sha512,
+            ECDSA+SHA256, ECDSA+SHA384, ECDSA+SHA512]
+    family: classical
+    quantum_vulnerable: true
+    outcome: ACCEPTABLE_FOR_NOW
+    reason: >-
+      Configured TLS ECDSA signature scheme with a SHA-2 hash; quantum-vulnerable authentication
+      requiring long-term PQ migration planning.
+    migration_options:
+      - Test an ML-DSA authentication profile in the lab with every client of this service
+  - id: sig-tls-weak-hash
+    names: [rsa_pkcs1_sha1, ecdsa_sha1, RSA+SHA1, ECDSA+SHA1, RSA+SHA224, ECDSA+SHA224]
+    family: classical
+    quantum_vulnerable: true
+    outcome: DEPRECATED
+    reason: Configured TLS signature scheme uses a hash this policy no longer permits.
+    migration_options:
+      - Remove the scheme from the configuration and confirm every client still connects
 
 tls:
   minimum_version: TLSv1.2
@@ -501,6 +573,18 @@ tls:
       outcome: DEPRECATED
       reason: Cipher suite without forward secrecy or with a legacy construction is not permitted by this policy.
       migration_options: [Remove the suite and require a forward-secret AEAD suite]
+    - id: cs-aead-generic
+      names: [AES-128-GCM, AES-256-GCM, ChaCha20-Poly1305]
+      outcome: APPROVED
+      reason: >-
+        AEAD symmetric cipher permitted by this policy; symmetric ciphers are not the public-key
+        migration target of this lab.
+      migration_options: [No cipher change required]
+    - id: cs-legacy-generic
+      names: [AES-128-CBC, AES-256-CBC, 3DES, RC4]
+      outcome: DEPRECATED
+      reason: Non-AEAD or legacy symmetric cipher configuration is not permitted by this policy.
+      migration_options: [Remove the cipher and require an AEAD suite]
 
 certificates:
   renewal_window_days: 180

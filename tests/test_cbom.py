@@ -7,6 +7,7 @@ import io
 import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import pytest
 from cryptography import x509
@@ -20,8 +21,8 @@ from cryptoagility.models import Asset, Inventory
 NOW = datetime(2026, 6, 1, tzinfo=UTC)
 
 
-def _asset(**overrides) -> Asset:
-    base = {"asset_id": "a1", "asset_type": "certificate", "source": "x.pem",
+def _asset(**overrides: Any) -> Asset:
+    base: dict[str, Any] = {"asset_id": "a1", "asset_type": "certificate", "source": "x.pem",
             "algorithm_family": "RSA", "algorithm": "RSA", "key_size": 2048}
     base.update(overrides)
     return Asset(**base)
