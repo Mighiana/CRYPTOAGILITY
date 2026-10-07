@@ -88,7 +88,8 @@ def pem(cert: x509.Certificate) -> bytes:
 def key_pem(key, fmt=serialization.PrivateFormat.PKCS8, password: bytes | None = None) -> bytes:
     enc = (
         serialization.BestAvailableEncryption(password)
-        if password else serialization.NoEncryption()
+        if password
+        else serialization.NoEncryption()
     )
     return key.private_bytes(serialization.Encoding.PEM, fmt, enc)
 
@@ -131,8 +132,11 @@ def test_wrong_issuer_order_and_expired_certificate_are_reported(tmp_path: Path)
     other = make_cert("Root", other_key, ca=True)
     leaf_key = ec.generate_private_key(ec.SECP256R1())
     expired = make_cert(
-        "old.lab.test", leaf_key, (ca, ca_key),
-        not_before=NOW - timedelta(days=60), not_after=NOW - timedelta(days=1),
+        "old.lab.test",
+        leaf_key,
+        (ca, ca_key),
+        not_before=NOW - timedelta(days=60),
+        not_after=NOW - timedelta(days=1),
     )
     (tmp_path / "bad-chain.pem").write_bytes(pem(expired) + pem(other))
     leaf_a = by_type(inventory.scan(tmp_path, now=NOW), "certificate")[0]
@@ -302,8 +306,11 @@ def test_openssl_config_groups_classified(tmp_path: Path) -> None:
     )
     assets = inventory.scan(tmp_path, now=NOW).assets
     assert [(a.algorithm_family, a.algorithm) for a in assets] == [
-        ("HYBRID-KEM", "X25519MLKEM768"), ("HYBRID-KEM", "SecP256r1MLKEM768"),
-        ("ML-KEM", "MLKEM768"), ("XDH", "X25519"), ("FFDH", "ffdhe2048"),
+        ("HYBRID-KEM", "X25519MLKEM768"),
+        ("HYBRID-KEM", "SecP256r1MLKEM768"),
+        ("ML-KEM", "MLKEM768"),
+        ("XDH", "X25519"),
+        ("FFDH", "ffdhe2048"),
     ]
     assert assets[0].evidence["crypto_class"] == "hybrid"
     assert assets[2].evidence["algorithm_standard"] == "NIST FIPS 203"
@@ -314,9 +321,7 @@ def test_hostile_yaml_and_json_are_rejected_without_execution(tmp_path: Path) ->
     (tmp_path / "rce.yaml").write_text(
         f'key_exchange: !!python/object/apply:os.system ["touch {canary}"]\n'
     )
-    (tmp_path / "bomb.yaml").write_text(
-        "a: &a [x, x, x]\nb: &b [*a, *a, *a]\nc: [*b, *b, *b]\n"
-    )
+    (tmp_path / "bomb.yaml").write_text("a: &a [x, x, x]\nb: &b [*a, *a, *a]\nc: [*b, *b, *b]\n")
     (tmp_path / "multi.yaml").write_text("a: 1\n---\nb: 2\n")
     (tmp_path / "deep.json").write_text("[" * 50 + "]" * 50)
     (tmp_path / "bad.json").write_text("{not json")
@@ -334,20 +339,24 @@ def test_hostile_yaml_and_json_are_rejected_without_execution(tmp_path: Path) ->
 
 
 def test_app_config_emits_only_recognized_crypto_settings(tmp_path: Path) -> None:
-    (tmp_path / "service.json").write_text(json.dumps({
-        "name": "payments",
-        "db_password": "hunter2-synthetic",
-        "api": {"token": "tok_synthetic", "notes": "=cmd|' /C calc'!A0"},
-        "tls": {
-            "min_tls_version": "TLSv1.2",
-            "key_exchange": ["X25519MLKEM768", "x25519"],
-            "cipher_suites": "TLS_AES_128_GCM_SHA256:@SUM(1)",
-            "signature_algorithm": "ML-DSA-65",
-            "key_size": 3072,
-        },
-        "signing": {"algorithm": "rsa", "digest": "sha1", "rsa_bits": "big"},
-        "crypto_profile": "hybrid",
-    }))
+    (tmp_path / "service.json").write_text(
+        json.dumps(
+            {
+                "name": "payments",
+                "db_password": "hunter2-synthetic",
+                "api": {"token": "tok_synthetic", "notes": "=cmd|' /C calc'!A0"},
+                "tls": {
+                    "min_tls_version": "TLSv1.2",
+                    "key_exchange": ["X25519MLKEM768", "x25519"],
+                    "cipher_suites": "TLS_AES_128_GCM_SHA256:@SUM(1)",
+                    "signature_algorithm": "ML-DSA-65",
+                    "key_size": 3072,
+                },
+                "signing": {"algorithm": "rsa", "digest": "sha1", "rsa_bits": "big"},
+                "crypto_profile": "hybrid",
+            }
+        )
+    )
     inv = inventory.scan(tmp_path, now=NOW)
     pairs = sorted((a.evidence["location"], a.algorithm) for a in inv.assets)
     assert ("tls.key_exchange", "X25519MLKEM768") in pairs
@@ -372,8 +381,19 @@ def test_app_config_emits_only_recognized_crypto_settings(tmp_path: Path) -> Non
 def test_native_ml_dsa_certificate_and_keys(tmp_path: Path) -> None:
     key = tmp_path / "mldsa.key"
     ossl("genpkey", "-algorithm", "ML-DSA-65", "-out", str(key))
-    ossl("req", "-x509", "-new", "-key", str(key), "-subj", "/CN=pq.lab.test", "-days", "30",
-         "-out", str(tmp_path / "mldsa.crt"))
+    ossl(
+        "req",
+        "-x509",
+        "-new",
+        "-key",
+        str(key),
+        "-subj",
+        "/CN=pq.lab.test",
+        "-days",
+        "30",
+        "-out",
+        str(tmp_path / "mldsa.crt"),
+    )
     ossl("pkey", "-in", str(key), "-pubout", "-out", str(tmp_path / "mldsa.pub"))
     pub_der = ossl("pkey", "-in", str(key), "-pubout", "-outform", "DER")
 
@@ -407,12 +427,32 @@ def test_pq_subject_key_signed_by_classical_ca(tmp_path: Path) -> None:
     (work / "ca.crt").write_bytes(pem(ca))
     (work / "ca.key").write_bytes(key_pem(ca_key))
     ossl("genpkey", "-algorithm", "ML-DSA-44", "-out", str(work / "leaf.key"))
-    ossl("req", "-new", "-key", str(work / "leaf.key"), "-subj", "/CN=pq-leaf",
-         "-out", str(work / "leaf.csr"))
+    ossl(
+        "req",
+        "-new",
+        "-key",
+        str(work / "leaf.key"),
+        "-subj",
+        "/CN=pq-leaf",
+        "-out",
+        str(work / "leaf.csr"),
+    )
     out = tmp_path / "scan"
     out.mkdir()
-    ossl("x509", "-req", "-in", str(work / "leaf.csr"), "-CA", str(work / "ca.crt"),
-         "-CAkey", str(work / "ca.key"), "-days", "10", "-out", str(out / "leaf.crt"))
+    ossl(
+        "x509",
+        "-req",
+        "-in",
+        str(work / "leaf.csr"),
+        "-CA",
+        str(work / "ca.crt"),
+        "-CAkey",
+        str(work / "ca.key"),
+        "-days",
+        "10",
+        "-out",
+        str(out / "leaf.crt"),
+    )
     (out / "leaf.crt").write_bytes((out / "leaf.crt").read_bytes() + pem(ca))
     leaf = by_type(inventory.scan(out), "certificate")[0]
     assert leaf.algorithm == "ML-DSA-44"
@@ -425,8 +465,12 @@ def test_pq_subject_key_signed_by_classical_ca(tmp_path: Path) -> None:
 @requires_openssl
 @pytest.mark.parametrize(
     ("kind", "algorithm", "family"),
-    [("kem", "ML-KEM-768", "ML-KEM"), ("kem", "ML-KEM-1024", "ML-KEM"),
-     ("signature", "SLH-DSA-SHA2-128f", "SLH-DSA"), ("signature", "ML-DSA-87", "ML-DSA")],
+    [
+        ("kem", "ML-KEM-768", "ML-KEM"),
+        ("kem", "ML-KEM-1024", "ML-KEM"),
+        ("signature", "SLH-DSA-SHA2-128f", "SLH-DSA"),
+        ("signature", "ML-DSA-87", "ML-DSA"),
+    ],
 )
 def test_pq_public_and_private_key_metadata(
     tmp_path: Path, kind: str, algorithm: str, family: str
@@ -439,7 +483,8 @@ def test_pq_public_and_private_key_metadata(
     inv = inventory.scan(tmp_path)
     assert inv.errors == []
     assert {(a.asset_type, a.algorithm_family, a.parameter_set) for a in inv.assets} == {
-        ("private_key", family, algorithm), ("public_key", family, algorithm)
+        ("private_key", family, algorithm),
+        ("public_key", family, algorithm),
     }
     assert {a.evidence["public_key_sha256"] for a in inv.assets} and len(
         {a.evidence["public_key_sha256"] for a in inv.assets}
@@ -478,7 +523,10 @@ def tls_server(*args: str) -> Iterator[int]:
     env = {**os.environ, "OPENSSL_CONF": os.devnull}
     proc = subprocess.Popen(
         [openssl.executable(), "s_server", "-accept", f"127.0.0.1:{port}", "-quiet", *args],
-        stdin=subprocess.PIPE, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=env,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env,
     )
     try:
         deadline = time.monotonic() + 10
@@ -505,13 +553,19 @@ def pki(tmp_path: Path) -> dict[str, Path]:
     leaf = make_cert("localhost", leaf_key, (inter, inter_key), sans=("localhost", "127.0.0.1"))
     old_key = ec.generate_private_key(ec.SECP256R1())
     old = make_cert(
-        "localhost", old_key, (root, root_key),
+        "localhost",
+        old_key,
+        (root, root_key),
         not_before=datetime.now(UTC) - timedelta(days=10),
         not_after=datetime.now(UTC) - timedelta(days=1),
     )
     files = {
-        "root": pem(root), "inter": pem(inter), "leaf": pem(leaf), "leaf_key": key_pem(leaf_key),
-        "old": pem(old), "old_key": key_pem(old_key),
+        "root": pem(root),
+        "inter": pem(inter),
+        "leaf": pem(leaf),
+        "leaf_key": key_pem(leaf_key),
+        "old": pem(old),
+        "old_key": key_pem(old_key),
     }
     paths = {}
     for name, data in files.items():
@@ -521,16 +575,24 @@ def pki(tmp_path: Path) -> dict[str, Path]:
 
 
 def _serve_leaf(pki: dict[str, Path], *extra: str):
-    return tls_server("-cert", str(pki["leaf"]), "-key", str(pki["leaf_key"]),
-                      "-cert_chain", str(pki["inter"]), *extra)
+    return tls_server(
+        "-cert",
+        str(pki["leaf"]),
+        "-key",
+        str(pki["leaf_key"]),
+        "-cert_chain",
+        str(pki["inter"]),
+        *extra,
+    )
 
 
 @requires_openssl
 @pytest.mark.integration
 def test_authenticated_loopback_chain_observed_separately_from_probes(pki) -> None:
     with _serve_leaf(pki, "-tls1_3", "-groups", "X25519MLKEM768:X25519") as port:
-        inv = inventory.inspect_endpoint("127.0.0.1", port, cafile=pki["root"],
-                                         server_name="localhost")
+        inv = inventory.inspect_endpoint(
+            "127.0.0.1", port, cafile=pki["root"], server_name="localhost"
+        )
     assert inv.errors == []
     endpoint, leaf, inter = inv.assets
     assert endpoint.asset_type == "tls_endpoint"
@@ -589,8 +651,9 @@ def test_unauthenticated_endpoints_fail_closed(pki, server_name, cafile_key, cer
     key = pki["old_key"] if cert == "old" else pki["leaf_key"]
     chain = [] if cert == "old" else ["-cert_chain", str(pki["inter"])]
     with tls_server("-cert", str(pki[cert]), "-key", str(key), *chain) as port:
-        inv = inventory.inspect_endpoint("127.0.0.1", port, cafile=cafile,
-                                         server_name=server_name, probe=False)
+        inv = inventory.inspect_endpoint(
+            "127.0.0.1", port, cafile=cafile, server_name=server_name, probe=False
+        )
     assert inv.assets == []
     assert [e["code"] for e in inv.errors] == ["tls_verification_failed"]
     assert reason in inv.errors[0]["message"]
@@ -615,14 +678,28 @@ def test_closed_port_and_bad_cafile(pki, tmp_path: Path) -> None:
 def test_pqc_profile_endpoint_with_ml_dsa_certificate(tmp_path: Path) -> None:
     key, crt = tmp_path / "pq.key", tmp_path / "pq.crt"
     ossl("genpkey", "-algorithm", "ML-DSA-65", "-out", str(key))
-    ossl("req", "-x509", "-new", "-key", str(key), "-subj", "/CN=localhost", "-days", "5",
-         "-addext", "subjectAltName=DNS:localhost", "-out", str(crt))
+    ossl(
+        "req",
+        "-x509",
+        "-new",
+        "-key",
+        str(key),
+        "-subj",
+        "/CN=localhost",
+        "-days",
+        "5",
+        "-addext",
+        "subjectAltName=DNS:localhost",
+        "-out",
+        str(crt),
+    )
     if "X25519MLKEM768" not in inventory.tls13_groups():
         pytest.skip("X25519MLKEM768 TLS group unavailable")
     pq_only = ("-tls1_3", "-groups", "X25519MLKEM768")
     with tls_server("-cert", str(crt), "-key", str(key), *pq_only) as port:
-        inv = inventory.inspect_endpoint("127.0.0.1", port, cafile=crt, server_name="localhost",
-                                         probe=False)
+        inv = inventory.inspect_endpoint(
+            "127.0.0.1", port, cafile=crt, server_name="localhost", probe=False
+        )
     assert inv.errors == [], inv.errors
     endpoint, leaf = inv.assets
     assert endpoint.negotiated_group == "X25519MLKEM768"

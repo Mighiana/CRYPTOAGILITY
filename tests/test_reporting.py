@@ -22,8 +22,10 @@ ROOT = Path(__file__).resolve().parents[1]
 NOW = datetime(2026, 1, 1, tzinfo=UTC)
 SVG_NS = "http://www.w3.org/2000/svg"
 XSS = '"><script>alert(1)</script><img src=x onerror=alert(2)>'
-PEM = ("-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIGJ1aWx0LWluLXRlc3Qta2V5LW5vdC1yZWFs"
-       "\n-----END PRIVATE KEY-----")
+PEM = (
+    "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEIGJ1aWx0LWluLXRlc3Qta2V5LW5vdC1yZWFs"
+    "\n-----END PRIVATE KEY-----"
+)
 
 
 def _write(path: Path, data: Any) -> None:
@@ -34,20 +36,36 @@ def _read(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def _lab_evidence(workdir: Path, matrix: dict[str, Any] | None = None,
-                  bench: dict[str, Any] | None = None) -> Path:
+def _lab_evidence(
+    workdir: Path, matrix: dict[str, Any] | None = None, bench: dict[str, Any] | None = None
+) -> Path:
     """Produce every evidence file with the real lab modules and local OpenSSL."""
     scan = workdir / "scan"
     out = workdir / "results"
     scan.mkdir(parents=True)
     out.mkdir()
     openssl.run(["genpkey", "-algorithm", "ML-DSA-65", "-out", str(scan / "mldsa.key")])
-    openssl.run(["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout",
-                 str(scan / "rsa.key"), "-out", str(scan / "rsa.crt"), "-subj",
-                 "/CN=lab.test", "-days", "30"])
+    openssl.run(
+        [
+            "req",
+            "-x509",
+            "-newkey",
+            "rsa:2048",
+            "-nodes",
+            "-keyout",
+            str(scan / "rsa.key"),
+            "-out",
+            str(scan / "rsa.crt"),
+            "-subj",
+            "/CN=lab.test",
+            "-days",
+            "30",
+        ]
+    )
     (scan / "openssl.cnf").write_text("[system_default_sect]\nGroups = X25519MLKEM768:X25519\n")
-    (scan / "bad.pem").write_text("-----BEGIN CERTIFICATE-----\nnot base64\n"
-                                  "-----END CERTIFICATE-----\n")
+    (scan / "bad.pem").write_text(
+        "-----BEGIN CERTIFICATE-----\nnot base64\n-----END CERTIFICATE-----\n"
+    )
     caps = tls.capabilities()
     inv = inventory.scan(scan, now=NOW)
     pol = policy.load_policy(ROOT / "policies" / "default.yaml")
@@ -56,18 +74,32 @@ def _lab_evidence(workdir: Path, matrix: dict[str, Any] | None = None,
         # network or key generation happens.
         reduced = copy.deepcopy(caps)
         reduced["tls13_groups"] = []
-        matrix = tls.run_matrix(workdir / "mx", servers=["hybrid"],
-                                clients=["hybrid-only", "classical-only"],
-                                include_negative=False, caps=reduced)
+        matrix = tls.run_matrix(
+            workdir / "mx",
+            servers=["hybrid"],
+            clients=["hybrid-only", "classical-only"],
+            include_negative=False,
+            caps=reduced,
+        )
     if bench is None:
-        bench = benchmark.run_benchmarks(workdir / "bm", iterations=5, warmups=2,
-                                         profiles=["pqc"],
-                                         algorithms=["ML-KEM-768", "ML-DSA-65"],
-                                         include_tls=False, caps=caps)
-    for name, data in (("capabilities", caps), ("inventory", inv.to_dict()),
-                       ("policy", policy.evaluate(inv, pol, now=NOW)), ("matrix", matrix),
-                       ("migration-plan", migration.plan(inv, pol, matrix, now=NOW)),
-                       ("benchmark", bench), ("cbom", cbom.export_json(inv))):
+        bench = benchmark.run_benchmarks(
+            workdir / "bm",
+            iterations=5,
+            warmups=2,
+            profiles=["pqc"],
+            algorithms=["ML-KEM-768", "ML-DSA-65"],
+            include_tls=False,
+            caps=caps,
+        )
+    for name, data in (
+        ("capabilities", caps),
+        ("inventory", inv.to_dict()),
+        ("policy", policy.evaluate(inv, pol, now=NOW)),
+        ("matrix", matrix),
+        ("migration-plan", migration.plan(inv, pol, matrix, now=NOW)),
+        ("benchmark", bench),
+        ("cbom", cbom.export_json(inv)),
+    ):
         _write(out / f"{name}.json", data)
     return out
 
@@ -92,12 +124,15 @@ def _render(results_dir: Path, tmp_path: Path, name: str = "report.html") -> str
 
 def _body(page: str) -> str:
     start = page.index('<section class="a-section"', page.index("data-a-error"))
-    return page[start:page.index("<footer")]
+    return page[start : page.index("<footer")]
 
 
 def _provenance(page: str, filename: str) -> str:
-    match = re.search(rf"<tr data-status=\"[a-z]+\"><td><code>{re.escape(filename)}</code>"
-                      r"</td><td>(.*?)</td>", page)
+    match = re.search(
+        rf"<tr data-status=\"[a-z]+\"><td><code>{re.escape(filename)}</code>"
+        r"</td><td>(.*?)</td>",
+        page,
+    )
     assert match, filename
     return match.group(1)
 
@@ -109,7 +144,7 @@ def _states(fragment: str) -> list[str]:
 def _section(page: str, ident: str) -> str:
     start = page.index(f'<section class="a-section" id="{ident}"')
     end = page.find('<section class="a-section"', start + 1)
-    return page[start:end if end != -1 else page.index("<footer")]
+    return page[start : end if end != -1 else page.index("<footer")]
 
 
 # --------------------------------------------------------------------------- real evidence
@@ -121,8 +156,17 @@ def test_full_report_from_real_lab_evidence(results: Path, tmp_path: Path) -> No
         assert "Loaded" in _provenance(page, name)
         digest = hashlib.sha256((results / name).read_bytes()).hexdigest()[:16]
         assert f"<code>{digest}\u2026</code>" in page
-    for ident in ("summary", "inventory", "classification", "findings", "interop",
-                  "performance", "footprint", "methodology", "limitations"):
+    for ident in (
+        "summary",
+        "inventory",
+        "classification",
+        "findings",
+        "interop",
+        "performance",
+        "footprint",
+        "methodology",
+        "limitations",
+    ):
         assert f'id="{ident}"' in page, ident
     plan = _read(results / "migration-plan.json")
     assert f">{plan['readiness']}</span>" in _section(page, "summary")
@@ -176,7 +220,10 @@ def test_sample_count_caveat_and_no_fabricated_p95(results: Path, tmp_path: Path
     # The p95 column never carries a number when the evidence has none.
     assert not re.search(r"p95[^<]*</th>.*?data-value=\"[0-9]", perf, re.S) or all(
         e["operations"][op]["statistics"]["p95_ms"] is None
-        for e in bench["results"] if e["status"] == "SUCCESS" for op in e["operations"])
+        for e in bench["results"]
+        if e["status"] == "SUCCESS"
+        for op in e["operations"]
+    )
 
 
 def test_page_is_offline_single_script_and_csp_pinned(results: Path, tmp_path: Path) -> None:
@@ -185,8 +232,7 @@ def test_page_is_offline_single_script_and_csp_pinned(results: Path, tmp_path: P
     assert urls <= {SVG_NS}, urls
     assert not re.search(r"(?:src|href|action)\s*=\s*[\"']?\s*//", page, re.I)
     assert not re.search(r"@import|url\(\s*['\"]?(?!data:|#)", page, re.I)
-    assert not re.search(r"\b(?:fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource)\s*\(",
-                         page)
+    assert not re.search(r"\b(?:fetch|XMLHttpRequest|sendBeacon|WebSocket|EventSource)\s*\(", page)
     scripts = re.findall(r"<script>(.*?)</script>", page, re.S)
     assert len(scripts) == 1 and page.lower().count("<script") == 1
     digest = base64.b64encode(hashlib.sha256(scripts[0].encode()).digest()).decode()
@@ -229,8 +275,7 @@ def test_each_missing_file_is_reported(key: str, results: Path, tmp_path: Path) 
         assert f"{name}" in _section(page, "limitations")
 
 
-def test_missing_matrix_and_benchmark_mark_areas_untested(results: Path,
-                                                           tmp_path: Path) -> None:
+def test_missing_matrix_and_benchmark_mark_areas_untested(results: Path, tmp_path: Path) -> None:
     (results / "matrix.json").unlink()
     (results / "benchmark.json").unlink()
     page = _render(results, tmp_path)
@@ -257,8 +302,9 @@ BAD_BYTES = {
 
 @pytest.mark.parametrize("key", sorted(ev_mod.EVIDENCE_FILES))
 @pytest.mark.parametrize("case", sorted(BAD_BYTES))
-def test_malformed_files_are_rejected_explicitly(key: str, case: str, results: Path,
-                                                 tmp_path: Path) -> None:
+def test_malformed_files_are_rejected_explicitly(
+    key: str, case: str, results: Path, tmp_path: Path
+) -> None:
     name = ev_mod.EVIDENCE_FILES[key]
     (results / name).write_bytes(BAD_BYTES[case])
     page = _render(results, tmp_path)
@@ -302,19 +348,26 @@ def _mutations() -> list[tuple[str, str, Any]]:
         d["findings"][0]["outcome"] = "GREEN"
 
     return [
-        ("inventory", "schema", schema), ("inventory", "extra-field", extra_asset_field),
-        ("policy", "schema", schema), ("policy", "compliant-lie", compliant_lie),
+        ("inventory", "schema", schema),
+        ("inventory", "extra-field", extra_asset_field),
+        ("policy", "schema", schema),
+        ("policy", "compliant-lie", compliant_lie),
         ("policy", "unknown-outcome", unknown_outcome),
-        ("migration_plan", "ready-lie", ready_lie), ("matrix", "success-lie", success_lie),
-        ("benchmark", "secret", bench_secret), ("benchmark", "fabricated-p95", bench_p95),
-        ("cbom", "format", cbom_format), ("capabilities", "schema", schema),
+        ("migration_plan", "ready-lie", ready_lie),
+        ("matrix", "success-lie", success_lie),
+        ("benchmark", "secret", bench_secret),
+        ("benchmark", "fabricated-p95", bench_p95),
+        ("cbom", "format", cbom_format),
+        ("capabilities", "schema", schema),
     ]
 
 
-@pytest.mark.parametrize("key,label,mutate", _mutations(), ids=[m[1] + "-" + m[0]
-                                                                for m in _mutations()])
-def test_schema_mismatch_and_contradictions_are_errors(key: str, label: str, mutate: Any,
-                                                       results: Path, tmp_path: Path) -> None:
+@pytest.mark.parametrize(
+    "key,label,mutate", _mutations(), ids=[m[1] + "-" + m[0] for m in _mutations()]
+)
+def test_schema_mismatch_and_contradictions_are_errors(
+    key: str, label: str, mutate: Any, results: Path, tmp_path: Path
+) -> None:
     path = results / ev_mod.EVIDENCE_FILES[key]
     data = _read(path)
     mutate(data)
@@ -367,9 +420,16 @@ def test_render_html_requires_exact_evidence_keys(results: Path) -> None:
         reporting.render_html(loaded)
 
 
-@pytest.mark.parametrize("raw", [b"[" * (ev_mod.MAX_DEPTH + 2) + b"]" * (ev_mod.MAX_DEPTH + 2),
-                                 b'{"a": 1, "a": 2}', b"[NaN]", b"[-Infinity]",
-                                 json.dumps(list(range(ev_mod.MAX_NODES + 1))).encode()])
+@pytest.mark.parametrize(
+    "raw",
+    [
+        b"[" * (ev_mod.MAX_DEPTH + 2) + b"]" * (ev_mod.MAX_DEPTH + 2),
+        b'{"a": 1, "a": 2}',
+        b"[NaN]",
+        b"[-Infinity]",
+        json.dumps(list(range(ev_mod.MAX_NODES + 1))).encode(),
+    ],
+)
 def test_parse_json_is_strict_and_bounded(raw: bytes) -> None:
     with pytest.raises(reporting.EvidenceError):
         ev_mod.parse_json(raw)
@@ -397,7 +457,10 @@ def test_markup_in_evidence_is_escaped(results: Path, tmp_path: Path) -> None:
     _inject(results, XSS)
     loaded = reporting.load_evidence(results)
     assert {k: e.status for k, e in loaded.items() if k in ("inventory", "policy", "matrix")} == {
-        "inventory": reporting.LOADED, "policy": reporting.LOADED, "matrix": reporting.LOADED}
+        "inventory": reporting.LOADED,
+        "policy": reporting.LOADED,
+        "matrix": reporting.LOADED,
+    }
     page = _render(results, tmp_path)
     body = _body(page)
     assert "<script" not in body.lower() and "<img" not in body.lower()
@@ -406,20 +469,30 @@ def test_markup_in_evidence_is_escaped(results: Path, tmp_path: Path) -> None:
     assert page.lower().count("<script") == 1
 
 
-@pytest.mark.parametrize("secret", [
-    PEM,
-    "RSA PRIVATE KEY material",
-    "CLIENT_RANDOM 0011 2233",
-    "CLIENT_HANDSHAKE_TRAFFIC_SECRET abcd",
-    "Master-Key: 0A1B2C",
-    "PSK identity hint",
-    base64.b64encode(bytes(range(256)) * 2).decode(),
-])
+@pytest.mark.parametrize(
+    "secret",
+    [
+        PEM,
+        "RSA PRIVATE KEY material",
+        "CLIENT_RANDOM 0011 2233",
+        "CLIENT_HANDSHAKE_TRAFFIC_SECRET abcd",
+        "Master-Key: 0A1B2C",
+        "PSK identity hint",
+        base64.b64encode(bytes(range(256)) * 2).decode(),
+    ],
+)
 def test_secret_like_strings_are_redacted(secret: str, results: Path, tmp_path: Path) -> None:
     _inject(results, f"prefix {secret} suffix")
     page = _render(results, tmp_path)
-    for marker in ("BEGIN PRIVATE", "PRIVATE KEY", "CLIENT_RANDOM", "TRAFFIC_SECRET",
-                   "Master-Key", "PSK identity", secret[:60]):
+    for marker in (
+        "BEGIN PRIVATE",
+        "PRIVATE KEY",
+        "CLIENT_RANDOM",
+        "TRAFFIC_SECRET",
+        "Master-Key",
+        "PSK identity",
+        secret[:60],
+    ):
         assert marker not in page, marker
     assert render_mod.REDACTED in page
     assert "looked like key material" in page
@@ -469,8 +542,9 @@ def test_packaged_shell_is_verified(monkeypatch: pytest.MonkeyPatch) -> None:
 
     tampered = {
         "script": shell.replace("<script>", "<script>window.x=1;", 1),
-        "remote": shell.replace("</head>", '<link rel="stylesheet" href="https://cdn.test/a.css">'
-                                "</head>", 1),
+        "remote": shell.replace(
+            "</head>", '<link rel="stylesheet" href="https://cdn.test/a.css"></head>', 1
+        ),
         "marker": shell.replace(render_mod.BODY_MARKER, ""),
     }
     for name, text in tampered.items():
@@ -491,14 +565,21 @@ def test_shell_ships_with_the_package() -> None:
 
 
 @pytest.mark.integration
-def test_real_loopback_matrix_and_tls_benchmark_render(tmp_path_factory: pytest.TempPathFactory,
-                                                       tmp_path: Path) -> None:
+def test_real_loopback_matrix_and_tls_benchmark_render(
+    tmp_path_factory: pytest.TempPathFactory, tmp_path: Path
+) -> None:
     work = tmp_path_factory.mktemp("tls-lab")
-    matrix = tls.run_matrix(work / "mx", servers=["hybrid", "classical"],
-                            clients=["hybrid-only"], include_negative=True)
-    bench = benchmark.run_benchmarks(work / "bm", iterations=5, warmups=2,
-                                     profiles=["hybrid"], algorithms=["ML-KEM-768"],
-                                     include_tls=True)
+    matrix = tls.run_matrix(
+        work / "mx", servers=["hybrid", "classical"], clients=["hybrid-only"], include_negative=True
+    )
+    bench = benchmark.run_benchmarks(
+        work / "bm",
+        iterations=5,
+        warmups=2,
+        profiles=["hybrid"],
+        algorithms=["ML-KEM-768"],
+        include_tls=True,
+    )
     results = _lab_evidence(work / "lab", matrix=matrix, bench=bench)
     page = _render(results, tmp_path)
     interop = _section(page, "interop")
@@ -509,8 +590,9 @@ def test_real_loopback_matrix_and_tls_benchmark_render(tmp_path_factory: pytest.
     negatives = [r for r in matrix["rows"] if r.get("experiment") == "negative"]
     assert negatives and "negative control (failure expected)" in interop
     perf = _section(page, "performance")
-    tls_entries = [e for e in bench["results"] if e["kind"] == "tls_handshake"
-                   and e["status"] == "SUCCESS"]
+    tls_entries = [
+        e for e in bench["results"] if e["kind"] == "tls_handshake" and e["status"] == "SUCCESS"
+    ]
     assert tls_entries
     for entry in tls_entries:
         median = entry["operations"]["handshake"]["statistics"]["median_ms"]

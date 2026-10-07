@@ -36,11 +36,13 @@ def test_no_command_prints_help(capsys: pytest.CaptureFixture[str]) -> None:
     assert "inventory" in capsys.readouterr().out
 
 
-def test_inventory_writes_json_and_cbom(scenario_dir: Path, tmp_path: Path,
-                                        capsys: pytest.CaptureFixture[str]) -> None:
+def test_inventory_writes_json_and_cbom(
+    scenario_dir: Path, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
     out = tmp_path / "inventory.json"
-    assert cli.main(["inventory", str(scenario_dir), "-o", str(out),
-                     "--cbom-dir", str(tmp_path)]) == 0
+    assert (
+        cli.main(["inventory", str(scenario_dir), "-o", str(out), "--cbom-dir", str(tmp_path)]) == 0
+    )
     data = json.loads(out.read_text())
     assert data["schema_version"] == "1.0" and data["assets"] and not data["errors"]
     assert (tmp_path / "cbom.csv").read_text().startswith("asset_id,")
@@ -68,22 +70,34 @@ def test_policy_is_deterministic(inventory_json: Path, tmp_path: Path) -> None:
 
 def test_plan_writes_markdown_and_gates_on_blocked(inventory_json: Path, tmp_path: Path) -> None:
     md = tmp_path / "plan.md"
-    args = ["plan", str(inventory_json), "--constraints", str(ROOT / "scenario/constraints.yaml"),
-            "--markdown", str(md), "-o", str(tmp_path / "plan.json")]
+    args = [
+        "plan",
+        str(inventory_json),
+        "--constraints",
+        str(ROOT / "scenario/constraints.yaml"),
+        "--markdown",
+        str(md),
+        "-o",
+        str(tmp_path / "plan.json"),
+    ]
     assert cli.main(args) == 0
     assert json.loads((tmp_path / "plan.json").read_text())["readiness"] == "BLOCKED"
     assert md.read_text().strip()
     assert cli.main([*args, "--fail-on-blocked"]) == cli.EXIT_GATE
 
 
-@pytest.mark.parametrize("payload, message", [
-    ("not json", "not valid JSON"),
-    ('{"schema_version": "9"}', "not a CryptoAgility inventory"),
-    ('{"cbom_format": "cryptoagility-lab-cbom"}', "CBOM export"),
-    ("[]", "not a CryptoAgility inventory"),
-])
-def test_invalid_inventory_input(tmp_path: Path, payload: str, message: str,
-                                 capsys: pytest.CaptureFixture[str]) -> None:
+@pytest.mark.parametrize(
+    "payload, message",
+    [
+        ("not json", "not valid JSON"),
+        ('{"schema_version": "9"}', "not a CryptoAgility inventory"),
+        ('{"cbom_format": "cryptoagility-lab-cbom"}', "CBOM export"),
+        ("[]", "not a CryptoAgility inventory"),
+    ],
+)
+def test_invalid_inventory_input(
+    tmp_path: Path, payload: str, message: str, capsys: pytest.CaptureFixture[str]
+) -> None:
     path = tmp_path / "bad.json"
     path.write_text(payload)
     assert cli.main(["policy", str(path)]) == cli.EXIT_INPUT
@@ -114,7 +128,8 @@ def test_refuses_symlink_input(inventory_json: Path, tmp_path: Path) -> None:
 
 
 def test_unsupported_profile_is_exit_3_not_downgrade(
-        monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]) -> None:
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
     def refuse(name: str, caps: object = None) -> tls.TLSProfile:
         raise tls.UnsupportedProfileError(name, ["TLS 1.3 group MLKEM768"])
 
@@ -140,10 +155,11 @@ def test_strict_profiles_handshake(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 @pytest.mark.integration
-def test_mismatched_client_fails_instead_of_downgrading(
-        capsys: pytest.CaptureFixture[str]) -> None:
-    assert cli.main(["test", "--profile", "pqc", "--client", "classical-only",
-                     "--json"]) == cli.EXIT_GATE
+def test_mismatched_client_fails_instead_of_downgrading(capsys: pytest.CaptureFixture[str]) -> None:
+    assert (
+        cli.main(["test", "--profile", "pqc", "--client", "classical-only", "--json"])
+        == cli.EXIT_GATE
+    )
     row = json.loads(capsys.readouterr().out)["rows"][0]
     assert row["status"] == tls.FAIL_NEGOTIATION and row["negotiated_group"] is None
 
@@ -152,12 +168,18 @@ def test_mismatched_client_fails_instead_of_downgrading(
 def test_lab_pipeline_produces_loadable_evidence(tmp_path: Path) -> None:
     from cryptoagility import reporting
 
-    summary = lab.run(tmp_path / "results", policy_path=cli.DEFAULT_POLICY,
-                      iterations=5, warmups=2, log=lambda _: None)
+    summary = lab.run(
+        tmp_path / "results",
+        policy_path=cli.DEFAULT_POLICY,
+        iterations=5,
+        warmups=2,
+        log=lambda _: None,
+    )
     results = tmp_path / "results"
     evidence = reporting.load_evidence(results)
     assert {key: ev.status for key, ev in evidence.items()} == {
-        key: reporting.LOADED for key in reporting.EVIDENCE_FILES}
+        key: reporting.LOADED for key in reporting.EVIDENCE_FILES
+    }
     assert summary["readiness"] in {"BLOCKED", "PARTIALLY_READY", "READY", "UNKNOWN"}
     html = (results / "report.html").read_text()
     assert "<script src=" not in html and "PRIVATE KEY" not in html

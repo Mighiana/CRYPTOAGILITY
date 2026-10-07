@@ -105,10 +105,11 @@ def emit(data: Any, output: Path | None, as_json: bool, text: Callable[[], str])
 def _table(header: Sequence[str], rows: Sequence[Sequence[Any]]) -> str:
     cells = [["-" if c is None else str(c) for c in row] for row in rows]
     widths = [max([len(h), *(len(r[i]) for r in cells)]) for i, h in enumerate(header)]
-    lines = ["  ".join(h.ljust(w) for h, w in zip(header, widths, strict=True)),
-             "  ".join("-" * w for w in widths)]
-    lines += ["  ".join(c.ljust(w) for c, w in zip(r, widths, strict=True)).rstrip()
-              for r in cells]
+    lines = [
+        "  ".join(h.ljust(w) for h, w in zip(header, widths, strict=True)),
+        "  ".join("-" * w for w in widths),
+    ]
+    lines += ["  ".join(c.ljust(w) for c, w in zip(r, widths, strict=True)).rstrip() for r in cells]
     return "\n".join(lines) + "\n"
 
 
@@ -120,8 +121,10 @@ def _counts(title: str, counts: dict[str, int]) -> str:
 
 
 def render_inventory(inv: Inventory) -> str:
-    rows = [(a.asset_type, a.algorithm_family, a.algorithm, a.key_size or a.parameter_set,
-             a.source) for a in inv.assets]
+    rows = [
+        (a.asset_type, a.algorithm_family, a.algorithm, a.key_size or a.parameter_set, a.source)
+        for a in inv.assets
+    ]
     text = _table(("type", "family", "algorithm", "size/params", "source"), rows)
     text += f"\n{len(inv.assets)} assets, {len(inv.errors)} discovery errors\n"
     for err in inv.errors:
@@ -131,34 +134,58 @@ def render_inventory(inv: Inventory) -> str:
 
 def render_policy(result: dict[str, Any]) -> str:
     flagged = [f for f in result["findings"] if not f["compliant"]]
-    rows = [(f["outcome"], f["current_algorithm"], f["source"], f["reasons"][0][:90])
-            for f in flagged]
+    rows = [
+        (f["outcome"], f["current_algorithm"], f["source"], f["reasons"][0][:90]) for f in flagged
+    ]
     text = _table(("outcome", "algorithm", "source", "reason"), rows) if rows else ""
     summary = result["summary"]
     text += "\n" + _counts("outcomes", summary["by_outcome"])
-    text += (f"{summary['compliant']}/{summary['total_assets']} compliant, "
-             f"{summary['quantum_vulnerable']} quantum-vulnerable, "
-             f"{summary['evidence_incomplete']} with incomplete evidence\n")
+    text += (
+        f"{summary['compliant']}/{summary['total_assets']} compliant, "
+        f"{summary['quantum_vulnerable']} quantum-vulnerable, "
+        f"{summary['evidence_incomplete']} with incomplete evidence\n"
+    )
     return text
 
 
 def render_matrix(result: dict[str, Any]) -> str:
     verdict = {True: "pass", False: "FAIL", None: "-"}
-    rows = [(r["server"], r["client"], r["status"], r["negotiated_group"], r["certificate_type"],
-             r["handshake_bytes_read"], verdict[r["policy_pass"]], r["error_reason"])
-            for r in result["rows"]]
-    text = _table(("server", "client", "status", "group", "cert", "bytes read", "policy",
-                   "reason"), rows)
+    rows = [
+        (
+            r["server"],
+            r["client"],
+            r["status"],
+            r["negotiated_group"],
+            r["certificate_type"],
+            r["handshake_bytes_read"],
+            verdict[r["policy_pass"]],
+            r["error_reason"],
+        )
+        for r in result["rows"]
+    ]
+    text = _table(
+        ("server", "client", "status", "group", "cert", "bytes read", "policy", "reason"), rows
+    )
     version = result["environment"].get("openssl", {}).get("version")
-    text += (f"\n{version}; TLS policy {result['policy'].get('name')}. A successful "
-             "handshake and a policy pass are judged separately.\n")
+    text += (
+        f"\n{version}; TLS policy {result['policy'].get('name')}. A successful "
+        "handshake and a policy pass are judged separately.\n"
+    )
     return text
 
 
 def render_plan(result: dict[str, Any], sources: dict[str, str]) -> str:
-    rows = [(i["priority"], i["outcome"], i["current_algorithm"],
-             sources.get(i["asset_id"], i["asset_id"]), i["next_action"][:70])
-            for i in result["items"] if not i["ready"]]
+    rows = [
+        (
+            i["priority"],
+            i["outcome"],
+            i["current_algorithm"],
+            sources.get(i["asset_id"], i["asset_id"]),
+            i["next_action"][:70],
+        )
+        for i in result["items"]
+        if not i["ready"]
+    ]
     text = _table(("priority", "outcome", "algorithm", "source", "next action"), rows)
     text += f"\nreadiness: {result['readiness']}\n"
     text += "".join(f"  - {reason}\n" for reason in result["reasons"])
@@ -167,9 +194,11 @@ def render_plan(result: dict[str, Any], sources: dict[str, str]) -> str:
 
 
 def render_capabilities(caps: dict[str, Any]) -> str:
-    lines = [f"OpenSSL: {caps.get('openssl', {}).get('version')}",
-             "providers: " + ", ".join(str(p.get("name", "?")) for p in caps.get("providers", [])),
-             "TLS 1.3 groups: " + ", ".join(caps.get("tls13_groups", []))]
+    lines = [
+        f"OpenSSL: {caps.get('openssl', {}).get('version')}",
+        "providers: " + ", ".join(str(p.get("name", "?")) for p in caps.get("providers", [])),
+        "TLS 1.3 groups: " + ", ".join(caps.get("tls13_groups", [])),
+    ]
     for name, info in caps.get("profiles", {}).items():
         state = "supported" if info.get("supported") else "UNSUPPORTED"
         missing = "; ".join(info.get("missing", []))
@@ -191,17 +220,25 @@ def cmd_inventory(args: argparse.Namespace) -> int:
 
 
 def cmd_inspect(args: argparse.Namespace) -> int:
-    inv = inventory.inspect_endpoint(args.host, args.port, cafile=args.cafile,
-                                     server_name=args.server_name,
-                                     allow_remote=args.allow_remote, timeout=args.timeout)
+    inv = inventory.inspect_endpoint(
+        args.host,
+        args.port,
+        cafile=args.cafile,
+        server_name=args.server_name,
+        allow_remote=args.allow_remote,
+        timeout=args.timeout,
+    )
     emit(inv.to_dict(), args.output, args.json, lambda: render_inventory(inv))
     return EXIT_GATE if inv.errors and not inv.assets else 0
 
 
 def cmd_cbom(args: argparse.Namespace) -> int:
     inv = read_inventory(args.inventory)
-    text = (cbom.export_csv(inv) if args.format == "csv"
-            else json.dumps(cbom.export_json(inv), indent=2, sort_keys=True) + "\n")
+    text = (
+        cbom.export_csv(inv)
+        if args.format == "csv"
+        else json.dumps(cbom.export_json(inv), indent=2, sort_keys=True) + "\n"
+    )
     if args.output:
         write_text(args.output, text)
         print(f"wrote {args.output}", file=sys.stderr)
@@ -235,18 +272,27 @@ def cmd_test(args: argparse.Namespace) -> int:
     tls.resolve_profile(args.profile, caps)
     client = args.client or benchmark.PROFILE_CLIENTS[args.profile]
     with tempfile.TemporaryDirectory(prefix="cryptoagility-test-") as work:
-        result = tls.run_matrix(Path(work), servers=[args.profile], clients=[client],
-                                include_negative=False, caps=caps,
-                                policy=_tls_policy(args.tls_policy))
+        result = tls.run_matrix(
+            Path(work),
+            servers=[args.profile],
+            clients=[client],
+            include_negative=False,
+            caps=caps,
+            policy=_tls_policy(args.tls_policy),
+        )
     emit(result, args.output, args.json, lambda: render_matrix(result))
     return 0 if result["rows"][0]["status"] == tls.SUCCESS else EXIT_GATE
 
 
 def cmd_matrix(args: argparse.Namespace) -> int:
     with tempfile.TemporaryDirectory(prefix="cryptoagility-matrix-") as work:
-        result = tls.run_matrix(Path(work), servers=args.server, clients=args.client,
-                                include_negative=not args.no_negative,
-                                policy=_tls_policy(args.tls_policy))
+        result = tls.run_matrix(
+            Path(work),
+            servers=args.server,
+            clients=args.client,
+            include_negative=not args.no_negative,
+            policy=_tls_policy(args.tls_policy),
+        )
     emit(result, args.output, args.json, lambda: render_matrix(result))
     return 0
 
@@ -258,8 +304,14 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
             tls.resolve_profile(name, caps)
     with tempfile.TemporaryDirectory(prefix="cryptoagility-bench-") as work:
         result = benchmark.run_benchmarks(
-            Path(work), args.iterations, args.warmups, args.profile, algorithms=args.algorithm,
-            include_tls=not args.no_tls, caps=caps)
+            Path(work),
+            args.iterations,
+            args.warmups,
+            args.profile,
+            algorithms=args.algorithm,
+            include_tls=not args.no_tls,
+            caps=caps,
+        )
     emit(result, args.output, args.json, lambda: benchmark.render_text(result))
     return 0
 
@@ -267,8 +319,9 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
 def cmd_plan(args: argparse.Namespace) -> int:
     matrix = read_json(args.matrix) if args.matrix else None
     inv = read_inventory(args.inventory)
-    result = migration.plan(inv, policy.load_policy(args.policy), matrix,
-                            read_yaml(args.constraints))
+    result = migration.plan(
+        inv, policy.load_policy(args.policy), matrix, read_yaml(args.constraints)
+    )
     sources = {a.asset_id: a.source for a in inv.assets}
     if args.markdown:
         write_text(args.markdown, migration.render_markdown(result))
@@ -284,18 +337,27 @@ def cmd_report(args: argparse.Namespace) -> int:
     evidence = reporting.load_evidence(args.results)
     print(f"wrote {path}")
     states = [ev.status for ev in evidence.values()]
-    print(_counts("evidence files", {s: states.count(s) for s in
-                                     (reporting.LOADED, reporting.MISSING, reporting.INVALID)}),
-          end="")
+    print(
+        _counts(
+            "evidence files",
+            {s: states.count(s) for s in (reporting.LOADED, reporting.MISSING, reporting.INVALID)},
+        ),
+        end="",
+    )
     return 0
 
 
 def cmd_lab(args: argparse.Namespace) -> int:
     from cryptoagility import lab
 
-    summary = lab.run(args.results, policy_path=args.policy, constraints_path=args.constraints,
-                      iterations=args.iterations, warmups=args.warmups,
-                      include_benchmark=not args.no_benchmark)
+    summary = lab.run(
+        args.results,
+        policy_path=args.policy,
+        constraints_path=args.constraints,
+        iterations=args.iterations,
+        warmups=args.warmups,
+        include_benchmark=not args.no_benchmark,
+    )
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0
 
@@ -307,15 +369,19 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="cryptoagility",
         description="Local cryptographic inventory, policy, PQC/hybrid TLS lab and migration "
-                    "planning. Lab experiments use synthetic identities on loopback only.",
+        "planning. Lab experiments use synthetic identities on loopback only.",
     )
     parser.add_argument("--version", action="version", version=f"cryptoagility {__version__}")
-    parser.add_argument("--openssl-version", action="store_true",
-                        help="print the pinned lab OpenSSL version and exit")
+    parser.add_argument(
+        "--openssl-version",
+        action="store_true",
+        help="print the pinned lab OpenSSL version and exit",
+    )
     sub = parser.add_subparsers(dest="command", metavar="command")
 
-    def command(name: str, func: Callable[[argparse.Namespace], int], text: str,
-                json_output: bool = True) -> argparse.ArgumentParser:
+    def command(
+        name: str, func: Callable[[argparse.Namespace], int], text: str, json_output: bool = True
+    ) -> argparse.ArgumentParser:
         p = sub.add_parser(name, help=text, description=text)
         p.set_defaults(func=func)
         if json_output:
@@ -332,12 +398,16 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("port", type=int)
     p.add_argument("--cafile", type=Path)
     p.add_argument("--server-name")
-    p.add_argument("--allow-remote", action="store_true",
-                   help="permit a non-loopback endpoint you are authorized to test")
+    p.add_argument(
+        "--allow-remote",
+        action="store_true",
+        help="permit a non-loopback endpoint you are authorized to test",
+    )
     p.add_argument("--timeout", type=float, default=5.0)
 
-    p = command("cbom", cmd_cbom, "Export the project-specific CBOM from inventory.json",
-                json_output=False)
+    p = command(
+        "cbom", cmd_cbom, "Export the project-specific CBOM from inventory.json", json_output=False
+    )
     p.add_argument("inventory", type=Path)
     p.add_argument("--format", choices=("json", "csv"), default="json")
     p.add_argument("-o", "--output", type=Path)
@@ -357,11 +427,18 @@ def build_parser() -> argparse.ArgumentParser:
 
     command("capabilities", cmd_capabilities, "Report the lab OpenSSL's real PQC support")
 
-    p = command("test", cmd_test, "One strict-profile loopback handshake; an unsupported "
-                "profile is an error (exit 3), never a downgrade")
+    p = command(
+        "test",
+        cmd_test,
+        "One strict-profile loopback handshake; an unsupported "
+        "profile is an error (exit 3), never a downgrade",
+    )
     p.add_argument("--profile", choices=tuple(tls.PROFILES), required=True)
-    p.add_argument("--client", choices=tuple(tls.CLIENT_VARIANTS),
-                   help="client variant (default: the profile's own strict client)")
+    p.add_argument(
+        "--client",
+        choices=tuple(tls.CLIENT_VARIANTS),
+        help="client variant (default: the profile's own strict client)",
+    )
     p.add_argument("--tls-policy", type=Path, help="TLS negotiation policy (YAML/JSON)")
 
     p = command("matrix", cmd_matrix, "Run the client x server interoperability matrix")
@@ -376,16 +453,21 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--iterations", type=int, default=20)
     p.add_argument("--warmups", type=int, default=3)
     p.add_argument("--no-tls", action="store_true")
-    p.add_argument("--strict", action="store_true",
-                   help="exit 3 if a requested profile is unsupported instead of recording it")
+    p.add_argument(
+        "--strict",
+        action="store_true",
+        help="exit 3 if a requested profile is unsupported instead of recording it",
+    )
 
-    p = command("report", cmd_report, "Render the offline HTML report from a results dir",
-                json_output=False)
+    p = command(
+        "report", cmd_report, "Render the offline HTML report from a results dir", json_output=False
+    )
     p.add_argument("results", type=Path)
     p.add_argument("-o", "--output", type=Path, help="default: RESULTS/report.html")
 
-    p = command("lab", cmd_lab, "Run the full synthetic-scenario pipeline into RESULTS",
-                json_output=False)
+    p = command(
+        "lab", cmd_lab, "Run the full synthetic-scenario pipeline into RESULTS", json_output=False
+    )
     p.add_argument("results", type=Path, nargs="?", default=Path("results"))
     p.add_argument("--policy", type=Path, default=DEFAULT_POLICY)
     p.add_argument("--constraints", type=Path)
@@ -409,7 +491,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     except tls.UnsupportedProfileError as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_UNSUPPORTED
-    except (CLIError, policy.PolicyError, migration.MigrationError, openssl.OpenSSLError,
-            tls.TLSLabError, ValueError, OSError) as exc:
+    except (
+        CLIError,
+        policy.PolicyError,
+        migration.MigrationError,
+        openssl.OpenSSLError,
+        tls.TLSLabError,
+        ValueError,
+        OSError,
+    ) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return EXIT_INPUT

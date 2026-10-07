@@ -34,9 +34,7 @@ def executable() -> str:
         system = shutil.which("openssl")
         if system:
             return system
-    raise OpenSSLError(
-        "Pinned OpenSSL not found; run make setup or set CRYPTOAGILITY_TOOLS_DIR"
-    )
+    raise OpenSSLError("Pinned OpenSSL not found; run make setup or set CRYPTOAGILITY_TOOLS_DIR")
 
 
 def run(args: list[str], *, input: bytes | None = None, timeout: float = 15) -> bytes:
@@ -46,8 +44,12 @@ def run(args: list[str], *, input: bytes | None = None, timeout: float = 15) -> 
     env["OPENSSL_CONF"] = os.devnull
     try:
         result = subprocess.run(
-            [executable(), *args], input=input, capture_output=True, timeout=timeout,
-            check=False, env=env,
+            [executable(), *args],
+            input=input,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+            env=env,
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise OpenSSLError("OpenSSL command failed or timed out") from exc

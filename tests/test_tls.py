@@ -61,8 +61,20 @@ def test_validate_hostname_accepts_synthetic_names(name: str) -> None:
 
 @pytest.mark.parametrize(
     "name",
-    ["example.com", "localhost.test.", "a..test", "-bad.test", "x;id.test", "LOCALHOST",
-     "localhost\n", "a b.test", "test", "../../etc.test", "x" * 64 + ".test", ""],
+    [
+        "example.com",
+        "localhost.test.",
+        "a..test",
+        "-bad.test",
+        "x;id.test",
+        "LOCALHOST",
+        "localhost\n",
+        "a b.test",
+        "test",
+        "../../etc.test",
+        "x" * 64 + ".test",
+        "",
+    ],
 )
 def test_validate_hostname_rejects_real_or_hostile_names(name: str) -> None:
     with pytest.raises(ValueError):
@@ -89,10 +101,10 @@ def test_classify_failure_distinguishes_kinds() -> None:
     assert tls.classify_failure(["server: no suitable key share"]) == "group_disjoint"
     assert tls.classify_failure(["no suitable signature algorithm"]) == "signature_disjoint"
     assert tls.classify_failure(["verify error 10: certificate has expired"]) == (
-        "certificate_expired")
+        "certificate_expired"
+    )
     assert tls.classify_failure(["verify error 62: hostname mismatch"]) == "hostname_mismatch"
-    assert tls.classify_failure(["unable to get local issuer certificate"]) == (
-        "untrusted_issuer")
+    assert tls.classify_failure(["unable to get local issuer certificate"]) == ("untrusted_issuer")
     assert tls.classify_failure(["something new"]) == "unknown"
 
 
@@ -146,8 +158,9 @@ def test_pqc_profile_requires_real_mldsa_certificate_support() -> None:
 
 def test_unsupported_detected_before_any_network_or_key_generation(tmp_path: Path) -> None:
     caps = _caps_without(SYNTHETIC_CAPS, "X25519MLKEM768")
-    result = tls.run_matrix(tmp_path, servers=["hybrid"], clients=["hybrid-only"],
-                            include_negative=False, caps=caps)
+    result = tls.run_matrix(
+        tmp_path, servers=["hybrid"], clients=["hybrid-only"], include_negative=False, caps=caps
+    )
     (row,) = result["rows"]
     assert row["status"] == tls.UNSUPPORTED
     assert row["failure_kind"] == "server_unsupported_locally"
@@ -160,8 +173,9 @@ def test_unsupported_detected_before_any_network_or_key_generation(tmp_path: Pat
 def test_client_side_unsupported_is_distinct_from_disjoint(tmp_path: Path) -> None:
     caps = _caps_without(SYNTHETIC_CAPS, "MLKEM768")
     caps["tls13_groups"].append("X25519MLKEM768")
-    result = tls.run_matrix(tmp_path, servers=["hybrid"], clients=["pqc-only"],
-                            include_negative=False, caps=caps)
+    result = tls.run_matrix(
+        tmp_path, servers=["hybrid"], clients=["pqc-only"], include_negative=False, caps=caps
+    )
     (row,) = result["rows"]
     assert row["status"] == tls.UNSUPPORTED
     assert row["failure_kind"] == "client_unsupported_locally"
@@ -184,15 +198,18 @@ def test_run_matrix_rejects_unknown_names_and_bad_policy(tmp_path: Path) -> None
 def test_evaluate_policy_is_independent_of_success() -> None:
     policy = tls.DEFAULT_POLICY
     ok, reasons = tls.evaluate_policy(
-        {"negotiated_group": "X25519", "tls_version": "TLSv1.3"}, policy)
+        {"negotiated_group": "X25519", "tls_version": "TLSv1.3"}, policy
+    )
     assert ok is False and "policy requires hybrid" in reasons[0]
     ok, reasons = tls.evaluate_policy(
-        {"negotiated_group": "X25519MLKEM768", "tls_version": "TLSv1.3"}, policy)
+        {"negotiated_group": "X25519MLKEM768", "tls_version": "TLSv1.3"}, policy
+    )
     assert ok is True and reasons == []
     assert tls.evaluate_policy({"negotiated_group": None}, policy)[0] is None
     strict = {"allowed_groups": ["MLKEM768"], "allowed_certificate_types": ["ML-DSA-65"]}
     ok, reasons = tls.evaluate_policy(
-        {"negotiated_group": "mlkem768", "certificate_type": "RSA-3072"}, strict)
+        {"negotiated_group": "mlkem768", "certificate_type": "RSA-3072"}, strict
+    )
     assert ok is False and reasons == ["certificate type RSA-3072 not allowed"]
 
 
@@ -262,7 +279,10 @@ def test_capabilities_report_native_build(caps: dict[str, Any]) -> None:
     assert {"ML-DSA-44", "ML-DSA-65", "ML-DSA-87"} <= set(caps["standardized"]["ml_dsa"])
     assert len(caps["standardized"]["slh_dsa"]) == 12
     assert caps["x509"]["ML-DSA-65"] == {
-        "supported": True, "certificate_type": "ML-DSA-65", "signature_algorithm": "ML-DSA-65"}
+        "supported": True,
+        "certificate_type": "ML-DSA-65",
+        "signature_algorithm": "ML-DSA-65",
+    }
     assert all(p["supported"] for p in caps["profiles"].values())
     assert "laboratory experiments" in caps["notes"]
 
@@ -325,11 +345,17 @@ def test_pqc_experiment_uses_mldsa65_certificate(matrix: dict[str, Any]) -> None
 @needs_native
 @pytest.mark.parametrize(
     ("server", "client"),
-    [("classical", "hybrid-only"), ("hybrid", "classical-only"), ("pqc", "hybrid-only"),
-     ("hybrid", "pqc-only"), ("classical", "pqc-only")],
+    [
+        ("classical", "hybrid-only"),
+        ("hybrid", "classical-only"),
+        ("pqc", "hybrid-only"),
+        ("hybrid", "pqc-only"),
+        ("classical", "pqc-only"),
+    ],
 )
-def test_algorithm_disjoint_fails_negotiation(matrix: dict[str, Any], server: str,
-                                               client: str) -> None:
+def test_algorithm_disjoint_fails_negotiation(
+    matrix: dict[str, Any], server: str, client: str
+) -> None:
     row = _row(matrix, server, client)
     assert row["status"] == tls.FAIL_NEGOTIATION
     assert row["failure_kind"] == "group_disjoint"
@@ -340,11 +366,13 @@ def test_algorithm_disjoint_fails_negotiation(matrix: dict[str, Any], server: st
 
 @pytest.mark.integration
 @needs_native
-@pytest.mark.parametrize(("server", "group"), [("classical", "X25519"),
-                                               ("hybrid", "X25519MLKEM768"),
-                                               ("pqc", "MLKEM768")])
-def test_modern_agile_client_gets_exactly_the_server_group(matrix: dict[str, Any], server: str,
-                                                            group: str) -> None:
+@pytest.mark.parametrize(
+    ("server", "group"),
+    [("classical", "X25519"), ("hybrid", "X25519MLKEM768"), ("pqc", "MLKEM768")],
+)
+def test_modern_agile_client_gets_exactly_the_server_group(
+    matrix: dict[str, Any], server: str, group: str
+) -> None:
     row = _row(matrix, server, "modern-agile")
     assert row["status"] == tls.SUCCESS
     assert row["negotiated_group"] == group
@@ -355,12 +383,13 @@ def test_modern_agile_client_gets_exactly_the_server_group(matrix: dict[str, Any
 @needs_native
 @pytest.mark.parametrize(
     ("server", "kind", "text"),
-    [("classical-expired-cert", "certificate_expired", "certificate has expired"),
-     ("classical-wrong-host-cert", "hostname_mismatch", "hostname mismatch"),
-     ("classical-untrusted-ca", "untrusted_issuer", "unable to get local issuer")],
+    [
+        ("classical-expired-cert", "certificate_expired", "certificate has expired"),
+        ("classical-wrong-host-cert", "hostname_mismatch", "hostname mismatch"),
+        ("classical-untrusted-ca", "untrusted_issuer", "unable to get local issuer"),
+    ],
 )
-def test_certificate_failures(matrix: dict[str, Any], server: str, kind: str,
-                              text: str) -> None:
+def test_certificate_failures(matrix: dict[str, Any], server: str, kind: str, text: str) -> None:
     row = _row(matrix, server, "classical-only")
     assert row["status"] == tls.FAIL_CERTIFICATE
     assert row["failure_kind"] == kind
@@ -402,8 +431,17 @@ def test_matrix_schema_evidence_and_cleanup(matrix: dict[str, Any]) -> None:
     env = matrix["environment"]
     assert env["bind_address"] == "127.0.0.1" and env["synthetic_identities"] is True
     assert "complete s_client process" in env["latency_semantics"]
-    required = {"client", "server", "status", "negotiated_group", "tls_version", "cipher_suite",
-                "certificate_type", "policy_pass", "error_reason"}
+    required = {
+        "client",
+        "server",
+        "status",
+        "negotiated_group",
+        "tls_version",
+        "cipher_suite",
+        "certificate_type",
+        "policy_pass",
+        "error_reason",
+    }
     for row in matrix["rows"]:
         assert required <= set(row)
         assert row["status"] in tls.STATUSES
@@ -433,7 +471,8 @@ def test_lab_pki_modes_chain_and_key_removal(tmp_path: Path) -> None:
             assert stat.S_IMODE(directory.stat().st_mode) == 0o700
         assert cred.chain is not None and cred.served_chain_length == 2
         assert cred.served_chain_der_bytes == cred.certificate_der_bytes + tls.pem_der_length(
-            cred.chain.read_bytes())
+            cred.chain.read_bytes()
+        )
         assert b"PRIVATE KEY" in cred.key.read_bytes()
         info = tls.certificate_info(cred.certificate.read_bytes())
         assert info["certificate_type"] == "ML-DSA-65"
@@ -456,20 +495,26 @@ def test_server_loopback_binding_and_cleanup_on_error(tmp_path: Path) -> None:
             port = server.port
             assert port is not None
             if shutil.which("ss"):
-                listing = subprocess.run(["ss", "-Hltn", f"sport = :{port}"],
-                                         capture_output=True, text=True, check=False).stdout
+                listing = subprocess.run(
+                    ["ss", "-Hltn", f"sport = :{port}"], capture_output=True, text=True, check=False
+                ).stdout
                 assert listing.split()[3] == f"127.0.0.1:{port}"
-            result = tls.handshake(port, tls.CLIENT_VARIANTS["hybrid-only"],
-                                   pki.trust_bundle, server=server)
+            result = tls.handshake(
+                port, tls.CLIENT_VARIANTS["hybrid-only"], pki.trust_bundle, server=server
+            )
             assert result.completed and result.negotiated_group == "X25519MLKEM768"
-            wrong = tls.handshake(port, tls.CLIENT_VARIANTS["hybrid-only"],
-                                  pki.trust_bundle, hostname="other.test", server=server)
+            wrong = tls.handshake(
+                port,
+                tls.CLIENT_VARIANTS["hybrid-only"],
+                pki.trust_bundle,
+                hostname="other.test",
+                server=server,
+            )
             assert not wrong.completed and wrong.failure_kind == "hostname_mismatch"
             raise RuntimeError("boom")
         assert server.process is not None and server.process.poll() is not None
         assert port is not None
-        with pytest.raises(OSError), socket.create_connection(
-                ("127.0.0.1", port), timeout=1):
+        with pytest.raises(OSError), socket.create_connection(("127.0.0.1", port), timeout=1):
             pass
 
 

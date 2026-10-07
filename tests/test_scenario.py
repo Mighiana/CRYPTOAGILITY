@@ -49,21 +49,33 @@ def test_scenario_variety(generated: Path) -> None:
 
 
 def _finding(evaluation: dict, source: str, current: str) -> dict:
-    return next(f for f in evaluation["findings"]
-                if f["source"] == source and f["current_algorithm"].startswith(current))
+    return next(
+        f
+        for f in evaluation["findings"]
+        if f["source"] == source and f["current_algorithm"].startswith(current)
+    )
 
 
-@pytest.mark.parametrize("source, token, outcome, check", [
-    ("services/03-legacy-portal.yaml", "TLSv1.1", "DEPRECATED", "tls_version"),
-    ("services/03-legacy-portal.yaml", "3DES", "DEPRECATED", "cipher_suite"),
-    ("services/03-legacy-portal.yaml", "rsa_pkcs1_sha1", "DEPRECATED", "configured_signature"),
-    ("services/07-backup-archive.yaml", "ffdhe2048", "MIGRATION_REQUIRED", "configured_group"),
-    ("services/05-identity-provider.yaml", "X25519MLKEM768", "EXPERIMENTAL", "configured_group"),
-    ("services/11-pqc-pilot.yaml", "pqc", "EXPERIMENTAL", "algorithm"),
-    ("services/01-public-web.yaml", "classical", "ACCEPTABLE_FOR_NOW", "algorithm"),
-])
-def test_config_tokens_route_to_policy_tables(evaluation: dict, source: str, token: str,
-                                              outcome: str, check: str) -> None:
+@pytest.mark.parametrize(
+    "source, token, outcome, check",
+    [
+        ("services/03-legacy-portal.yaml", "TLSv1.1", "DEPRECATED", "tls_version"),
+        ("services/03-legacy-portal.yaml", "3DES", "DEPRECATED", "cipher_suite"),
+        ("services/03-legacy-portal.yaml", "rsa_pkcs1_sha1", "DEPRECATED", "configured_signature"),
+        ("services/07-backup-archive.yaml", "ffdhe2048", "MIGRATION_REQUIRED", "configured_group"),
+        (
+            "services/05-identity-provider.yaml",
+            "X25519MLKEM768",
+            "EXPERIMENTAL",
+            "configured_group",
+        ),
+        ("services/11-pqc-pilot.yaml", "pqc", "EXPERIMENTAL", "algorithm"),
+        ("services/01-public-web.yaml", "classical", "ACCEPTABLE_FOR_NOW", "algorithm"),
+    ],
+)
+def test_config_tokens_route_to_policy_tables(
+    evaluation: dict, source: str, token: str, outcome: str, check: str
+) -> None:
     finding = _finding(evaluation, source, token)
     assert finding["outcome"] == outcome
     assert finding["evidence_status"] == "complete"
@@ -71,9 +83,11 @@ def test_config_tokens_route_to_policy_tables(evaluation: dict, source: str, tok
 
 
 def test_unknown_cipher_string_fails_closed(evaluation: dict) -> None:
-    flagged = [f for f in evaluation["findings"]
-               if f["source"] == "clients/legacy-batch-client.cnf"
-               and f["outcome"] == "UNSUPPORTED"]
+    flagged = [
+        f
+        for f in evaluation["findings"]
+        if f["source"] == "clients/legacy-batch-client.cnf" and f["outcome"] == "UNSUPPORTED"
+    ]
     assert flagged and all(f["evidence_status"] != "complete" for f in flagged)
 
 

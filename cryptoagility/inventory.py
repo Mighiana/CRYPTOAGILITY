@@ -72,11 +72,21 @@ APP_CONFIG_SUFFIXES = {".json", ".yaml", ".yml"}
 
 FIPS = {"ML-KEM": "NIST FIPS 203", "ML-DSA": "NIST FIPS 204", "SLH-DSA": "NIST FIPS 205"}
 CLASS_BY_FAMILY = {
-    "RSA": "classical-public-key", "EC": "classical-public-key", "EdDSA": "classical-public-key",
-    "XDH": "classical-public-key", "ECDH": "classical-public-key", "FFDH": "classical-public-key",
-    "DSA": "classical-public-key", "ML-KEM": "post-quantum", "ML-DSA": "post-quantum",
-    "SLH-DSA": "post-quantum", "HYBRID-KEM": "hybrid", "SYMMETRIC": "symmetric", "HASH": "hash",
-    "TLS-PROTOCOL": "protocol", "PROFILE": "profile",
+    "RSA": "classical-public-key",
+    "EC": "classical-public-key",
+    "EdDSA": "classical-public-key",
+    "XDH": "classical-public-key",
+    "ECDH": "classical-public-key",
+    "FFDH": "classical-public-key",
+    "DSA": "classical-public-key",
+    "ML-KEM": "post-quantum",
+    "ML-DSA": "post-quantum",
+    "SLH-DSA": "post-quantum",
+    "HYBRID-KEM": "hybrid",
+    "SYMMETRIC": "symmetric",
+    "HASH": "hash",
+    "TLS-PROTOCOL": "protocol",
+    "PROFILE": "profile",
 }
 _SLH = [f"SLH-DSA-{h}-{n}{v}" for h in ("SHA2", "SHAKE") for n in (128, 192, 256) for v in "sf"]
 PQ_OIDS = {
@@ -410,20 +420,22 @@ def certificate_assets(
             linkage = "issuer_not_present"
         fingerprint = hashlib.sha256(der).hexdigest()
         evidence = _crypto_evidence(key.family)
-        evidence.update({
-            "certificate_sha256": fingerprint,
-            "certificate_der_bytes": len(der),
-            "serial_number": format(cert.serial_number, "x")[:64],
-            "not_before": _iso(not_before),
-            "validity": validity,
-            "certificate_role": _cert_role(cert),
-            "self_signed": cert.issuer == cert.subject,
-            "chain_position": index,
-            "issuer_linkage": linkage,
-            "subject_key_parser": key.parser,
-            "signature_algorithm_family": sig_family,
-            "signature_crypto_class": classify_family(sig_family),
-        })
+        evidence.update(
+            {
+                "certificate_sha256": fingerprint,
+                "certificate_der_bytes": len(der),
+                "serial_number": format(cert.serial_number, "x")[:64],
+                "not_before": _iso(not_before),
+                "validity": validity,
+                "certificate_role": _cert_role(cert),
+                "self_signed": cert.issuer == cert.subject,
+                "chain_position": index,
+                "issuer_linkage": linkage,
+                "subject_key_parser": key.parser,
+                "signature_algorithm_family": sig_family,
+                "signature_crypto_class": classify_family(sig_family),
+            }
+        )
         if sig_family in FIPS:
             evidence["signature_algorithm_standard"] = FIPS[sig_family]
         if key.family in FIPS or sig_family in FIPS:
@@ -431,22 +443,24 @@ def certificate_assets(
         if key.spki_der is not None:
             evidence["public_key_sha256"] = hashlib.sha256(key.spki_der).hexdigest()
             evidence["spki_der_bytes"] = len(key.spki_der)
-        assets.append(Asset(
-            asset_id=_asset_id(prefix, source, str(index), fingerprint),
-            asset_type="certificate",
-            source=source,
-            algorithm_family=key.family,
-            algorithm=key.algorithm,
-            key_size=key.key_size,
-            parameter_set=key.parameter_set,
-            signature_algorithm=sig_name,
-            certificate_subject=clean_text(cert.subject.rfc4514_string()),
-            issuer=clean_text(cert.issuer.rfc4514_string()),
-            expiry=_iso(not_after),
-            sans=_sans(cert),
-            chain_length=len(certs),
-            evidence=evidence,
-        ))
+        assets.append(
+            Asset(
+                asset_id=_asset_id(prefix, source, str(index), fingerprint),
+                asset_type="certificate",
+                source=source,
+                algorithm_family=key.family,
+                algorithm=key.algorithm,
+                key_size=key.key_size,
+                parameter_set=key.parameter_set,
+                signature_algorithm=sig_name,
+                certificate_subject=clean_text(cert.subject.rfc4514_string()),
+                issuer=clean_text(cert.issuer.rfc4514_string()),
+                expiry=_iso(not_after),
+                sans=_sans(cert),
+                chain_length=len(certs),
+                evidence=evidence,
+            )
+        )
     return assets
 
 
@@ -512,8 +526,15 @@ def _pem_blocks(data: bytes) -> tuple[list[tuple[str, bytes, bool]], int]:
 
 def _rewrap(label: str, der: bytes) -> bytes:
     armor = label.encode()
-    return b"-----BEGIN " + armor + b"-----\n" + base64.encodebytes(der) + b"-----END " + armor \
+    return (
+        b"-----BEGIN "
+        + armor
         + b"-----\n"
+        + base64.encodebytes(der)
+        + b"-----END "
+        + armor
+        + b"-----\n"
+    )
 
 
 def _scan_pem(data: bytes, source: str, state: _ScanState) -> list[Asset]:
@@ -547,7 +568,8 @@ def _scan_pem(data: bytes, source: str, state: _ScanState) -> list[Asset]:
                     pkcs8 = serialization.load_pem_private_key(
                         _rewrap(label, der), password=None
                     ).private_bytes(
-                        serialization.Encoding.DER, serialization.PrivateFormat.PKCS8,
+                        serialization.Encoding.DER,
+                        serialization.PrivateFormat.PKCS8,
                         serialization.NoEncryption(),
                     )
                 assets.append(_key_asset("private_key", source, index, _private_key_info(pkcs8)))
@@ -557,8 +579,9 @@ def _scan_pem(data: bytes, source: str, state: _ScanState) -> list[Asset]:
                 state.error(source, "malformed_key", f"{where} is not a supported private key")
         else:
             safe_label = re.sub(r"[^A-Z0-9 ]", "", label)[:40]
-            state.error(source, "unsupported_pem_type",
-                        f"{where} of type '{safe_label}' is not inventoried")
+            state.error(
+                source, "unsupported_pem_type", f"{where} of type '{safe_label}' is not inventoried"
+            )
     if certs:
         assets[:0] = certificate_assets(certs, source, state.now)
     if not blocks and not malformed:
@@ -592,10 +615,14 @@ def _scan_der(data: bytes, source: str, state: _ScanState) -> list[Asset]:
 # --------------------------------------------------------------------------- algorithm tokens
 
 _GROUPS = {
-    "x25519": ("XDH", "X25519"), "x448": ("XDH", "X448"),
-    "secp256r1": ("ECDH", "secp256r1"), "prime256v1": ("ECDH", "secp256r1"),
-    "p-256": ("ECDH", "secp256r1"), "secp384r1": ("ECDH", "secp384r1"),
-    "p-384": ("ECDH", "secp384r1"), "secp521r1": ("ECDH", "secp521r1"),
+    "x25519": ("XDH", "X25519"),
+    "x448": ("XDH", "X448"),
+    "secp256r1": ("ECDH", "secp256r1"),
+    "prime256v1": ("ECDH", "secp256r1"),
+    "p-256": ("ECDH", "secp256r1"),
+    "secp384r1": ("ECDH", "secp384r1"),
+    "p-384": ("ECDH", "secp384r1"),
+    "secp521r1": ("ECDH", "secp521r1"),
     "p-521": ("ECDH", "secp521r1"),
     "brainpoolp256r1tls13": ("ECDH", "brainpoolP256r1tls13"),
     "brainpoolp384r1tls13": ("ECDH", "brainpoolP384r1tls13"),
@@ -609,41 +636,80 @@ _GROUPS = {
     "x448mlkem1024": ("HYBRID-KEM", "X448MLKEM1024"),
 }
 _SIGALGS = {
-    **{f"rsa_pss_{v}_sha{n}": ("RSA", f"rsa_pss_{v}_sha{n}") for v in ("rsae", "pss")
-       for n in (256, 384, 512)},
+    **{
+        f"rsa_pss_{v}_sha{n}": ("RSA", f"rsa_pss_{v}_sha{n}")
+        for v in ("rsae", "pss")
+        for n in (256, 384, 512)
+    },
     **{f"rsa_pkcs1_sha{n}": ("RSA", f"rsa_pkcs1_sha{n}") for n in (1, 256, 384, 512)},
     "ecdsa_secp256r1_sha256": ("EC", "ecdsa_secp256r1_sha256"),
     "ecdsa_secp384r1_sha384": ("EC", "ecdsa_secp384r1_sha384"),
     "ecdsa_secp521r1_sha512": ("EC", "ecdsa_secp521r1_sha512"),
     "ecdsa_sha1": ("EC", "ecdsa_sha1"),
-    "ed25519": ("EdDSA", "ed25519"), "ed448": ("EdDSA", "ed448"),
+    "ed25519": ("EdDSA", "ed25519"),
+    "ed448": ("EdDSA", "ed448"),
     **{f"mldsa{n}": ("ML-DSA", f"mldsa{n}") for n in (44, 65, 87)},
 }
 _KEYALGS = {
-    "rsa": ("RSA", "RSA"), "ec": ("EC", "ECDSA"), "ecdsa": ("EC", "ECDSA"),
-    "ed25519": ("EdDSA", "Ed25519"), "ed448": ("EdDSA", "Ed448"),
-    "x25519": ("XDH", "X25519"), "x448": ("XDH", "X448"), "dsa": ("DSA", "DSA"),
+    "rsa": ("RSA", "RSA"),
+    "ec": ("EC", "ECDSA"),
+    "ecdsa": ("EC", "ECDSA"),
+    "ed25519": ("EdDSA", "Ed25519"),
+    "ed448": ("EdDSA", "Ed448"),
+    "x25519": ("XDH", "X25519"),
+    "x448": ("XDH", "X448"),
+    "dsa": ("DSA", "DSA"),
     **{name.lower(): (family, name) for family, name in PQ_OIDS.values()},
     **{f"mldsa{n}": ("ML-DSA", f"ML-DSA-{n}") for n in (44, 65, 87)},
     **{f"mlkem{n}": ("ML-KEM", f"ML-KEM-{n}") for n in (512, 768, 1024)},
 }
 _SUITES = {
-    s.lower(): ("SYMMETRIC", s) for s in (
-        "TLS_AES_128_GCM_SHA256", "TLS_AES_256_GCM_SHA384", "TLS_CHACHA20_POLY1305_SHA256",
-        "TLS_AES_128_CCM_SHA256", "TLS_AES_128_CCM_8_SHA256", "AES-128-GCM", "AES-256-GCM",
-        "ChaCha20-Poly1305", "AES-128-CBC", "AES-256-CBC", "3DES", "RC4",
+    s.lower(): ("SYMMETRIC", s)
+    for s in (
+        "TLS_AES_128_GCM_SHA256",
+        "TLS_AES_256_GCM_SHA384",
+        "TLS_CHACHA20_POLY1305_SHA256",
+        "TLS_AES_128_CCM_SHA256",
+        "TLS_AES_128_CCM_8_SHA256",
+        "AES-128-GCM",
+        "AES-256-GCM",
+        "ChaCha20-Poly1305",
+        "AES-128-CBC",
+        "AES-256-CBC",
+        "3DES",
+        "RC4",
     )
 }
 _HASHES = {
-    h.lower(): ("HASH", h) for h in (
-        "md5", "sha1", "sha224", "sha256", "sha384", "sha512", "sha3-256", "sha3-384",
-        "sha3-512", "SHA-256", "SHA-384", "SHA-512",
+    h.lower(): ("HASH", h)
+    for h in (
+        "md5",
+        "sha1",
+        "sha224",
+        "sha256",
+        "sha384",
+        "sha512",
+        "sha3-256",
+        "sha3-384",
+        "sha3-512",
+        "SHA-256",
+        "SHA-384",
+        "SHA-512",
     )
 }
 _PROTOCOLS = {
-    "tlsv1": "TLSv1", "tlsv1.0": "TLSv1", "tlsv1.1": "TLSv1.1", "tlsv1.2": "TLSv1.2",
-    "tlsv1.3": "TLSv1.3", "tls1.2": "TLSv1.2", "tls1.3": "TLSv1.3", "1.2": "TLSv1.2",
-    "1.3": "TLSv1.3", "dtlsv1": "DTLSv1", "dtlsv1.2": "DTLSv1.2", "sslv3": "SSLv3",
+    "tlsv1": "TLSv1",
+    "tlsv1.0": "TLSv1",
+    "tlsv1.1": "TLSv1.1",
+    "tlsv1.2": "TLSv1.2",
+    "tlsv1.3": "TLSv1.3",
+    "tls1.2": "TLSv1.2",
+    "tls1.3": "TLSv1.3",
+    "1.2": "TLSv1.2",
+    "1.3": "TLSv1.3",
+    "dtlsv1": "DTLSv1",
+    "dtlsv1.2": "DTLSv1.2",
+    "sslv3": "SSLv3",
     "none": "None",
 }
 _PROFILES = {p: ("PROFILE", p) for p in ("classical", "hybrid", "pqc")}
@@ -683,14 +749,24 @@ def classify_token(kind: str, token: str) -> tuple[str, str] | None:
 
 
 _PURPOSE = {
-    "group": "tls_key_establishment", "sigalg": "signature", "suite": "cipher_suite",
-    "cipher_string": "tls12_cipher_string", "hash": "digest", "protocol": "tls_protocol_bound",
-    "key": "key_algorithm", "profile": "crypto_profile",
+    "group": "tls_key_establishment",
+    "sigalg": "signature",
+    "suite": "cipher_suite",
+    "cipher_string": "tls12_cipher_string",
+    "hash": "digest",
+    "protocol": "tls_protocol_bound",
+    "key": "key_algorithm",
+    "profile": "crypto_profile",
 }
 
 
 def _token_asset(
-    asset_type: str, source: str, setting: str, kind: str, token: str, index: int,
+    asset_type: str,
+    source: str,
+    setting: str,
+    kind: str,
+    token: str,
+    index: int,
     location: str,
 ) -> Asset:
     found = classify_token(kind, token) if _TOKEN.match(token) else None
@@ -705,7 +781,10 @@ def _token_asset(
             evidence["algorithm_standard"] = FIPS["ML-KEM"] + " component in hybrid group"
     asset = Asset(
         asset_id=_asset_id("cfg", source, f"{location}#{setting}#{index}", name),
-        asset_type=asset_type, source=source, algorithm_family=family, algorithm=name,
+        asset_type=asset_type,
+        source=source,
+        algorithm_family=family,
+        algorithm=name,
         evidence=evidence,
     )
     if kind == "protocol" and found:
@@ -726,15 +805,35 @@ def _split_tokens(value: str) -> list[str]:
 # --------------------------------------------------------------------------- OpenSSL config
 
 _CNF_KEYS = {
-    "groups": "group", "curves": "group", "signaturealgorithms": "sigalg",
-    "clientsignaturealgorithms": "sigalg", "ciphersuites": "suite",
-    "cipherstring": "cipher_string", "minprotocol": "protocol", "maxprotocol": "protocol",
-    "default_md": "hash", "default_bits": "key_size",
+    "groups": "group",
+    "curves": "group",
+    "signaturealgorithms": "sigalg",
+    "clientsignaturealgorithms": "sigalg",
+    "ciphersuites": "suite",
+    "cipherstring": "cipher_string",
+    "minprotocol": "protocol",
+    "maxprotocol": "protocol",
+    "default_md": "hash",
+    "default_bits": "key_size",
 }
 _CNF_UNSAFE_KEYS = {
-    "module", "dynamic_path", "so_path", "providers", "engines", "init", "activate",
-    "engine_id", "load", "openssl_conf", "default_keyfile", "random", "random_seed",
-    "alg_section", "ssl_conf", "default_properties", "fips",
+    "module",
+    "dynamic_path",
+    "so_path",
+    "providers",
+    "engines",
+    "init",
+    "activate",
+    "engine_id",
+    "load",
+    "openssl_conf",
+    "default_keyfile",
+    "random",
+    "random_seed",
+    "alg_section",
+    "ssl_conf",
+    "default_properties",
+    "fips",
 }
 _CNF_KEY = re.compile(r"[A-Za-z0-9_.\-]{1,64}")
 
@@ -759,8 +858,11 @@ def _scan_openssl_cnf(data: bytes, source: str, state: _ScanState) -> list[Asset
         where = f"line {number}"
         if line.startswith("."):
             directive = re.sub(r"[^a-z]", "", line[1:10].lower()) or "unknown"
-            state.error(source, "config_directive_not_processed",
-                        f"{where}: .{directive} directive ignored (never followed or executed)")
+            state.error(
+                source,
+                "config_directive_not_processed",
+                f"{where}: .{directive} directive ignored (never followed or executed)",
+            )
             continue
         header = re.fullmatch(r"\[\s*([A-Za-z0-9_.\-]{1,64})\s*\]", line)
         if header:
@@ -773,30 +875,48 @@ def _scan_openssl_cnf(data: bytes, source: str, state: _ScanState) -> list[Asset
             continue
         low = key.lower()
         base_key = low.rsplit(".", 1)[-1]
-        if low in _CNF_UNSAFE_KEYS or base_key in _CNF_UNSAFE_KEYS or section.endswith(
-            ("provider_sect", "engine_section", "engines")
+        if (
+            low in _CNF_UNSAFE_KEYS
+            or base_key in _CNF_UNSAFE_KEYS
+            or section.endswith(("provider_sect", "engine_section", "engines"))
         ):
-            state.error(source, "config_directive_not_processed",
-                        f"{where}: '{low}' in [{section}] not processed "
-                        "(no providers/engines/modules/files are loaded)")
+            state.error(
+                source,
+                "config_directive_not_processed",
+                f"{where}: '{low}' in [{section}] not processed "
+                "(no providers/engines/modules/files are loaded)",
+            )
             continue
         kind = _CNF_KEYS.get(low)
         if kind is None:
             continue
         if "$" in value:
-            state.error(source, "config_value_not_expanded",
-                        f"{where}: variable reference in '{key}' not expanded")
+            state.error(
+                source,
+                "config_value_not_expanded",
+                f"{where}: variable reference in '{key}' not expanded",
+            )
             continue
         location = f"[{section}] line {number}"
         if kind == "key_size":
             if value.isdigit() and 512 <= int(value) <= 16384:
-                assets.append(Asset(
-                    asset_id=_asset_id("cfg", source, location, value),
-                    asset_type="openssl_config", source=source, algorithm_family="RSA",
-                    algorithm="RSA", key_size=int(value), parameter_set=f"RSA-{value}",
-                    evidence={**_crypto_evidence("RSA"), "setting": key,
-                              "purpose": "default_generated_key_bits", "location": location},
-                ))
+                assets.append(
+                    Asset(
+                        asset_id=_asset_id("cfg", source, location, value),
+                        asset_type="openssl_config",
+                        source=source,
+                        algorithm_family="RSA",
+                        algorithm="RSA",
+                        key_size=int(value),
+                        parameter_set=f"RSA-{value}",
+                        evidence={
+                            **_crypto_evidence("RSA"),
+                            "setting": key,
+                            "purpose": "default_generated_key_bits",
+                            "location": location,
+                        },
+                    )
+                )
             else:
                 state.error(source, "invalid_config_value", f"{where}: invalid default_bits")
             continue
@@ -814,22 +934,39 @@ def _scan_openssl_cnf(data: bytes, source: str, state: _ScanState) -> list[Asset
 # --------------------------------------------------------------------------- app config
 
 _APP_KEYS = {
-    "key_exchange": "group", "kem": "group", "tls_groups": "group", "groups": "group",
-    "curves": "group", "key_agreement": "group",
-    "signature_algorithm": "sigalg", "signature_algorithms": "sigalg", "sigalgs": "sigalg",
+    "key_exchange": "group",
+    "kem": "group",
+    "tls_groups": "group",
+    "groups": "group",
+    "curves": "group",
+    "key_agreement": "group",
+    "signature_algorithm": "sigalg",
+    "signature_algorithms": "sigalg",
+    "sigalgs": "sigalg",
     "signing_algorithm": "sigalg",
-    "cipher_suites": "suite", "ciphersuites": "suite", "cipher_suite": "suite",
-    "cipher": "suite", "ciphers": "suite",
-    "tls_version": "protocol", "min_tls_version": "protocol", "max_tls_version": "protocol",
-    "min_protocol": "protocol", "max_protocol": "protocol",
-    "key_algorithm": "key", "public_key_algorithm": "key", "algorithm": "key",
-    "hash": "hash", "digest": "hash", "hash_algorithm": "hash",
+    "cipher_suites": "suite",
+    "ciphersuites": "suite",
+    "cipher_suite": "suite",
+    "cipher": "suite",
+    "ciphers": "suite",
+    "tls_version": "protocol",
+    "min_tls_version": "protocol",
+    "max_tls_version": "protocol",
+    "min_protocol": "protocol",
+    "max_protocol": "protocol",
+    "key_algorithm": "key",
+    "public_key_algorithm": "key",
+    "algorithm": "key",
+    "hash": "hash",
+    "digest": "hash",
+    "hash_algorithm": "hash",
     "crypto_profile": "profile",
-    "key_size": "key_size", "key_bits": "key_size", "rsa_bits": "key_size",
+    "key_size": "key_size",
+    "key_bits": "key_size",
+    "rsa_bits": "key_size",
 }
 _YAML_SAFE_TAGS = {
-    f"tag:yaml.org,2002:{name}"
-    for name in ("str", "int", "float", "bool", "null", "seq", "map")
+    f"tag:yaml.org,2002:{name}" for name in ("str", "int", "float", "bool", "null", "seq", "map")
 } | {"!"}
 
 
@@ -896,12 +1033,20 @@ def _scan_app_config(data: bytes, source: str, suffix: str, state: _ScanState) -
         kind = _APP_KEYS[key]
         if kind == "key_size":
             if isinstance(value, int) and not isinstance(value, bool) and 1 <= value <= 65536:
-                assets.append(Asset(
-                    asset_id=_asset_id("cfg", source, location, str(value)),
-                    asset_type="application_config", source=source, key_size=value,
-                    evidence={"crypto_class": "unknown", "setting": key, "purpose": "key_size",
-                              "location": location},
-                ))
+                assets.append(
+                    Asset(
+                        asset_id=_asset_id("cfg", source, location, str(value)),
+                        asset_type="application_config",
+                        source=source,
+                        key_size=value,
+                        evidence={
+                            "crypto_class": "unknown",
+                            "setting": key,
+                            "purpose": "key_size",
+                            "location": location,
+                        },
+                    )
+                )
             else:
                 state.error(source, "invalid_config_value", f"{location}: invalid key size")
             continue
@@ -930,8 +1075,11 @@ def _scan_app_config(data: bytes, source: str, suffix: str, state: _ScanState) -
 def _scan_file(path: Path, source: str, state: _ScanState) -> None:
     suffix = path.suffix.lower()
     if suffix not in CERT_SUFFIXES | OPENSSL_CONFIG_SUFFIXES | APP_CONFIG_SUFFIXES:
-        state.error(source, "unsupported_file_type",
-                    f"File type '{clean_text(suffix, 16)}' is not inventoried")
+        state.error(
+            source,
+            "unsupported_file_type",
+            f"File type '{clean_text(suffix, 16)}' is not inventoried",
+        )
         return
     try:
         data = _read_regular_file(path)
@@ -1109,7 +1257,8 @@ def _probe(connect: str, args: list[str], timeout: float) -> dict[str, Any] | No
     try:
         out = openssl.run(
             ["s_client", "-connect", connect, *args, "-no-interactive", "-verify_return_error"],
-            input=b"", timeout=timeout,
+            input=b"",
+            timeout=timeout,
         )
     except openssl.OpenSSLError:
         return None
@@ -1135,8 +1284,10 @@ def inspect_endpoint(
     default handshake; evidence['probe_supported'] lists single-offer probe results.
     """
     connect, display = _validate_target(host, port, allow_remote)
-    if isinstance(timeout, bool) or not isinstance(timeout, int | float) or not (
-        0.1 <= float(timeout) <= 30
+    if (
+        isinstance(timeout, bool)
+        or not isinstance(timeout, int | float)
+        or not (0.1 <= float(timeout) <= 30)
     ):
         raise ValueError("timeout must be between 0.1 and 30 seconds")
     name = server_name if server_name is not None else display
@@ -1157,37 +1308,72 @@ def inspect_endpoint(
     try:
         raw = openssl.run(
             ["s_client", "-connect", connect, *base, "-showcerts", "-no-interactive"],
-            input=b"", timeout=float(timeout),
+            input=b"",
+            timeout=float(timeout),
         )
     except openssl.OpenSSLError:
-        return Inventory(errors=[{"source": source, "code": "tls_connection_failed",
-                                  "message": "TLS connection or handshake failed or timed out"}])
+        return Inventory(
+            errors=[
+                {
+                    "source": source,
+                    "code": "tls_connection_failed",
+                    "message": "TLS connection or handshake failed or timed out",
+                }
+            ]
+        )
     text = raw[:MAX_TLS_OUTPUT].decode("ascii", "replace")
     observed = _parse_s_client(text)
     if observed["verify_code"] != 0 or not observed["verified_ok"]:
         code = observed["verify_code"]
-        reason = VERIFY_REASONS.get(code, f"verification error {code}") if code else (
-            "peer not authenticated")
-        return Inventory(errors=[{"source": source, "code": "tls_verification_failed",
-                                  "message": f"Peer authentication failed: {reason}"}])
+        reason = (
+            VERIFY_REASONS.get(code, f"verification error {code}")
+            if code
+            else ("peer not authenticated")
+        )
+        return Inventory(
+            errors=[
+                {
+                    "source": source,
+                    "code": "tls_verification_failed",
+                    "message": f"Peer authentication failed: {reason}",
+                }
+            ]
+        )
     if not observed["tls_version"] or observed["cipher_suite"] in {None, "(NONE)"}:
-        return Inventory(errors=[{"source": source, "code": "tls_handshake_incomplete",
-                                  "message": "Handshake did not complete"}])
+        return Inventory(
+            errors=[
+                {
+                    "source": source,
+                    "code": "tls_handshake_incomplete",
+                    "message": "Handshake did not complete",
+                }
+            ]
+        )
     errors: list[dict[str, str]] = []
     certs: list[x509.Certificate] = []
     for match in _PEM_RE.finditer(text.encode("ascii", "replace")):
         if match.group(1) != b"CERTIFICATE":
             continue
         if len(certs) >= MAX_CHAIN_CERTS:
-            errors.append({"source": source, "code": "chain_limit_exceeded",
-                           "message": f"Only the first {MAX_CHAIN_CERTS} certificates parsed"})
+            errors.append(
+                {
+                    "source": source,
+                    "code": "chain_limit_exceeded",
+                    "message": f"Only the first {MAX_CHAIN_CERTS} certificates parsed",
+                }
+            )
             break
         try:
             body = b"".join(match.group(2).split())
             certs.append(x509.load_der_x509_certificate(base64.b64decode(body, validate=True)))
         except (ValueError, binascii.Error):
-            errors.append({"source": source, "code": "malformed_certificate",
-                           "message": "Presented certificate could not be parsed"})
+            errors.append(
+                {
+                    "source": source,
+                    "code": "malformed_certificate",
+                    "message": "Presented certificate could not be parsed",
+                }
+            )
     moment = now or datetime.now(UTC)
     cert_assets = certificate_assets(certs, f"{source}#presented-chain", moment, prefix="tlscert")
 
@@ -1219,24 +1405,26 @@ def inspect_endpoint(
     evidence = _crypto_evidence(family)
     if family in {"ML-KEM", "HYBRID-KEM"}:
         evidence["integration_status"] = "experimental-tls-integration"
-    evidence.update({
-        "authentication": {
-            "verified": True,
-            "verified_name": name,
-            "trust_anchor": "cafile" if trust else "pinned-openssl-default-store",
-        },
-        "peer_address": connect.rsplit(":", 1)[0].strip("[]"),
-        "observed": {
-            "tls_version": observed["tls_version"],
-            "cipher_suite": observed["cipher_suite"],
-            "negotiated_group": group,
-            "peer_signature_type": observed["peer_signature_type"],
-            "presented_chain_length": len(certs),
-        },
-        "probe_supported": probes,
-        "probe_note": "Single-offer handshakes by the pinned OpenSSL client; not a complete "
-        "server configuration audit.",
-    })
+    evidence.update(
+        {
+            "authentication": {
+                "verified": True,
+                "verified_name": name,
+                "trust_anchor": "cafile" if trust else "pinned-openssl-default-store",
+            },
+            "peer_address": connect.rsplit(":", 1)[0].strip("[]"),
+            "observed": {
+                "tls_version": observed["tls_version"],
+                "cipher_suite": observed["cipher_suite"],
+                "negotiated_group": group,
+                "peer_signature_type": observed["peer_signature_type"],
+                "presented_chain_length": len(certs),
+            },
+            "probe_supported": probes,
+            "probe_note": "Single-offer handshakes by the pinned OpenSSL client; not a complete "
+            "server configuration audit.",
+        }
+    )
     if leaf is not None:
         evidence["leaf_certificate_sha256"] = leaf.evidence["certificate_sha256"]
         evidence["leaf_asset_id"] = leaf.asset_id

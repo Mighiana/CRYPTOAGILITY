@@ -25,15 +25,36 @@ COMPLIANCE_NOTICE = (
 REDACTED = "[REDACTED]"
 
 ASSET_COLUMNS = [
-    "asset_id", "asset_type", "source", "algorithm_family", "algorithm", "key_size",
-    "parameter_set", "signature_algorithm", "tls_version", "cipher_suite", "negotiated_group",
-    "certificate_subject", "issuer", "expiry", "sans", "chain_length", "migration_status",
+    "asset_id",
+    "asset_type",
+    "source",
+    "algorithm_family",
+    "algorithm",
+    "key_size",
+    "parameter_set",
+    "signature_algorithm",
+    "tls_version",
+    "cipher_suite",
+    "negotiated_group",
+    "certificate_subject",
+    "issuer",
+    "expiry",
+    "sans",
+    "chain_length",
+    "migration_status",
     "policy_result",
 ]
 EVIDENCE_COLUMNS = [
-    "crypto_class", "algorithm_standard", "integration_status", "validity",
-    "signature_algorithm_family", "certificate_sha256", "public_key_sha256", "setting",
-    "purpose", "location",
+    "crypto_class",
+    "algorithm_standard",
+    "integration_status",
+    "validity",
+    "signature_algorithm_family",
+    "certificate_sha256",
+    "public_key_sha256",
+    "setting",
+    "purpose",
+    "location",
 ]
 CSV_COLUMNS = ASSET_COLUMNS + [f"evidence.{name}" for name in EVIDENCE_COLUMNS]
 

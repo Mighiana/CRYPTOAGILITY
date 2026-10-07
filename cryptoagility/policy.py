@@ -153,9 +153,7 @@ def _text(value: Any, where: str, max_len: int = MAX_TEXT) -> str:
     return value
 
 
-def _text_list(
-    value: Any, where: str, *, min_items: int = 1, max_len: int = MAX_TEXT
-) -> list[str]:
+def _text_list(value: Any, where: str, *, min_items: int = 1, max_len: int = MAX_TEXT) -> list[str]:
     if not isinstance(value, list) or not min_items <= len(value) <= MAX_LIST:
         raise PolicyError(f"{where} must be a list of {min_items}-{MAX_LIST} strings")
     return [_text(item, f"{where}[{index}]", max_len) for index, item in enumerate(value)]
@@ -300,15 +298,27 @@ def _rule(
 
 
 def _rule_table(
-    value: Any, where: str, rule_ids: set[str], asset_types: set[str], *, crypto: bool,
+    value: Any,
+    where: str,
+    rule_ids: set[str],
+    asset_types: set[str],
+    *,
+    crypto: bool,
     sized: bool = False,
 ) -> _Names:
     if not isinstance(value, list) or not 1 <= len(value) <= MAX_RULES:
         raise PolicyError(f"{where} must be a list of 1-{MAX_RULES} rules")
     names = _Names(where)
     for index, rule in enumerate(value):
-        _rule(rule, f"{where}[{index}]", names=names, rule_ids=rule_ids,
-              asset_types=asset_types, crypto=crypto, sized=sized)
+        _rule(
+            rule,
+            f"{where}[{index}]",
+            names=names,
+            rule_ids=rule_ids,
+            asset_types=asset_types,
+            crypto=crypto,
+            sized=sized,
+        )
     return names
 
 
@@ -318,21 +328,43 @@ def validate_policy(data: Any) -> dict[str, Any]:
     Raises PolicyError on unknown keys, wrong types, ambiguous names, misleading language or any
     configuration that would let unknown evidence or negotiation violations pass.
     """
-    top = _mapping(data, "policy", (
-        "schema_version", "policy_id", "title", "description", "profile", "compliant_outcomes",
-        "unknown_evidence", "asset_types", "algorithms", "signature_algorithms", "tls",
-        "certificates", "planning",
-    ))
+    top = _mapping(
+        data,
+        "policy",
+        (
+            "schema_version",
+            "policy_id",
+            "title",
+            "description",
+            "profile",
+            "compliant_outcomes",
+            "unknown_evidence",
+            "asset_types",
+            "algorithms",
+            "signature_algorithms",
+            "tls",
+            "certificates",
+            "planning",
+        ),
+    )
     if top["schema_version"] != SCHEMA_VERSION:
         raise PolicyError(f"policy.schema_version must be {SCHEMA_VERSION!r}")
     _identifier(top["policy_id"], "policy.policy_id")
     _text(top["title"], "policy.title")
     _text(top["description"], "policy.description", 2000)
 
-    profile = _mapping(top["profile"], "policy.profile", (
-        "name", "description", "long_confidentiality_years", "long_system_lifetime_years",
-        "escalate_update_difficulty", "require_footprint_evidence",
-    ))
+    profile = _mapping(
+        top["profile"],
+        "policy.profile",
+        (
+            "name",
+            "description",
+            "long_confidentiality_years",
+            "long_system_lifetime_years",
+            "escalate_update_difficulty",
+            "require_footprint_evidence",
+        ),
+    )
     _identifier(profile["name"], "policy.profile.name")
     _text(profile["description"], "policy.profile.description", 2000)
     _int(profile["long_confidentiality_years"], "policy.profile.long_confidentiality_years", 1, 100)
@@ -352,8 +384,11 @@ def validate_policy(data: Any) -> dict[str, Any]:
         if item in NON_COMPLIANT_OUTCOMES:
             raise PolicyError("policy.compliant_outcomes cannot include non-compliant outcomes")
 
-    unknown = _mapping(top["unknown_evidence"], "policy.unknown_evidence",
-                       ("reason", "migration_options", "recommended_test"))
+    unknown = _mapping(
+        top["unknown_evidence"],
+        "policy.unknown_evidence",
+        ("reason", "migration_options", "recommended_test"),
+    )
     _text(unknown["reason"], "policy.unknown_evidence.reason")
     _text_list(unknown["migration_options"], "policy.unknown_evidence.migration_options")
     _text(unknown["recommended_test"], "policy.unknown_evidence.recommended_test")
@@ -365,8 +400,10 @@ def validate_policy(data: Any) -> dict[str, Any]:
     for type_name, spec in types.items():
         where = f"policy.asset_types.{_identifier(type_name, 'policy.asset_types key')}"
         _mapping(spec, where, ("aliases", "required_evidence", "dependency", "recommended_test"))
-        aliases.add([type_name, *_text_list(spec["aliases"], f"{where}.aliases",
-                                            max_len=MAX_NAME)], type_name)
+        aliases.add(
+            [type_name, *_text_list(spec["aliases"], f"{where}.aliases", max_len=MAX_NAME)],
+            type_name,
+        )
         required = spec["required_evidence"]
         if not isinstance(required, list) or len(required) > len(EVIDENCE_FIELDS):
             raise PolicyError(f"{where}.required_evidence must be a list")
@@ -377,23 +414,38 @@ def validate_policy(data: Any) -> dict[str, Any]:
     type_names = set(types)
 
     rule_ids: set[str] = set()
-    _rule_table(top["algorithms"], "policy.algorithms", rule_ids, type_names,
-                crypto=True, sized=True)
-    _rule_table(top["signature_algorithms"], "policy.signature_algorithms", rule_ids,
-                type_names, crypto=True)
+    _rule_table(
+        top["algorithms"], "policy.algorithms", rule_ids, type_names, crypto=True, sized=True
+    )
+    _rule_table(
+        top["signature_algorithms"],
+        "policy.signature_algorithms",
+        rule_ids,
+        type_names,
+        crypto=True,
+    )
 
-    tls = _mapping(top["tls"], "policy.tls", (
-        "minimum_version", "versions", "below_minimum", "groups", "required_groups",
-        "negotiation_violation", "cipher_suites",
-    ))
-    version_names = _rule_table(tls["versions"], "policy.tls.versions", rule_ids, type_names,
-                                crypto=False)
+    tls = _mapping(
+        top["tls"],
+        "policy.tls",
+        (
+            "minimum_version",
+            "versions",
+            "below_minimum",
+            "groups",
+            "required_groups",
+            "negotiation_violation",
+            "cipher_suites",
+        ),
+    )
+    version_names = _rule_table(
+        tls["versions"], "policy.tls.versions", rule_ids, type_names, crypto=False
+    )
     minimum = _text(tls["minimum_version"], "policy.tls.minimum_version", MAX_NAME)
     if normalize_name(minimum) not in version_names.seen:
         raise PolicyError("policy.tls.minimum_version must name a listed version")
     _decision(tls["below_minimum"], "policy.tls.below_minimum", non_compliant=True)
-    group_names = _rule_table(tls["groups"], "policy.tls.groups", rule_ids, type_names,
-                              crypto=True)
+    group_names = _rule_table(tls["groups"], "policy.tls.groups", rule_ids, type_names, crypto=True)
     required_groups = tls["required_groups"]
     if not isinstance(required_groups, list) or len(required_groups) > MAX_LIST:
         raise PolicyError("policy.tls.required_groups must be a list")
@@ -402,21 +454,31 @@ def validate_policy(data: Any) -> dict[str, Any]:
             group_names.seen
         ):
             raise PolicyError("policy.tls.required_groups must name listed groups")
-    _decision(tls["negotiation_violation"], "policy.tls.negotiation_violation",
-              non_compliant=True)
-    _rule_table(tls["cipher_suites"], "policy.tls.cipher_suites", rule_ids, type_names,
-                crypto=False)
+    _decision(tls["negotiation_violation"], "policy.tls.negotiation_violation", non_compliant=True)
+    _rule_table(
+        tls["cipher_suites"], "policy.tls.cipher_suites", rule_ids, type_names, crypto=False
+    )
 
-    certs = _mapping(top["certificates"], "policy.certificates",
-                     ("renewal_window_days", "valid", "expiring", "expired"))
+    certs = _mapping(
+        top["certificates"],
+        "policy.certificates",
+        ("renewal_window_days", "valid", "expiring", "expired"),
+    )
     _int(certs["renewal_window_days"], "policy.certificates.renewal_window_days", 0, 3650)
     _decision(certs["valid"], "policy.certificates.valid")
     _decision(certs["expiring"], "policy.certificates.expiring")
     _decision(certs["expired"], "policy.certificates.expired", non_compliant=True)
 
-    planning = _mapping(top["planning"], "policy.planning", (
-        "outcome_priority", "ready_outcomes", "next_actions", "unknown_next_action",
-    ))
+    planning = _mapping(
+        top["planning"],
+        "policy.planning",
+        (
+            "outcome_priority",
+            "ready_outcomes",
+            "next_actions",
+            "unknown_next_action",
+        ),
+    )
     priority = _mapping(planning["outcome_priority"], "policy.planning.outcome_priority", OUTCOMES)
     for outcome, value in priority.items():
         _choice(value, f"policy.planning.outcome_priority.{outcome}", PRIORITIES[:-1])
@@ -567,33 +629,59 @@ class PolicyEngine:
     def unknown(self, check: str, observed: str, why: str, evidence: str) -> _Check:
         spec = self.policy["unknown_evidence"]
         return _Check(
-            check=check, observed=observed, outcome="UNSUPPORTED", evidence=evidence,
+            check=check,
+            observed=observed,
+            outcome="UNSUPPORTED",
+            evidence=evidence,
             reason=f"{check}: {why}. {spec['reason']}",
             migration_options=list(spec["migration_options"]),
             recommended_test=spec["recommended_test"],
         )
 
-    def decision(self, check: str, observed: str, spec: dict[str, Any], detail: str,
-                 rule_id: str | None = None, state: str | None = None) -> _Check:
+    def decision(
+        self,
+        check: str,
+        observed: str,
+        spec: dict[str, Any],
+        detail: str,
+        rule_id: str | None = None,
+        state: str | None = None,
+    ) -> _Check:
         return _Check(
-            check=check, observed=observed, outcome=spec["outcome"], rule_id=rule_id,
+            check=check,
+            observed=observed,
+            outcome=spec["outcome"],
+            rule_id=rule_id,
             reason=f"{check}: {detail}. {spec['reason']}",
-            migration_options=list(spec["migration_options"]), detail=state,
+            migration_options=list(spec["migration_options"]),
+            detail=state,
         )
 
-    def rule_check(self, check: str, observed: str, match: _Match, outcome: str,
-                   reason: str, detail: str) -> _Check:
+    def rule_check(
+        self, check: str, observed: str, match: _Match, outcome: str, reason: str, detail: str
+    ) -> _Check:
         rule = match.rule
         standard = f" Reference: {rule['standard']}." if "standard" in rule else ""
-        usages = tuple(rule.get("usage", ("key_establishment",) if check == "negotiated_group"
-                                     else ("signature",) if check == "signature_algorithm"
-                                     else ()))
+        usages = tuple(
+            rule.get(
+                "usage",
+                ("key_establishment",)
+                if check == "negotiated_group"
+                else ("signature",)
+                if check == "signature_algorithm"
+                else (),
+            )
+        )
         return _Check(
-            check=check, observed=observed, outcome=outcome, rule_id=rule["id"],
+            check=check,
+            observed=observed,
+            outcome=outcome,
+            rule_id=rule["id"],
             reason=f"{check}: observed {detail}; rule {rule['id']}: {reason}{standard}",
             migration_options=list(rule["migration_options"]),
             recommended_test=rule.get("recommended_test"),
-            quantum_vulnerable=rule.get("quantum_vulnerable"), usages=usages,
+            quantum_vulnerable=rule.get("quantum_vulnerable"),
+            usages=usages,
         )
 
     def contexts(self, check: _Check, match: _Match, type_name: str | None) -> list[_Check]:
@@ -601,13 +689,16 @@ class PolicyEngine:
         if not context:
             return [check]
         extra = _Check(
-            check=f"{check.check}_context", observed=f"{check.observed} in {type_name}",
-            outcome=context["outcome"], rule_id=match.rule["id"],
+            check=f"{check.check}_context",
+            observed=f"{check.observed} in {type_name}",
+            outcome=context["outcome"],
+            rule_id=match.rule["id"],
             reason=f"{check.check}: {type_name} context; rule {match.rule['id']}: "
-                   f"{context['reason']}",
+            f"{context['reason']}",
             migration_options=list(match.rule["migration_options"]),
             recommended_test=match.rule.get("recommended_test"),
-            quantum_vulnerable=check.quantum_vulnerable, usages=check.usages,
+            quantum_vulnerable=check.quantum_vulnerable,
+            usages=check.usages,
         )
         return [check, extra]
 
@@ -616,12 +707,19 @@ class PolicyEngine:
     def algorithm(self, asset: Asset, name: str, type_name: str | None) -> list[_Check]:
         match = self.index.lookup("algorithms", name)
         if match is None:
-            return [self.unknown("algorithm", name, f"algorithm {_display(name)} is not "
-                                 "recognised by this policy", EVIDENCE_UNRECOGNIZED)]
+            return [
+                self.unknown(
+                    "algorithm",
+                    name,
+                    f"algorithm {_display(name)} is not recognised by this policy",
+                    EVIDENCE_UNRECOGNIZED,
+                )
+            ]
         rule = match.rule
         if "outcome" in rule:
-            check = self.rule_check("algorithm", name, match, rule["outcome"], rule["reason"],
-                                    _display(name))
+            check = self.rule_check(
+                "algorithm", name, match, rule["outcome"], rule["reason"], _display(name)
+            )
             return self.contexts(check, match, type_name)
         if "key_size" in rule:
             bits = asset.key_size
@@ -630,44 +728,81 @@ class PolicyEngine:
                 return [self.unknown("key_size", _display(bits), why, EVIDENCE_MISSING)]
             band = next(b for b in rule["key_size"]["bands"] if bits >= b["min_bits"])
             check = self.rule_check(
-                "algorithm", f"{name} {bits} bits", match, band["outcome"], band["reason"],
+                "algorithm",
+                f"{name} {bits} bits",
+                match,
+                band["outcome"],
+                band["reason"],
                 f"{_display(name)} with key_size={bits} (band min_bits={band['min_bits']})",
             )
             return self.contexts(check, match, type_name)
         observed_set = _observed(asset.parameter_set)
         if observed_set is _INVALID:
-            return [self.unknown("parameter_set", _display(asset.parameter_set),
-                                 "parameter_set has an invalid value", EVIDENCE_UNRECOGNIZED)]
+            return [
+                self.unknown(
+                    "parameter_set",
+                    _display(asset.parameter_set),
+                    "parameter_set has an invalid value",
+                    EVIDENCE_UNRECOGNIZED,
+                )
+            ]
         selected = match.parameter_set
         if isinstance(observed_set, str):
             set_match = self.index.lookup("algorithms", observed_set)
             if set_match is None or set_match.rule is not rule or set_match.parameter_set is None:
-                return [self.unknown(
-                    "parameter_set", observed_set,
-                    f"parameter set {_display(observed_set)} is not listed under rule "
-                    f"{rule['id']}", EVIDENCE_UNRECOGNIZED)]
+                return [
+                    self.unknown(
+                        "parameter_set",
+                        observed_set,
+                        f"parameter set {_display(observed_set)} is not listed under rule "
+                        f"{rule['id']}",
+                        EVIDENCE_UNRECOGNIZED,
+                    )
+                ]
             if selected is not None and selected is not set_match.parameter_set:
-                return [self.unknown(
-                    "parameter_set", f"{name} / {observed_set}",
-                    "algorithm and parameter_set evidence conflict", EVIDENCE_UNRECOGNIZED)]
+                return [
+                    self.unknown(
+                        "parameter_set",
+                        f"{name} / {observed_set}",
+                        "algorithm and parameter_set evidence conflict",
+                        EVIDENCE_UNRECOGNIZED,
+                    )
+                ]
             selected = set_match.parameter_set
         if selected is None:
-            return [self.unknown("parameter_set", "absent",
-                                 f"rule {rule['id']} requires a parameter set for "
-                                 f"{_display(name)}", EVIDENCE_MISSING)]
+            return [
+                self.unknown(
+                    "parameter_set",
+                    "absent",
+                    f"rule {rule['id']} requires a parameter set for {_display(name)}",
+                    EVIDENCE_MISSING,
+                )
+            ]
         label = selected["names"][0]
-        check = self.rule_check("algorithm", label, match, selected["outcome"],
-                                selected["reason"], f"{_display(name)} parameter set {label}")
+        check = self.rule_check(
+            "algorithm",
+            label,
+            match,
+            selected["outcome"],
+            selected["reason"],
+            f"{_display(name)} parameter set {label}",
+        )
         return self.contexts(check, match, type_name)
 
-    def table_check(self, check: str, table: str, name: str,
-                    type_name: str | None) -> list[_Check]:
+    def table_check(self, check: str, table: str, name: str, type_name: str | None) -> list[_Check]:
         match = self.index.lookup(table, name)
         if match is None:
-            return [self.unknown(check, name, f"{check} {_display(name)} is not recognised by "
-                                 "this policy", EVIDENCE_UNRECOGNIZED)]
-        result = self.rule_check(check, name, match, match.rule["outcome"], match.rule["reason"],
-                                 _display(name))
+            return [
+                self.unknown(
+                    check,
+                    name,
+                    f"{check} {_display(name)} is not recognised by this policy",
+                    EVIDENCE_UNRECOGNIZED,
+                )
+            ]
+        result = self.rule_check(
+            check, name, match, match.rule["outcome"], match.rule["reason"], _display(name)
+        )
         return self.contexts(result, match, type_name)
 
     def tls_version(self, name: str, type_name: str | None) -> list[_Check]:
@@ -675,9 +810,15 @@ class PolicyEngine:
         match = self.index.lookup("versions", name)
         if match and self.index.version_rank[match.rule["id"]] < self.index.minimum_rank:
             minimum = self.policy["tls"]["minimum_version"]
-            checks.append(self.decision("tls_version", name, self.policy["tls"]["below_minimum"],
-                                        f"{_display(name)} is below policy minimum {minimum}",
-                                        match.rule["id"]))
+            checks.append(
+                self.decision(
+                    "tls_version",
+                    name,
+                    self.policy["tls"]["below_minimum"],
+                    f"{_display(name)} is below policy minimum {minimum}",
+                    match.rule["id"],
+                )
+            )
         return checks
 
     def group(self, name: str, requested: Any, type_name: str | None) -> list[_Check]:
@@ -687,34 +828,59 @@ class PolicyEngine:
         required = self.index.required_groups
         if match and required and match.rule["id"] not in required:
             names = ", ".join(self.policy["tls"]["required_groups"])
-            checks.append(self.decision(
-                "required_group", name, violation,
-                f"negotiated {_display(name)} but policy requires one of [{names}]; a "
-                "successful handshake is not policy compliance", match.rule["id"]))
+            checks.append(
+                self.decision(
+                    "required_group",
+                    name,
+                    violation,
+                    f"negotiated {_display(name)} but policy requires one of [{names}]; a "
+                    "successful handshake is not policy compliance",
+                    match.rule["id"],
+                )
+            )
         requested_name = _observed(requested)
         if requested_name is _INVALID:
-            checks.append(self.unknown("requested_group", _display(requested),
-                                       "requested_group has an invalid value",
-                                       EVIDENCE_UNRECOGNIZED))
+            checks.append(
+                self.unknown(
+                    "requested_group",
+                    _display(requested),
+                    "requested_group has an invalid value",
+                    EVIDENCE_UNRECOGNIZED,
+                )
+            )
         elif isinstance(requested_name, str):
             requested_match = self.index.lookup("groups", requested_name)
             if requested_match is None:
-                checks.append(self.unknown("requested_group", requested_name,
-                                           "requested group is not recognised by this policy",
-                                           EVIDENCE_UNRECOGNIZED))
+                checks.append(
+                    self.unknown(
+                        "requested_group",
+                        requested_name,
+                        "requested group is not recognised by this policy",
+                        EVIDENCE_UNRECOGNIZED,
+                    )
+                )
             elif match is not None and requested_match.rule is not match.rule:
-                checks.append(self.decision(
-                    "downgrade", f"{requested_name} -> {name}", violation,
-                    f"requested {_display(requested_name)} but negotiated {_display(name)}; "
-                    "treated as a downgrade, not silently accepted", match.rule["id"]))
+                checks.append(
+                    self.decision(
+                        "downgrade",
+                        f"{requested_name} -> {name}",
+                        violation,
+                        f"requested {_display(requested_name)} but negotiated {_display(name)}; "
+                        "treated as a downgrade, not silently accepted",
+                        match.rule["id"],
+                    )
+                )
         return checks
 
     def expiry(self, value: str) -> list[_Check]:
         try:
             expires = datetime.fromisoformat(value)
         except ValueError:
-            return [self.unknown("expiry", value, "expiry is not an ISO 8601 timestamp",
-                                 EVIDENCE_UNRECOGNIZED)]
+            return [
+                self.unknown(
+                    "expiry", value, "expiry is not an ISO 8601 timestamp", EVIDENCE_UNRECOGNIZED
+                )
+            ]
         note = ""
         if expires.tzinfo is None:
             expires = expires.replace(tzinfo=UTC)
@@ -722,29 +888,55 @@ class PolicyEngine:
         certs = self.policy["certificates"]
         remaining = (expires - self.now).total_seconds() / 86400
         if remaining <= 0:
-            return [self.decision("expiry", value, certs["expired"],
-                                  f"certificate expired at {expires.isoformat()}{note}",
-                                  state="expired")]
+            return [
+                self.decision(
+                    "expiry",
+                    value,
+                    certs["expired"],
+                    f"certificate expired at {expires.isoformat()}{note}",
+                    state="expired",
+                )
+            ]
         if remaining <= certs["renewal_window_days"]:
-            return [self.decision(
-                "expiry", value, certs["expiring"],
-                f"certificate expires at {expires.isoformat()}{note}, within the "
-                f"{certs['renewal_window_days']}-day renewal window", state="expiring")]
-        return [self.decision("expiry", value, certs["valid"],
-                              f"certificate valid until {expires.isoformat()}{note}",
-                              state="valid")]
+            return [
+                self.decision(
+                    "expiry",
+                    value,
+                    certs["expiring"],
+                    f"certificate expires at {expires.isoformat()}{note}, within the "
+                    f"{certs['renewal_window_days']}-day renewal window",
+                    state="expiring",
+                )
+            ]
+        return [
+            self.decision(
+                "expiry",
+                value,
+                certs["valid"],
+                f"certificate valid until {expires.isoformat()}{note}",
+                state="valid",
+            )
+        ]
 
     # ---- assets
 
     def asset(self, asset: Asset) -> dict[str, Any]:
         checks: list[_Check] = []
         raw_type = _observed(asset.asset_type)
-        type_name = (self.index.asset_types.get(normalize_name(raw_type))
-                     if isinstance(raw_type, str) else None)
+        type_name = (
+            self.index.asset_types.get(normalize_name(raw_type))
+            if isinstance(raw_type, str)
+            else None
+        )
         if type_name is None:
-            checks.append(self.unknown("asset_type", _display(asset.asset_type),
-                                       "asset type is not recognised by this policy",
-                                       EVIDENCE_UNRECOGNIZED))
+            checks.append(
+                self.unknown(
+                    "asset_type",
+                    _display(asset.asset_type),
+                    "asset type is not recognised by this policy",
+                    EVIDENCE_UNRECOGNIZED,
+                )
+            )
             required: set[str] = set()
         else:
             required = set(self.policy["asset_types"][type_name]["required_evidence"])
@@ -752,17 +944,35 @@ class PolicyEngine:
         for name in EVIDENCE_FIELDS:
             value = values[name]
             if value is _INVALID:
-                checks.append(self.unknown(name, _display(getattr(asset, name)),
-                                           f"{name} has an invalid value", EVIDENCE_UNRECOGNIZED))
+                checks.append(
+                    self.unknown(
+                        name,
+                        _display(getattr(asset, name)),
+                        f"{name} has an invalid value",
+                        EVIDENCE_UNRECOGNIZED,
+                    )
+                )
             elif value is None:
                 if name in required:
-                    checks.append(self.unknown(name, "absent", f"{name} evidence is required "
-                                               f"for {type_name} assets", EVIDENCE_MISSING))
+                    checks.append(
+                        self.unknown(
+                            name,
+                            "absent",
+                            f"{name} evidence is required for {type_name} assets",
+                            EVIDENCE_MISSING,
+                        )
+                    )
             elif isinstance(value, str):
                 checks.extend(self._field(asset, name, value, type_name))
         if not checks:
-            checks.append(self.unknown("evidence", "absent", "no evaluable evidence was "
-                                       "recorded for this asset", EVIDENCE_MISSING))
+            checks.append(
+                self.unknown(
+                    "evidence",
+                    "absent",
+                    "no evaluable evidence was recorded for this asset",
+                    EVIDENCE_MISSING,
+                )
+            )
         return self.finding(asset, type_name, checks)
 
     def _field(self, asset: Asset, name: str, value: str, type_name: str | None) -> list[_Check]:
@@ -782,8 +992,9 @@ class PolicyEngine:
             return self.group(value, evidence.get("requested_group"), type_name)
         return self.table_check(name, "cipher_suites", value, type_name)
 
-    def _configured_setting(self, asset: Asset, value: str,
-                            type_name: str | None) -> list[_Check] | None:
+    def _configured_setting(
+        self, asset: Asset, value: str, type_name: str | None
+    ) -> list[_Check] | None:
         """Config tokens name a TLS group/version/suite/signature scheme, not a key algorithm.
 
         Route them to the matching policy table. Protocol and suite tokens also populate
@@ -796,13 +1007,17 @@ class PolicyEngine:
         if purpose == "tls_key_establishment":
             return self.table_check("configured_group", "groups", value, type_name)
         if purpose == "signature":
-            return self.table_check("configured_signature", "signature_algorithms", value,
-                                    type_name)
+            return self.table_check(
+                "configured_signature", "signature_algorithms", value, type_name
+            )
         if purpose == "tls_protocol_bound":
             return [] if asset.tls_version else self.tls_version(value, type_name)
         if purpose == "cipher_suite":
-            return [] if asset.cipher_suite else self.table_check(
-                "cipher_suite", "cipher_suites", value, type_name)
+            return (
+                []
+                if asset.cipher_suite
+                else self.table_check("cipher_suite", "cipher_suites", value, type_name)
+            )
         return None
 
     def finding(self, asset: Asset, type_name: str | None, checks: list[_Check]) -> dict[str, Any]:
@@ -825,7 +1040,8 @@ class PolicyEngine:
             and outcome in self.policy["compliant_outcomes"],
             "evidence_status": evidence,
             "known_outcome": max((c.outcome for c in known), key=SEVERITY.__getitem__)
-            if known else None,
+            if known
+            else None,
             "quantum_vulnerable": bool(vulnerable) if crypto else None,
             "quantum_vulnerable_usages": sorted({u for c in vulnerable for u in c.usages}),
             "expiry_status": _expiry_status(expiry),
@@ -840,22 +1056,38 @@ class PolicyEngine:
         status = observation.get("status")
         checks: list[_Check] = []
         if not isinstance(status, str) or status.strip().upper() not in SUCCESS_STATUSES:
-            checks.append(self.unknown(
-                "status", _display(status), "connection did not succeed, so no negotiated "
-                "parameters exist to evaluate; failure is not treated as compliance",
-                EVIDENCE_MISSING))
+            checks.append(
+                self.unknown(
+                    "status",
+                    _display(status),
+                    "connection did not succeed, so no negotiated "
+                    "parameters exist to evaluate; failure is not treated as compliance",
+                    EVIDENCE_MISSING,
+                )
+            )
         else:
-            for name, table in (("tls_version", "versions"), ("negotiated_group", "groups"),
-                                ("cipher_suite", "cipher_suites")):
+            for name, table in (
+                ("tls_version", "versions"),
+                ("negotiated_group", "groups"),
+                ("cipher_suite", "cipher_suites"),
+            ):
                 value = _observed(observation.get(name))
                 if value is _INVALID:
-                    checks.append(self.unknown(name, _display(observation.get(name)),
-                                               f"{name} has an invalid value",
-                                               EVIDENCE_UNRECOGNIZED))
+                    checks.append(
+                        self.unknown(
+                            name,
+                            _display(observation.get(name)),
+                            f"{name} has an invalid value",
+                            EVIDENCE_UNRECOGNIZED,
+                        )
+                    )
                 elif value is None:
                     if name != "cipher_suite":
-                        checks.append(self.unknown(name, "absent", f"{name} was not recorded",
-                                                   EVIDENCE_MISSING))
+                        checks.append(
+                            self.unknown(
+                                name, "absent", f"{name} was not recorded", EVIDENCE_MISSING
+                            )
+                        )
                 elif isinstance(value, str):
                     if name == "tls_version":
                         checks.extend(self.tls_version(value, None))
@@ -866,8 +1098,9 @@ class PolicyEngine:
         outcome = max((c.outcome for c in checks), key=SEVERITY.__getitem__)
         evidence = _evidence_status(checks)
         complete = evidence == EVIDENCE_COMPLETE
-        group_checks = [c for c in checks if c.check == "negotiated_group" and
-                        c.evidence == EVIDENCE_COMPLETE]
+        group_checks = [
+            c for c in checks if c.check == "negotiated_group" and c.evidence == EVIDENCE_COMPLETE
+        ]
         group = group_checks[0] if group_checks else None
         return {
             "outcome": outcome,
@@ -946,8 +1179,9 @@ def evaluate(
             "total_assets": len(findings),
             "by_outcome": by_outcome,
             "compliant": sum(1 for f in findings if f["compliant"]),
-            "evidence_incomplete": sum(1 for f in findings
-                                       if f["evidence_status"] != EVIDENCE_COMPLETE),
+            "evidence_incomplete": sum(
+                1 for f in findings if f["evidence_status"] != EVIDENCE_COMPLETE
+            ),
             "quantum_vulnerable": sum(1 for f in findings if f["quantum_vulnerable"]),
             "inventory_errors": len(errors),
         },

@@ -116,24 +116,37 @@ class AlgorithmSpec:
 
 
 def _sig(name: str, standard: str, scheme: str) -> AlgorithmSpec:
-    return AlgorithmSpec(name, "signature", "pqc", name, ("-algorithm", name), (), standard,
-                         scheme)
+    return AlgorithmSpec(name, "signature", "pqc", name, ("-algorithm", name), (), standard, scheme)
 
 
 def _known_algorithms() -> dict[str, AlgorithmSpec]:
     specs = [
         AlgorithmSpec(
-            "RSA-3072", "signature", "classical", "RSA",
+            "RSA-3072",
+            "signature",
+            "classical",
+            "RSA",
             ("-algorithm", "RSA", "-pkeyopt", "rsa_keygen_bits:3072"),
-            ("-digest", "sha256", "-pkeyopt", "rsa_padding_mode:pss",
-             "-pkeyopt", "rsa_pss_saltlen:digest"),
-            "RFC 8017 RSASSA-PSS", "RSASSA-PSS, SHA-256, salt length = digest length",
+            (
+                "-digest",
+                "sha256",
+                "-pkeyopt",
+                "rsa_padding_mode:pss",
+                "-pkeyopt",
+                "rsa_pss_saltlen:digest",
+            ),
+            "RFC 8017 RSASSA-PSS",
+            "RSASSA-PSS, SHA-256, salt length = digest length",
         ),
         AlgorithmSpec(
-            "ECDSA-P-256", "signature", "classical", "ECDSA",
+            "ECDSA-P-256",
+            "signature",
+            "classical",
+            "ECDSA",
             ("-algorithm", "EC", "-pkeyopt", "ec_paramgen_curve:P-256"),
             ("-digest", "sha256"),
-            "FIPS 186-5 ECDSA", "ECDSA over P-256 with SHA-256, DER-encoded signature",
+            "FIPS 186-5 ECDSA",
+            "ECDSA over P-256 with SHA-256, DER-encoded signature",
         ),
     ]
     for level in ("44", "65", "87"):
@@ -141,12 +154,27 @@ def _known_algorithms() -> dict[str, AlgorithmSpec]:
     for family in ("SHA2", "SHAKE"):
         for size in ("128", "192", "256"):
             for variant in ("s", "f"):
-                specs.append(_sig(f"SLH-DSA-{family}-{size}{variant}", "FIPS 205",
-                                  "pure SLH-DSA, empty context"))
+                specs.append(
+                    _sig(
+                        f"SLH-DSA-{family}-{size}{variant}",
+                        "FIPS 205",
+                        "pure SLH-DSA, empty context",
+                    )
+                )
     for level in ("512", "768", "1024"):
         name = f"ML-KEM-{level}"
-        specs.append(AlgorithmSpec(name, "kem", "pqc", name, ("-algorithm", name), (),
-                                   "FIPS 203", "ML-KEM encapsulation/decapsulation"))
+        specs.append(
+            AlgorithmSpec(
+                name,
+                "kem",
+                "pqc",
+                name,
+                ("-algorithm", name),
+                (),
+                "FIPS 203",
+                "ML-KEM encapsulation/decapsulation",
+            )
+        )
     return {spec.name: spec for spec in specs}
 
 
@@ -257,7 +285,7 @@ class _Plan:
             if isinstance(elapsed, bool) or not isinstance(elapsed, int) or elapsed <= 0:
                 raise BenchmarkError("measurement produced an invalid duration")
             values.append(elapsed)
-        measured = values[self.warmups:]
+        measured = values[self.warmups :]
         return {
             "status": SUCCESS,
             "timing_source": source,
@@ -444,8 +472,9 @@ def capability_inventory(caps: dict[str, Any], benchmarked: Sequence[str]) -> di
 # --------------------------------------------------------------------------- entries
 
 
-def _entry(entry_id: str, kind: str, algorithm: str, profiles: list[str], **extra: Any
-           ) -> dict[str, Any]:
+def _entry(
+    entry_id: str, kind: str, algorithm: str, profiles: list[str], **extra: Any
+) -> dict[str, Any]:
     entry: dict[str, Any] = {
         "id": entry_id,
         "kind": kind,
@@ -462,8 +491,13 @@ def _entry(entry_id: str, kind: str, algorithm: str, profiles: list[str], **extr
 
 
 def _fail(entry: dict[str, Any], status: str, reason: str) -> dict[str, Any]:
-    entry.update(status=status, reason=tls.sanitize_reason(reason) or status.lower(),
-                 sizes={}, checks={}, operations={})
+    entry.update(
+        status=status,
+        reason=tls.sanitize_reason(reason) or status.lower(),
+        sizes={},
+        checks={},
+        operations={},
+    )
     return entry
 
 
@@ -481,8 +515,9 @@ def _keygen(spec: AlgorithmSpec, plan: _Plan) -> tuple[dict[str, Any], bytes]:
     return result, keys[0]
 
 
-def _key_material(spec: AlgorithmSpec, pem: bytes, keydir: Path, timeout: float
-                  ) -> tuple[Path, Path, dict[str, int]]:
+def _key_material(
+    spec: AlgorithmSpec, pem: bytes, keydir: Path, timeout: float
+) -> tuple[Path, Path, dict[str, int]]:
     key = keydir / "key.pem"
     _write_private(key, pem)
     _, pub_pem = _run(["pkey", "-in", str(key), "-pubout"], timeout)
@@ -504,8 +539,19 @@ def _flip(data: bytes) -> bytes:
 
 
 def _verify_args(spec: AlgorithmSpec, pub: Path, message: Path, signature: Path) -> list[str]:
-    return ["pkeyutl", "-verify", "-rawin", *spec.sign_args, "-pubin", "-inkey", str(pub),
-            "-in", str(message), "-sigfile", str(signature)]
+    return [
+        "pkeyutl",
+        "-verify",
+        "-rawin",
+        *spec.sign_args,
+        "-pubin",
+        "-inkey",
+        str(pub),
+        "-in",
+        str(message),
+        "-sigfile",
+        str(signature),
+    ]
 
 
 def _rejected(args: list[str], timeout: float) -> bool:
@@ -527,8 +573,19 @@ def bench_signature(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> 
     signatures: list[bytes] = []
 
     def sign(_: int) -> int:
-        elapsed, sig = _run(["pkeyutl", "-sign", "-rawin", *spec.sign_args, "-inkey", str(key),
-                             "-in", str(message)], plan.timeout)
+        elapsed, sig = _run(
+            [
+                "pkeyutl",
+                "-sign",
+                "-rawin",
+                *spec.sign_args,
+                "-inkey",
+                str(key),
+                "-in",
+                str(message),
+            ],
+            plan.timeout,
+        )
         if not sig:
             raise BenchmarkError("empty signature")
         signatures.append(sig)
@@ -561,8 +618,7 @@ def bench_signature(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> 
     sig_sizes = [len(s) for s in signatures]
     entry.update(
         status=SUCCESS,
-        sizes={**sizes, "signature_bytes": _distribution(sig_sizes),
-               "message_bytes": len(MESSAGE)},
+        sizes={**sizes, "signature_bytes": _distribution(sig_sizes), "message_bytes": len(MESSAGE)},
         checks={
             "every_signature_verified": len(signatures) == plan.total,
             "tampered_signature_rejected": True,
@@ -584,8 +640,20 @@ def bench_kem(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> dict[s
 
     def encap(index: int) -> int:
         ct = keydir / f"ct-{index}.bin"
-        elapsed, secret = _run(["pkeyutl", "-encap", "-pubin", "-inkey", str(pub),
-                                "-out", str(ct), "-secret", "/dev/stdout"], plan.timeout)
+        elapsed, secret = _run(
+            [
+                "pkeyutl",
+                "-encap",
+                "-pubin",
+                "-inkey",
+                str(pub),
+                "-out",
+                str(ct),
+                "-secret",
+                "/dev/stdout",
+            ],
+            plan.timeout,
+        )
         if not secret or not ct.is_file():
             raise BenchmarkError("encapsulation produced no output")
         secrets.append(secret)
@@ -593,8 +661,9 @@ def bench_kem(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> dict[s
         return elapsed
 
     def decap(index: int) -> int:
-        elapsed, secret = _run(["pkeyutl", "-decap", "-inkey", str(key),
-                                "-in", str(ciphertexts[index])], plan.timeout)
+        elapsed, secret = _run(
+            ["pkeyutl", "-decap", "-inkey", str(key), "-in", str(ciphertexts[index])], plan.timeout
+        )
         if not hmac.compare_digest(secret, secrets[index]):
             raise BenchmarkError("decapsulated shared secret does not match encapsulation")
         return elapsed
@@ -610,11 +679,13 @@ def bench_kem(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> dict[s
         tampered = keydir / "tampered-ct.bin"
         _write_private(tampered, _flip(last_ct))
         try:
-            _, implicit = _run(["pkeyutl", "-decap", "-inkey", str(key), "-in", str(tampered)],
-                               plan.timeout)
+            _, implicit = _run(
+                ["pkeyutl", "-decap", "-inkey", str(key), "-in", str(tampered)], plan.timeout
+            )
             if hmac.compare_digest(implicit, secrets[-1]):
-                raise BenchmarkError("negative control failed: tampered ciphertext gave the "
-                                     "original shared secret")
+                raise BenchmarkError(
+                    "negative control failed: tampered ciphertext gave the original shared secret"
+                )
             tamper_outcome = "implicit_rejection_different_secret"
         except BenchmarkError as exc:
             if "negative control" in str(exc):
@@ -632,8 +703,11 @@ def bench_kem(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> dict[s
         secrets.clear()
     entry.update(
         status=SUCCESS,
-        sizes={**sizes, "ciphertext_bytes": _distribution(ct_sizes),
-               "shared_secret_bytes": _distribution(secret_sizes)},
+        sizes={
+            **sizes,
+            "ciphertext_bytes": _distribution(ct_sizes),
+            "shared_secret_bytes": _distribution(secret_sizes),
+        },
         checks={
             "every_shared_secret_matched": True,
             "shared_secrets_distinct": True,
@@ -641,15 +715,19 @@ def bench_kem(spec: AlgorithmSpec, plan: _Plan, workspace: _Workspace) -> dict[s
             "truncated_ciphertext_rejected": True,
             "shared_secret_values_published": False,
         },
-        operations={"keygen": keygen, "encapsulate": encap_result,
-                    "decapsulate": decap_result},
+        operations={"keygen": keygen, "encapsulate": encap_result, "decapsulate": decap_result},
     )
     return entry
 
 
 def bench_baseline(plan: _Plan) -> dict[str, Any]:
-    entry = _entry("baseline:openssl-version", "baseline", "none", [],
-                   description="Subprocess floor: 'openssl version' performs no cryptography")
+    entry = _entry(
+        "baseline:openssl-version",
+        "baseline",
+        "none",
+        [],
+        description="Subprocess floor: 'openssl version' performs no cryptography",
+    )
 
     def sample(_: int) -> int:
         elapsed, out = _run(["version"], plan.timeout)
@@ -665,11 +743,18 @@ def bench_tls(name: str, plan: _Plan, workdir: Path, caps: dict[str, Any]) -> di
     profile = tls.PROFILES[name]
     client = tls.CLIENT_VARIANTS[PROFILE_CLIENTS[name]]
     spec = tls.SERVER_SPECS[name]
-    entry = _entry(f"tls:{name}", "tls_handshake", profile.group, [name],
-                   group=profile.group, group_kind=profile.group_kind,
-                   certificate_key=profile.certificate_key,
-                   authentication=profile.authentication, client_variant=client.name,
-                   network_attempted=False)
+    entry = _entry(
+        f"tls:{name}",
+        "tls_handshake",
+        profile.group,
+        [name],
+        group=profile.group,
+        group_kind=profile.group_kind,
+        certificate_key=profile.certificate_key,
+        authentication=profile.authentication,
+        client_variant=client.name,
+        network_attempted=False,
+    )
     try:
         tls.resolve_profile(name, caps)
     except tls.UnsupportedProfileError as exc:
@@ -684,8 +769,13 @@ def bench_tls(name: str, plan: _Plan, workdir: Path, caps: dict[str, Any]) -> di
         return _fail(entry, ERROR, str(exc) or type(exc).__name__)
 
 
-def _measure_tls(entry: dict[str, Any], spec: tls.ServerSpec, client: tls.ClientVariant,
-                 plan: _Plan, workdir: Path) -> dict[str, Any]:
+def _measure_tls(
+    entry: dict[str, Any],
+    spec: tls.ServerSpec,
+    client: tls.ClientVariant,
+    plan: _Plan,
+    workdir: Path,
+) -> dict[str, Any]:
     profile = tls.PROFILES[entry["profiles"][0]]
     policy = dict(tls.DEFAULT_POLICY)
     rows: list[dict[str, Any]] = []
@@ -697,28 +787,47 @@ def _measure_tls(entry: dict[str, Any], spec: tls.ServerSpec, client: tls.Client
             port = server.port
 
             def sample(index: int) -> int:
-                result = tls.handshake(port, client, pki.trust_bundle, timeout=plan.timeout,
-                                       server=server)
+                result = tls.handshake(
+                    port, client, pki.trust_bundle, timeout=plan.timeout, server=server
+                )
                 row = tls.result_row(spec, client, result, policy)
                 if row["status"] != tls.SUCCESS:
-                    raise BenchmarkError(f"handshake {index} {row['status']}: "
-                                         f"{row['error_reason'] or row['failure_kind']}")
-                if (result.client_process_ms is None or result.handshake_bytes_read is None
-                        or result.handshake_bytes_written is None):
+                    raise BenchmarkError(
+                        f"handshake {index} {row['status']}: "
+                        f"{row['error_reason'] or row['failure_kind']}"
+                    )
+                if (
+                    result.client_process_ms is None
+                    or result.handshake_bytes_read is None
+                    or result.handshake_bytes_written is None
+                ):
                     raise BenchmarkError("handshake instrumentation counters missing")
                 rows.append(row)
                 return int(round(result.client_process_ms * 1_000_000))
 
             measured = plan.measure(sample, source=TLS_TIMING_SCOPE)
-    observed = {key: sorted({str(r[key]) for r in rows}) for key in (
-        "negotiated_group", "tls_version", "cipher_suite", "certificate_type",
-        "certificate_signature_algorithm", "peer_signature_type", "chain_der_bytes",
-        "chain_length")}
-    unstable = [key for key, values in observed.items()
-                if key not in ("cipher_suite", "peer_signature_type") and len(values) != 1]
+    observed = {
+        key: sorted({str(r[key]) for r in rows})
+        for key in (
+            "negotiated_group",
+            "tls_version",
+            "cipher_suite",
+            "certificate_type",
+            "certificate_signature_algorithm",
+            "peer_signature_type",
+            "chain_der_bytes",
+            "chain_length",
+        )
+    }
+    unstable = [
+        key
+        for key, values in observed.items()
+        if key not in ("cipher_suite", "peer_signature_type") and len(values) != 1
+    ]
     if unstable:
-        raise BenchmarkError("handshake observations changed between samples: "
-                             + ", ".join(unstable))
+        raise BenchmarkError(
+            "handshake observations changed between samples: " + ", ".join(unstable)
+        )
     first = rows[0]
     if first["chain_der_bytes"] != credential.served_chain_der_bytes:
         raise BenchmarkError("observed chain size differs from served DER chain")
@@ -733,8 +842,11 @@ def _measure_tls(entry: dict[str, Any], spec: tls.ServerSpec, client: tls.Client
         certificate_type=first["certificate_type"],
         certificate_signature_algorithm=first["certificate_signature_algorithm"],
         peer_signature_types=observed["peer_signature_type"],
-        policy={"name": policy["name"], "pass": first["policy_pass"],
-                "reasons": first["policy_reasons"]},
+        policy={
+            "name": policy["name"],
+            "pass": first["policy_pass"],
+            "reasons": first["policy_reasons"],
+        },
         sizes={
             "leaf_certificate_der_bytes": credential.certificate_der_bytes,
             "served_chain_der_bytes": credential.served_chain_der_bytes,
@@ -742,8 +854,9 @@ def _measure_tls(entry: dict[str, Any], spec: tls.ServerSpec, client: tls.Client
             "observed_chain_der_bytes": first["chain_der_bytes"],
             "handshake_bytes_read": _distribution(read),
             "handshake_bytes_written": _distribution(written),
-            "handshake_bytes_total": _distribution([a + b for a, b in zip(read, written,
-                                                                          strict=True)]),
+            "handshake_bytes_total": _distribution(
+                [a + b for a, b in zip(read, written, strict=True)]
+            ),
             "handshake_bytes_definition": HANDSHAKE_BYTES_DEFINITION,
         },
         checks={
@@ -778,8 +891,11 @@ def run_benchmarks(
     """
     iterations = _bounded_int(iterations, MIN_ITERATIONS, MAX_ITERATIONS, "iterations")
     warmups = _bounded_int(warmups, MIN_WARMUPS, MAX_WARMUPS, "warmups")
-    if isinstance(timeout, bool) or not isinstance(timeout, int | float) or not (
-            MIN_TIMEOUT <= timeout <= MAX_TIMEOUT):
+    if (
+        isinstance(timeout, bool)
+        or not isinstance(timeout, int | float)
+        or not (MIN_TIMEOUT <= timeout <= MAX_TIMEOUT)
+    ):
         raise ValueError(f"timeout must be between {MIN_TIMEOUT} and {MAX_TIMEOUT} seconds")
     if not isinstance(include_tls, bool):
         raise ValueError("include_tls must be a boolean")
@@ -800,30 +916,49 @@ def run_benchmarks(
     env = environment(caps)
     started = time.monotonic()
     results: list[dict[str, Any]] = []
-    runnable = [n for n in chosen
-                if _provider(caps, KNOWN_ALGORITHMS[n].kind, KNOWN_ALGORITHMS[n].list_name)]
+    runnable = [
+        n
+        for n in chosen
+        if _provider(caps, KNOWN_ALGORITHMS[n].kind, KNOWN_ALGORITHMS[n].list_name)
+    ]
     with _Workspace(workdir) if runnable else _NullWorkspace() as workspace:
-        results.append(_guard(_entry("baseline:openssl-version", "baseline", "none", []),
-                              partial(bench_baseline, plan)))
+        results.append(
+            _guard(
+                _entry("baseline:openssl-version", "baseline", "none", []),
+                partial(bench_baseline, plan),
+            )
+        )
         for name in chosen:
             spec = KNOWN_ALGORITHMS[name]
             member = [p for p in selected if name in PROFILE_ALGORITHMS[p]]
             entry = _entry(f"{spec.kind}:{name}", spec.kind, name, member)
             if name not in runnable:
-                entry = _fail(entry, UNSUPPORTED, f"ALGORITHM NOT AVAILABLE: {name} not "
-                              "listed by the pinned OpenSSL providers")
+                entry = _fail(
+                    entry,
+                    UNSUPPORTED,
+                    f"ALGORITHM NOT AVAILABLE: {name} not listed by the pinned OpenSSL providers",
+                )
             else:
                 bench = bench_signature if spec.kind == "signature" else bench_kem
                 entry = _guard(entry, partial(bench, spec, plan, workspace))
-            entry.update(profiles=member, family=spec.family, standard=spec.standard,
-                         scheme=spec.scheme,
-                         provider=_provider(caps, spec.kind, spec.list_name),
-                         interface="openssl genpkey/pkey/pkeyutl CLI")
+            entry.update(
+                profiles=member,
+                family=spec.family,
+                standard=spec.standard,
+                scheme=spec.scheme,
+                provider=_provider(caps, spec.kind, spec.list_name),
+                interface="openssl genpkey/pkey/pkeyutl CLI",
+            )
             results.append(entry)
         if include_tls:
             for name in selected:
-                fallback = _entry(f"tls:{name}", "tls_handshake", tls.PROFILES[name].group,
-                                  [name], network_attempted=True)
+                fallback = _entry(
+                    f"tls:{name}",
+                    "tls_handshake",
+                    tls.PROFILES[name].group,
+                    [name],
+                    network_attempted=True,
+                )
                 results.append(_guard(fallback, partial(bench_tls, name, plan, workdir, caps)))
     env["host"]["load_average_end"] = _loadavg()
     env["wall_time_s"] = round(time.monotonic() - started, 3)
@@ -885,10 +1020,15 @@ def _check_operation(op: Any, iterations: int, warmups: int, where: str) -> None
     if not isinstance(op, dict) or op.get("status") != SUCCESS:
         raise ValueError(f"{where}: operation must be SUCCESS")
     samples, warm = op.get("samples_ns"), op.get("warmup_samples_ns")
-    for name, values, count in (("samples_ns", samples, iterations),
-                                ("warmup_samples_ns", warm, warmups)):
-        if not isinstance(values, list) or len(values) != count or not all(
-                isinstance(v, int) and not isinstance(v, bool) and v > 0 for v in values):
+    for name, values, count in (
+        ("samples_ns", samples, iterations),
+        ("warmup_samples_ns", warm, warmups),
+    ):
+        if (
+            not isinstance(values, list)
+            or len(values) != count
+            or not all(isinstance(v, int) and not isinstance(v, bool) and v > 0 for v in values)
+        ):
             raise ValueError(f"{where}: {name} must hold {count} positive integers")
     assert isinstance(samples, list)
     if op.get("statistics") != summarize(samples):
@@ -909,16 +1049,18 @@ def validate_results(data: Any) -> dict[str, Any]:
     if any(marker in text for marker in _FORBIDDEN):
         raise ValueError("Benchmark evidence contains private or secret material markers")
     env = data.get("environment")
-    if not isinstance(env, dict) or not all(k in env for k in (
-            "timestamp_utc", "host", "os", "python", "openssl", "container")):
+    if not isinstance(env, dict) or not all(
+        k in env for k in ("timestamp_utc", "host", "os", "python", "openssl", "container")
+    ):
         raise ValueError("Benchmark environment metadata incomplete")
     if not env["openssl"].get("version") or "cpu_model" not in env["host"]:
         raise ValueError("Benchmark environment metadata incomplete")
     method = data.get("methodology")
     if not isinstance(method, dict):
         raise ValueError("Benchmark methodology missing")
-    iterations = _bounded_int(method.get("iterations"), MIN_ITERATIONS, MAX_ITERATIONS,
-                              "iterations")
+    iterations = _bounded_int(
+        method.get("iterations"), MIN_ITERATIONS, MAX_ITERATIONS, "iterations"
+    )
     warmups = _bounded_int(method.get("warmups"), MIN_WARMUPS, MAX_WARMUPS, "warmups")
     results = data.get("results")
     if not isinstance(results, list):
@@ -965,13 +1107,16 @@ def render_text(data: dict[str, Any]) -> str:
     ]
     for entry in data["results"]:
         if entry["status"] != SUCCESS:
-            lines.append(f"{entry['id'][:32]:32} {'-':12} {entry['status']:11} "
-                         f"{entry['reason'][:60]}")
+            lines.append(
+                f"{entry['id'][:32]:32} {'-':12} {entry['status']:11} {entry['reason'][:60]}"
+            )
             continue
         for name, op in entry["operations"].items():
             stats = op["statistics"]
             p95 = "n/a" if stats["p95_ms"] is None else f"{stats['p95_ms']:.3f}"
-            lines.append(f"{entry['id'][:32]:32} {name:12} {SUCCESS:11} "
-                         f"{stats['median_ms']:>10.3f} {p95:>9} {stats['min_ms']:>9.3f} "
-                         f"{stats['max_ms']:>9.3f}")
+            lines.append(
+                f"{entry['id'][:32]:32} {name:12} {SUCCESS:11} "
+                f"{stats['median_ms']:>10.3f} {p95:>9} {stats['min_ms']:>9.3f} "
+                f"{stats['max_ms']:>9.3f}"
+            )
     return "\n".join(lines) + "\n"

@@ -39,21 +39,39 @@ def required_hybrid(policy: dict) -> dict:
 
 
 def key(asset_id: str, algorithm: str, **kwargs: Any) -> Asset:
-    return Asset(asset_id=asset_id, asset_type="public_key", source="synthetic",
-                 algorithm=algorithm, **kwargs)
+    return Asset(
+        asset_id=asset_id,
+        asset_type="public_key",
+        source="synthetic",
+        algorithm=algorithm,
+        **kwargs,
+    )
 
 
 def endpoint(asset_id: str = "ep", group: str = "X25519", **kwargs: Any) -> Asset:
-    return Asset(asset_id=asset_id, asset_type="tls_endpoint", source="synthetic",
-                 tls_version="TLSv1.3", negotiated_group=group,
-                 cipher_suite="TLS_AES_256_GCM_SHA384", **kwargs)
+    return Asset(
+        asset_id=asset_id,
+        asset_type="tls_endpoint",
+        source="synthetic",
+        tls_version="TLSv1.3",
+        negotiated_group=group,
+        cipher_suite="TLS_AES_256_GCM_SHA384",
+        **kwargs,
+    )
 
 
 def row(group: str, status: str = "SUCCESS", **kwargs: Any) -> dict:
-    data = {"client": "openssl-3.5.9", "server": "openssl-3.5.9", "status": status,
-            "tls_version": "TLSv1.3", "negotiated_group": group,
-            "cipher_suite": "TLS_AES_256_GCM_SHA384", "certificate_type": "RSA",
-            "policy_pass": True, "error_reason": None}
+    data = {
+        "client": "openssl-3.5.9",
+        "server": "openssl-3.5.9",
+        "status": status,
+        "tls_version": "TLSv1.3",
+        "negotiated_group": group,
+        "cipher_suite": "TLS_AES_256_GCM_SHA384",
+        "certificate_type": "RSA",
+        "policy_pass": True,
+        "error_reason": None,
+    }
     data.update(kwargs)
     return data
 
@@ -78,11 +96,19 @@ def walk_keys(value: Any) -> set[str]:
     return set()
 
 
-REQUIRED_ITEM_FIELDS = {"asset_id", "priority", "reason", "dependency", "recommended_test",
-                        "blocker", "next_action"}
+REQUIRED_ITEM_FIELDS = {
+    "asset_id",
+    "priority",
+    "reason",
+    "dependency",
+    "recommended_test",
+    "blocker",
+    "next_action",
+}
 
 
 # ------------------------------------------------------------------ readiness states
+
 
 def test_ready_requires_complete_evidence_and_ready_outcomes(policy: dict) -> None:
     result = plan(inv(key("kem", "ML-KEM-768"), key("sig", "ML-DSA-65")), policy, now=NOW)
@@ -92,8 +118,7 @@ def test_ready_requires_complete_evidence_and_ready_outcomes(policy: dict) -> No
 
 
 def test_partially_ready_explains_pending_migration(policy: dict) -> None:
-    result = plan(inv(key("kem", "ML-KEM-768"), key("rsa", "RSA", key_size=3072)),
-                  policy, now=NOW)
+    result = plan(inv(key("kem", "ML-KEM-768"), key("rsa", "RSA", key_size=3072)), policy, now=NOW)
     assert result["readiness"] == "PARTIALLY_READY"
     rsa = item(result, "rsa")
     assert rsa["priority"] == "MEDIUM_TERM"
@@ -104,14 +129,18 @@ def test_partially_ready_explains_pending_migration(policy: dict) -> None:
     assert any("1 of 2 asset(s) meet a policy ready outcome" in r for r in result["reasons"])
 
 
-@pytest.mark.parametrize("unknown_asset", [
-    Asset(asset_id="mystery", asset_type="hsm_slot", source="s", algorithm="ML-KEM-768"),
-    key("mystery", "FrodoKEM-640"),
-    key("mystery", "RSA"),                     # missing key size
-    endpoint("mystery", group=None),           # type: ignore[arg-type]
-])
-def test_unknown_assets_or_missing_evidence_prevent_ready(policy: dict,
-                                                          unknown_asset: Asset) -> None:
+@pytest.mark.parametrize(
+    "unknown_asset",
+    [
+        Asset(asset_id="mystery", asset_type="hsm_slot", source="s", algorithm="ML-KEM-768"),
+        key("mystery", "FrodoKEM-640"),
+        key("mystery", "RSA"),  # missing key size
+        endpoint("mystery", group=None),  # type: ignore[arg-type]
+    ],
+)
+def test_unknown_assets_or_missing_evidence_prevent_ready(
+    policy: dict, unknown_asset: Asset
+) -> None:
     result = plan(inv(key("kem", "ML-KEM-768"), unknown_asset), policy, now=NOW)
     assert result["readiness"] == "UNKNOWN"
     mystery = item(result, "mystery")
@@ -122,8 +151,9 @@ def test_unknown_assets_or_missing_evidence_prevent_ready(policy: dict,
 
 
 def test_discovery_errors_and_empty_inventory_are_unknown(policy: dict) -> None:
-    errored = plan(inv(key("kem", "ML-KEM-768"), errors=[{"path": "x", "error": "denied"}]),
-                   policy, now=NOW)
+    errored = plan(
+        inv(key("kem", "ML-KEM-768"), errors=[{"path": "x", "error": "denied"}]), policy, now=NOW
+    )
     assert errored["readiness"] == "UNKNOWN"
     assert any("discovery error" in r for r in errored["reasons"])
     empty = plan(inv(), policy, now=NOW)
@@ -132,9 +162,15 @@ def test_discovery_errors_and_empty_inventory_are_unknown(policy: dict) -> None:
 
 
 def test_deprecated_dependency_blocks_with_immediate_priority(policy: dict) -> None:
-    weak = Asset(asset_id="legacy-cert", asset_type="certificate", source="s", algorithm="RSA",
-                 key_size=3072, signature_algorithm="sha1WithRSAEncryption",
-                 expiry="2030-01-01T00:00:00+00:00")
+    weak = Asset(
+        asset_id="legacy-cert",
+        asset_type="certificate",
+        source="s",
+        algorithm="RSA",
+        key_size=3072,
+        signature_algorithm="sha1WithRSAEncryption",
+        expiry="2030-01-01T00:00:00+00:00",
+    )
     result = plan(inv(weak, key("kem", "ML-KEM-768")), policy, now=NOW)
     assert result["readiness"] == "BLOCKED"
     legacy = item(result, "legacy-cert")
@@ -154,17 +190,18 @@ def test_required_hybrid_with_x25519_endpoint_blocks(required_hybrid: dict) -> N
 
 # ------------------------------------------------------------------ lab matrix evidence
 
+
 def test_matrix_hybrid_fallback_to_x25519_blocks_even_if_row_claims_pass(policy: dict) -> None:
-    lab = matrix(row("X25519", requested_group="X25519MLKEM768", profile="hybrid",
-                     policy_pass=True))
+    lab = matrix(
+        row("X25519", requested_group="X25519MLKEM768", profile="hybrid", policy_pass=True)
+    )
     result = plan(inv(endpoint("ep", "X25519")), policy, lab, now=NOW)
     assert result["readiness"] == "BLOCKED"
     evaluated = result["matrix"]["rows"][0]
     assert evaluated["status"] == "SUCCESS"
     assert evaluated["reported_policy_pass"] is True
     assert evaluated["compliant"] is False and evaluated["violation"] is True
-    assert any("a successful handshake is not policy compliance" in r
-               for r in result["reasons"])
+    assert any("a successful handshake is not policy compliance" in r for r in result["reasons"])
     assert item(result, "ep")["blocker_kind"] == "lab"
 
 
@@ -176,8 +213,10 @@ def test_matrix_profile_expected_group_alias_is_enforced(required_hybrid: dict) 
 
 
 def test_compliant_hybrid_matrix_row_is_cited_as_dependency_evidence(policy: dict) -> None:
-    lab = matrix(row("X25519MLKEM768", requested_group="X25519MLKEM768", profile="hybrid"),
-                 row("X25519", profile="classical"))
+    lab = matrix(
+        row("X25519MLKEM768", requested_group="X25519MLKEM768", profile="hybrid"),
+        row("X25519", profile="classical"),
+    )
     result = plan(inv(endpoint("ep", "X25519")), policy, lab, now=NOW)
     assert result["readiness"] == "PARTIALLY_READY"
     ep = item(result, "ep")
@@ -203,16 +242,19 @@ def test_pq_certificate_rows_count_as_authentication_evidence(policy: dict) -> N
     assert "demonstrate post-quantum authentication" in item(result, "rsa")["dependency"]
 
 
-@pytest.mark.parametrize("bad", [
-    [],
-    {"rows": []},
-    {"schema_version": "0.9", "rows": []},
-    {"schema_version": SCHEMA_VERSION, "rows": "not-a-list"},
-    {"schema_version": SCHEMA_VERSION, "rows": ["row"]},
-    {"schema_version": SCHEMA_VERSION, "rows": [{}] * 2001},
-    {"schema_version": SCHEMA_VERSION, "rows": [row("X25519", handshake_bytes=-5)]},
-    {"schema_version": SCHEMA_VERSION, "rows": [row("X25519", handshake_bytes=True)]},
-])
+@pytest.mark.parametrize(
+    "bad",
+    [
+        [],
+        {"rows": []},
+        {"schema_version": "0.9", "rows": []},
+        {"schema_version": SCHEMA_VERSION, "rows": "not-a-list"},
+        {"schema_version": SCHEMA_VERSION, "rows": ["row"]},
+        {"schema_version": SCHEMA_VERSION, "rows": [{}] * 2001},
+        {"schema_version": SCHEMA_VERSION, "rows": [row("X25519", handshake_bytes=-5)]},
+        {"schema_version": SCHEMA_VERSION, "rows": [row("X25519", handshake_bytes=True)]},
+    ],
+)
 def test_malformed_matrix_is_rejected(policy: dict, bad: Any) -> None:
     with pytest.raises(MigrationError):
         plan(inv(key("kem", "ML-KEM-768")), policy, bad, now=NOW)
@@ -220,9 +262,14 @@ def test_malformed_matrix_is_rejected(policy: dict, bad: Any) -> None:
 
 # ------------------------------------------------------------------ constraints and profiles
 
+
 def test_long_confidentiality_escalates_with_explanation(policy: dict) -> None:
-    result = plan(inv(endpoint("ep", "X25519"), key("sig", "Ed25519")), policy,
-                  constraints={"data_confidentiality_years": 25}, now=NOW)
+    result = plan(
+        inv(endpoint("ep", "X25519"), key("sig", "Ed25519")),
+        policy,
+        constraints={"data_confidentiality_years": 25},
+        now=NOW,
+    )
     ep, sig = item(result, "ep"), item(result, "sig")
     assert ep["priority"] == "SHORT_TERM"
     assert "harvest-now-decrypt-later" in ep["reason"]
@@ -230,19 +277,35 @@ def test_long_confidentiality_escalates_with_explanation(policy: dict) -> None:
 
 
 def test_per_asset_constraints_override_defaults(policy: dict) -> None:
-    result = plan(inv(key("a", "RSA", key_size=3072), key("b", "RSA", key_size=3072)), policy,
-                  constraints={"assets": {"b": {"system_lifetime_years": 30}}}, now=NOW)
+    result = plan(
+        inv(key("a", "RSA", key_size=3072), key("b", "RSA", key_size=3072)),
+        policy,
+        constraints={"assets": {"b": {"system_lifetime_years": 30}}},
+        now=NOW,
+    )
     assert item(result, "a")["priority"] == "MEDIUM_TERM"
     assert item(result, "b")["priority"] == "SHORT_TERM"
 
 
 def test_escalation_never_reaches_immediate_and_skips_ready_assets(constrained: dict) -> None:
-    constraints = {"data_confidentiality_years": 50, "system_lifetime_years": 50,
-                   "update_difficulty": "high",
-                   "measured_sizes": [{"label": "ML-KEM-768 ciphertext", "bytes": 1088,
-                                       "source": "benchmark run (test fixture)"}]}
-    result = plan(inv(key("rsa", "RSA", key_size=3072), key("kem", "ML-KEM-768")), constrained,
-                  constraints=constraints, now=NOW)
+    constraints = {
+        "data_confidentiality_years": 50,
+        "system_lifetime_years": 50,
+        "update_difficulty": "high",
+        "measured_sizes": [
+            {
+                "label": "ML-KEM-768 ciphertext",
+                "bytes": 1088,
+                "source": "benchmark run (test fixture)",
+            }
+        ],
+    }
+    result = plan(
+        inv(key("rsa", "RSA", key_size=3072), key("kem", "ML-KEM-768")),
+        constrained,
+        constraints=constraints,
+        now=NOW,
+    )
     rsa = item(result, "rsa")
     assert rsa["priority"] == "SHORT_TERM"
     assert "escalation capped at SHORT_TERM" in rsa["reason"]
@@ -251,16 +314,24 @@ def test_escalation_never_reaches_immediate_and_skips_ready_assets(constrained: 
 
 
 def test_default_profile_ignores_update_difficulty(policy: dict) -> None:
-    result = plan(inv(key("rsa", "RSA", key_size=3072)), policy,
-                  constraints={"update_difficulty": "high"}, now=NOW)
+    result = plan(
+        inv(key("rsa", "RSA", key_size=3072)),
+        policy,
+        constraints={"update_difficulty": "high"},
+        now=NOW,
+    )
     assert item(result, "rsa")["priority"] == "MEDIUM_TERM"
 
 
 def test_constrained_profile_without_measurements_reports_unknown_footprint(
     constrained: dict,
 ) -> None:
-    result = plan(inv(key("rsa", "RSA", key_size=3072)), constrained,
-                  constraints={"bandwidth_budget_bytes": 4096}, now=NOW)
+    result = plan(
+        inv(key("rsa", "RSA", key_size=3072)),
+        constrained,
+        constraints={"bandwidth_budget_bytes": 4096},
+        now=NOW,
+    )
     assert result["readiness"] == "UNKNOWN"
     assert result["footprint"]["status"] == "unknown"
     assert result["footprint"]["label"] is None
@@ -274,39 +345,55 @@ def test_constrained_profile_without_measurements_reports_unknown_footprint(
 
 
 def test_constrained_footprint_uses_measured_matrix_bytes(constrained: dict) -> None:
-    lab = matrix(row("X25519MLKEM768", handshake_bytes=3000),
-                 row("X25519MLKEM768", handshake_bytes=3200),
-                 row("X25519MLKEM768", handshake_bytes=3100),
-                 row("X25519MLKEM768", status="FAILED", handshake_bytes=99999))
-    result = plan(inv(endpoint("ep", "X25519")), constrained, lab,
-                  constraints={"bandwidth_budget_bytes": 3150}, now=NOW)
+    lab = matrix(
+        row("X25519MLKEM768", handshake_bytes=3000),
+        row("X25519MLKEM768", handshake_bytes=3200),
+        row("X25519MLKEM768", handshake_bytes=3100),
+        row("X25519MLKEM768", status="FAILED", handshake_bytes=99999),
+    )
+    result = plan(
+        inv(endpoint("ep", "X25519")),
+        constrained,
+        lab,
+        constraints={"bandwidth_budget_bytes": 3150},
+        now=NOW,
+    )
     footprint = result["footprint"]
     assert footprint["status"] == "measured"
     assert footprint["label"] == ESTIMATE_LABEL
-    assert footprint["handshake_measurements"] == [{
-        "group_rule_id": "grp-hybrid-x25519-mlkem768", "samples": 3,
-        "median_handshake_bytes": 3100, "min": 3000, "max": 3200,
-        "source": "matrix rows (local loopback lab)"}]
+    assert footprint["handshake_measurements"] == [
+        {
+            "group_rule_id": "grp-hybrid-x25519-mlkem768",
+            "samples": 3,
+            "median_handshake_bytes": 3100,
+            "min": 3000,
+            "max": 3200,
+            "source": "matrix rows (local loopback lab)",
+        }
+    ]
     assert footprint["within_declared_budget"] is False
     assert "exceeds the declared budget of 3150 bytes" in footprint["statement"]
     assert item(result, "ep")["blocker"] is None
     assert result["readiness"] == "PARTIALLY_READY"
 
 
-@pytest.mark.parametrize("bad", [
-    "high",
-    {"update_difficulty": "impossible"},
-    {"system_lifetime_years": -1},
-    {"system_lifetime_years": True},
-    {"data_confidentiality_years": "10"},
-    {"bandwidth_budget_bytes": 1 << 40},
-    {"mtu": 1500},
-    {"assets": {"a": {"unknown": 1}}},
-    {"assets": ["a"]},
-    {"measured_sizes": [{"label": "x", "bytes": 10}]},
-    {"measured_sizes": [{"label": "x", "bytes": -1, "source": "s"}]},
-    {"measured_sizes": [{"label": "\x1b[2J", "bytes": 1, "source": "s"}]},
-])
+@pytest.mark.parametrize(
+    "bad",
+    [
+        "high",
+        {"update_difficulty": "impossible"},
+        {"system_lifetime_years": -1},
+        {"system_lifetime_years": True},
+        {"data_confidentiality_years": "10"},
+        {"bandwidth_budget_bytes": 1 << 40},
+        {"mtu": 1500},
+        {"assets": {"a": {"unknown": 1}}},
+        {"assets": ["a"]},
+        {"measured_sizes": [{"label": "x", "bytes": 10}]},
+        {"measured_sizes": [{"label": "x", "bytes": -1, "source": "s"}]},
+        {"measured_sizes": [{"label": "\x1b[2J", "bytes": 1, "source": "s"}]},
+    ],
+)
 def test_invalid_constraints_are_rejected(bad: Any) -> None:
     with pytest.raises(MigrationError):
         validate_constraints(bad)
@@ -319,9 +406,14 @@ def test_planner_rejects_invalid_policy() -> None:
 
 # ------------------------------------------------------------------ contract properties
 
+
 def test_plan_contract_determinism_no_score_and_no_input_mutation(policy: dict) -> None:
-    inventory = inv(endpoint("ep", "X25519"), key("rsa", "RSA", key_size=2048),
-                    key("kem", "ML-KEM-768"), key("odd", "FrodoKEM-640"))
+    inventory = inv(
+        endpoint("ep", "X25519"),
+        key("rsa", "RSA", key_size=2048),
+        key("kem", "ML-KEM-768"),
+        key("odd", "FrodoKEM-640"),
+    )
     lab = matrix(row("X25519MLKEM768", handshake_bytes=3000))
     constraints = {"system_lifetime_years": 20}
     snapshot = copy.deepcopy((inventory, policy, lab, constraints))
@@ -343,6 +435,7 @@ def test_plan_contract_determinism_no_score_and_no_input_mutation(policy: dict) 
 
 
 # ------------------------------------------------------------------ markdown rendering
+
 
 def test_markdown_renders_plan_and_escapes_untrusted_text(policy: dict) -> None:
     evil = key("<script>alert(1)</script>|[x](http://evil.example)", "RSA", key_size=2048)
@@ -366,9 +459,15 @@ def test_markdown_includes_footprint_estimate_label(constrained: dict) -> None:
     assert "median 3000 bytes over 1 sample(s)" in text
 
 
-@pytest.mark.parametrize("bad", [None, {}, {"schema_version": SCHEMA_VERSION},
-                                 {"schema_version": SCHEMA_VERSION, "readiness": "GREAT",
-                                  "items": []}])
+@pytest.mark.parametrize(
+    "bad",
+    [
+        None,
+        {},
+        {"schema_version": SCHEMA_VERSION},
+        {"schema_version": SCHEMA_VERSION, "readiness": "GREAT", "items": []},
+    ],
+)
 def test_markdown_rejects_non_plans(bad: Any) -> None:
     with pytest.raises(MigrationError):
         render_markdown(bad)

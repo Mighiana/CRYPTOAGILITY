@@ -55,8 +55,9 @@ def _system_version() -> str | None:
 
 
 def _modes(root: Path) -> list[tuple[str, int]]:
-    return sorted((str(p.relative_to(root)), stat.S_IMODE(p.stat().st_mode))
-                  for p in root.rglob("*"))
+    return sorted(
+        (str(p.relative_to(root)), stat.S_IMODE(p.stat().st_mode)) for p in root.rglob("*")
+    )
 
 
 def _assert_clean(workdir: Path) -> None:
@@ -75,18 +76,36 @@ def _sample_ops(data: dict[str, Any]) -> list[dict[str, Any]]:
 # ------------------------------------------------------------------- unit: bounds & stats
 
 
-@pytest.mark.parametrize("kwargs", [
-    {"iterations": 4}, {"iterations": 501}, {"iterations": True}, {"iterations": "20"},
-    {"iterations": 20.0}, {"warmups": 1}, {"warmups": 51}, {"warmups": False},
-    {"timeout": 0.5}, {"timeout": 301}, {"timeout": True}, {"timeout": "5"},
-    {"profiles": "hybrid"}, {"profiles": []}, {"profiles": ["hybrid;rm -rf /"]},
-    {"profiles": ["HYBRID"]}, {"profiles": [None]},
-    {"algorithms": ["ML-DSA-65; id"]}, {"algorithms": "ML-DSA-65"}, {"algorithms": ["X448"]},
-    {"include_tls": "yes"}, {"algorithms": [], "include_tls": False},
-])
-def test_rejects_invalid_parameters_before_any_process(tmp_path: Path, monkeypatch:
-                                                       pytest.MonkeyPatch,
-                                                       kwargs: dict[str, Any]) -> None:
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"iterations": 4},
+        {"iterations": 501},
+        {"iterations": True},
+        {"iterations": "20"},
+        {"iterations": 20.0},
+        {"warmups": 1},
+        {"warmups": 51},
+        {"warmups": False},
+        {"timeout": 0.5},
+        {"timeout": 301},
+        {"timeout": True},
+        {"timeout": "5"},
+        {"profiles": "hybrid"},
+        {"profiles": []},
+        {"profiles": ["hybrid;rm -rf /"]},
+        {"profiles": ["HYBRID"]},
+        {"profiles": [None]},
+        {"algorithms": ["ML-DSA-65; id"]},
+        {"algorithms": "ML-DSA-65"},
+        {"algorithms": ["X448"]},
+        {"include_tls": "yes"},
+        {"algorithms": [], "include_tls": False},
+    ],
+)
+def test_rejects_invalid_parameters_before_any_process(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, kwargs: dict[str, Any]
+) -> None:
     monkeypatch.setenv("CRYPTOAGILITY_OPENSSL", str(tmp_path / "missing-openssl"))
     workdir = tmp_path / "work"
     with pytest.raises(ValueError):
@@ -139,8 +158,11 @@ def test_known_algorithms_cover_standardized_parameter_sets() -> None:
         assert profile in tls.PROFILES
         assert set(algorithms) <= names
     assert "ML-KEM-768" in benchmark.PROFILE_ALGORITHMS["hybrid"]
-    assert set(benchmark.PROFILE_ALGORITHMS["pqc"]) == {"ML-KEM-768", "ML-DSA-65",
-                                                        "SLH-DSA-SHA2-128s"}
+    assert set(benchmark.PROFILE_ALGORITHMS["pqc"]) == {
+        "ML-KEM-768",
+        "ML-DSA-65",
+        "SLH-DSA-SHA2-128s",
+    }
 
 
 def test_container_detection_sanitizes_environment(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -165,17 +187,22 @@ def full_run(tmp_path_factory: pytest.TempPathFactory) -> tuple[Path, dict[str, 
 
 
 @pytest.mark.integration
-def test_full_run_twenty_iterations_three_warmups(full_run: tuple[Path, dict[str, Any]]
-                                                  ) -> None:
+def test_full_run_twenty_iterations_three_warmups(full_run: tuple[Path, dict[str, Any]]) -> None:
     _, data = full_run
     benchmark.validate_results(data)
     assert data["schema_version"] == SCHEMA_VERSION
     assert data["summary"] == {"SUCCESS": 9, "UNSUPPORTED": 0, "ERROR": 0}
     ids = [e["id"] for e in data["results"]]
     assert ids == [
-        "baseline:openssl-version", "signature:RSA-3072", "signature:ECDSA-P-256",
-        "kem:ML-KEM-768", "signature:ML-DSA-65", "signature:SLH-DSA-SHA2-128s",
-        "tls:classical", "tls:hybrid", "tls:pqc",
+        "baseline:openssl-version",
+        "signature:RSA-3072",
+        "signature:ECDSA-P-256",
+        "kem:ML-KEM-768",
+        "signature:ML-DSA-65",
+        "signature:SLH-DSA-SHA2-128s",
+        "tls:classical",
+        "tls:hybrid",
+        "tls:pqc",
     ]
     for op in _sample_ops(data):
         assert len(op["samples_ns"]) == 20 and len(op["warmup_samples_ns"]) == 3
@@ -207,8 +234,7 @@ def test_environment_metadata(full_run: tuple[Path, dict[str, Any]]) -> None:
 
 
 @pytest.mark.integration
-def test_primitive_sizes_come_from_real_encodings(full_run: tuple[Path, dict[str, Any]]
-                                                  ) -> None:
+def test_primitive_sizes_come_from_real_encodings(full_run: tuple[Path, dict[str, Any]]) -> None:
     _, data = full_run
     by_id = {e["id"]: e for e in data["results"]}
     kem = by_id["kem:ML-KEM-768"]
@@ -218,8 +244,10 @@ def test_primitive_sizes_come_from_real_encodings(full_run: tuple[Path, dict[str
     assert kem["checks"]["every_shared_secret_matched"] is True
     assert kem["checks"]["shared_secrets_distinct"] is True
     assert kem["checks"]["truncated_ciphertext_rejected"] is True
-    assert kem["checks"]["tampered_ciphertext"] in ("implicit_rejection_different_secret",
-                                                    "rejected_with_error")
+    assert kem["checks"]["tampered_ciphertext"] in (
+        "implicit_rejection_different_secret",
+        "rejected_with_error",
+    )
     assert set(kem["operations"]) == {"keygen", "encapsulate", "decapsulate"}
     mldsa = by_id["signature:ML-DSA-65"]
     assert mldsa["sizes"]["signature_bytes"] == {"min": 3309, "max": 3309}  # FIPS 204
@@ -232,9 +260,11 @@ def test_primitive_sizes_come_from_real_encodings(full_run: tuple[Path, dict[str
     for name in ("RSA-3072", "ECDSA-P-256", "ML-DSA-65", "SLH-DSA-SHA2-128s"):
         entry = by_id[f"signature:{name}"]
         assert set(entry["operations"]) == {"keygen", "sign", "verify"}
-        assert entry["checks"] == {"every_signature_verified": True,
-                                   "tampered_signature_rejected": True,
-                                   "modified_message_rejected": True}
+        assert entry["checks"] == {
+            "every_signature_verified": True,
+            "tampered_signature_rejected": True,
+            "modified_message_rejected": True,
+        }
         assert entry["sizes"]["private_key_der_bytes"] > 0
         assert entry["provider"] == "default"
     assert by_id["signature:ML-DSA-65"]["standard"] == "FIPS 204"
@@ -243,13 +273,16 @@ def test_primitive_sizes_come_from_real_encodings(full_run: tuple[Path, dict[str
 
 
 @pytest.mark.integration
-def test_tls_profiles_measured_with_instrumented_bytes(full_run: tuple[Path, dict[str, Any]]
-                                                       ) -> None:
+def test_tls_profiles_measured_with_instrumented_bytes(
+    full_run: tuple[Path, dict[str, Any]],
+) -> None:
     _, data = full_run
     by_id = {e["id"]: e for e in data["results"]}
-    expected = {"classical": ("X25519", "classical", "RSA-3072", False),
-                "hybrid": ("X25519MLKEM768", "hybrid", "RSA-3072", True),
-                "pqc": ("MLKEM768", "pqc", "ML-DSA-65", False)}
+    expected = {
+        "classical": ("X25519", "classical", "RSA-3072", False),
+        "hybrid": ("X25519MLKEM768", "hybrid", "RSA-3072", True),
+        "pqc": ("MLKEM768", "pqc", "ML-DSA-65", False),
+    }
     for name, (group, kind, cert, policy_pass) in expected.items():
         entry = by_id[f"tls:{name}"]
         assert entry["status"] == "SUCCESS" and entry["network_attempted"] is True
@@ -263,8 +296,9 @@ def test_tls_profiles_measured_with_instrumented_bytes(full_run: tuple[Path, dic
         assert sizes["served_chain_der_bytes"] > sizes["leaf_certificate_der_bytes"]
         assert sizes["handshake_bytes_read"]["min"] > sizes["served_chain_der_bytes"]
         total = sizes["handshake_bytes_total"]
-        assert total["min"] == (sizes["handshake_bytes_read"]["min"]
-                                + sizes["handshake_bytes_written"]["min"])
+        assert total["min"] == (
+            sizes["handshake_bytes_read"]["min"] + sizes["handshake_bytes_written"]["min"]
+        )
         assert entry["operations"]["handshake"]["timing_source"].startswith("TLS samples")
     classical, hybrid, pqc = (by_id[f"tls:{n}"]["sizes"] for n in expected)
     # The X25519MLKEM768 key share (1184-byte ML-KEM-768 encapsulation key + 32-byte X25519
@@ -278,11 +312,21 @@ def test_tls_profiles_measured_with_instrumented_bytes(full_run: tuple[Path, dic
 
 @pytest.mark.integration
 def test_evidence_has_no_secrets_paths_and_runtime_is_cleaned(
-        full_run: tuple[Path, dict[str, Any]]) -> None:
+    full_run: tuple[Path, dict[str, Any]],
+) -> None:
     workdir, data = full_run
     text = json.dumps(data)
-    for marker in ("PRIVATE KEY", "BEGIN", "Master-Key", "PSK", ".pem", str(workdir),
-                   tempfile.gettempdir(), "benchmark-lab", "tls-lab"):
+    for marker in (
+        "PRIVATE KEY",
+        "BEGIN",
+        "Master-Key",
+        "PSK",
+        ".pem",
+        str(workdir),
+        tempfile.gettempdir(),
+        "benchmark-lab",
+        "tls-lab",
+    ):
         assert marker not in text
     assert json.loads(text) == data
     benchmark.validate_results(json.loads(text))
@@ -292,13 +336,19 @@ def test_evidence_has_no_secrets_paths_and_runtime_is_cleaned(
 
 @pytest.mark.integration
 def test_capability_inventory_detects_but_benchmarks_in_depth(
-        full_run: tuple[Path, dict[str, Any]]) -> None:
+    full_run: tuple[Path, dict[str, Any]],
+) -> None:
     _, data = full_run
     inv = data["capabilities"]
     assert len(inv["standardized"]["slh_dsa"]) == 12
     assert set(inv["known_algorithms_available"]) == set(benchmark.KNOWN_ALGORITHMS)
-    assert inv["benchmarked_algorithms"] == ["RSA-3072", "ECDSA-P-256", "ML-KEM-768",
-                                             "ML-DSA-65", "SLH-DSA-SHA2-128s"]
+    assert inv["benchmarked_algorithms"] == [
+        "RSA-3072",
+        "ECDSA-P-256",
+        "ML-KEM-768",
+        "ML-DSA-65",
+        "SLH-DSA-SHA2-128s",
+    ]
     assert "ML-DSA-87" in inv["available_not_benchmarked"]
     assert "X25519MLKEM768" in inv["tls_group_classes"]["hybrid"]
     assert inv["standardization_note"] == tls.STANDARDIZATION_NOTE
@@ -336,23 +386,26 @@ def _tamper_cases() -> list[tuple[str, Any]]:
         ("summary", lambda d: d["summary"].update(SUCCESS=99)),
         ("bad status", lambda d: d["results"][1].update(status="PASS")),
         ("duplicate", lambda d: d["results"].append(copy.deepcopy(d["results"][1]))),
-        ("private key", lambda d: d["results"][1].update(
-            note="-----BEGIN PRIVATE KEY-----")),
+        ("private key", lambda d: d["results"][1].update(note="-----BEGIN PRIVATE KEY-----")),
         ("no openssl", lambda d: d["environment"]["openssl"].update(version=None)),
         ("no env", lambda d: d.pop("environment")),
         ("success without ops", lambda d: d["results"][1].update(operations={})),
-        ("error with samples", lambda d: d["results"][1].update(status="ERROR",
-                                                                 reason="x")),
-        ("unsupported without reason", lambda d: d["results"][1].update(
-            status="UNSUPPORTED", operations={}, sizes={}, reason=None)),
+        ("error with samples", lambda d: d["results"][1].update(status="ERROR", reason="x")),
+        (
+            "unsupported without reason",
+            lambda d: d["results"][1].update(
+                status="UNSUPPORTED", operations={}, sizes={}, reason=None
+            ),
+        ),
     ]
     return cases
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize("name,mutate", _tamper_cases(), ids=[c[0] for c in _tamper_cases()])
-def test_validate_rejects_tampered_evidence(full_run: tuple[Path, dict[str, Any]], name: str,
-                                            mutate: Any) -> None:
+def test_validate_rejects_tampered_evidence(
+    full_run: tuple[Path, dict[str, Any]], name: str, mutate: Any
+) -> None:
     _, data = full_run
     tampered = copy.deepcopy(data)
     mutate(tampered)
@@ -372,8 +425,9 @@ def test_validate_rejects_non_results(data: Any) -> None:
 @pytest.mark.integration
 @pytest.mark.parametrize("n", [5, 19])
 def test_small_runs_omit_p95_and_reject_fabricated_p95(tmp_path: Path, n: int) -> None:
-    data = benchmark.run_benchmarks(tmp_path, iterations=n, warmups=2,
-                                    algorithms=["ECDSA-P-256"], include_tls=False)
+    data = benchmark.run_benchmarks(
+        tmp_path, iterations=n, warmups=2, algorithms=["ECDSA-P-256"], include_tls=False
+    )
     benchmark.validate_results(data)
     for op in _sample_ops(data):
         assert len(op["samples_ns"]) == n and op["statistics"]["p95_ns"] is None
@@ -381,8 +435,11 @@ def test_small_runs_omit_p95_and_reject_fabricated_p95(tmp_path: Path, n: int) -
     tampered["results"][1]["operations"]["sign"]["statistics"]["p95_ns"] = 123
     with pytest.raises(ValueError):
         benchmark.validate_results(tampered)
-    assert data["requested"] == {"profiles": ["classical", "hybrid", "pqc"],
-                                 "algorithms": ["ECDSA-P-256"], "include_tls": False}
+    assert data["requested"] == {
+        "profiles": ["classical", "hybrid", "pqc"],
+        "algorithms": ["ECDSA-P-256"],
+        "include_tls": False,
+    }
     _assert_clean(tmp_path)
 
 
@@ -391,23 +448,30 @@ def test_small_runs_omit_p95_and_reject_fabricated_p95(tmp_path: Path, n: int) -
 
 def _reduced_caps() -> dict[str, Any]:
     caps = json.loads(json.dumps(tls.capabilities()))
-    caps["signature_algorithms"] = [e for e in caps["signature_algorithms"]
-                                    if not any(n.startswith("ML-DSA") for n in e["names"])]
-    caps["kem_algorithms"] = [e for e in caps["kem_algorithms"]
-                              if not any(n.startswith("ML-KEM") for n in e["names"])]
+    caps["signature_algorithms"] = [
+        e
+        for e in caps["signature_algorithms"]
+        if not any(n.startswith("ML-DSA") for n in e["names"])
+    ]
+    caps["kem_algorithms"] = [
+        e for e in caps["kem_algorithms"] if not any(n.startswith("ML-KEM") for n in e["names"])
+    ]
     caps["tls13_groups"] = [g for g in caps["tls13_groups"] if "MLKEM" not in g.upper()]
     caps["x509"]["ML-DSA-65"] = {"supported": False}
     return caps
 
 
 @pytest.mark.integration
-def test_unavailable_algorithms_and_profiles_are_explicitly_unsupported(tmp_path: Path
-                                                                        ) -> None:
+def test_unavailable_algorithms_and_profiles_are_explicitly_unsupported(tmp_path: Path) -> None:
     workdir = tmp_path / "work"
-    data = benchmark.run_benchmarks(workdir, iterations=5, warmups=2,
-                                    profiles=["hybrid", "pqc"],
-                                    algorithms=["ML-DSA-65", "ML-KEM-768"],
-                                    caps=_reduced_caps())
+    data = benchmark.run_benchmarks(
+        workdir,
+        iterations=5,
+        warmups=2,
+        profiles=["hybrid", "pqc"],
+        algorithms=["ML-DSA-65", "ML-KEM-768"],
+        caps=_reduced_caps(),
+    )
     benchmark.validate_results(data)
     by_id = {e["id"]: e for e in data["results"]}
     assert data["summary"] == {"SUCCESS": 1, "UNSUPPORTED": 4, "ERROR": 0}
@@ -424,13 +488,20 @@ def test_unavailable_algorithms_and_profiles_are_explicitly_unsupported(tmp_path
 
 
 @pytest.mark.integration
-@pytest.mark.skipif("OpenSSL 3.0" not in (_system_version() or ""),
-                    reason="Ubuntu system OpenSSL 3.0.x not present")
-def test_real_legacy_openssl_marks_pqc_unsupported(tmp_path: Path,
-                                                   monkeypatch: pytest.MonkeyPatch) -> None:
+@pytest.mark.skipif(
+    "OpenSSL 3.0" not in (_system_version() or ""), reason="Ubuntu system OpenSSL 3.0.x not present"
+)
+def test_real_legacy_openssl_marks_pqc_unsupported(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.setenv("CRYPTOAGILITY_OPENSSL", str(SYSTEM_OPENSSL))
-    data = benchmark.run_benchmarks(tmp_path, iterations=5, warmups=2, profiles=["hybrid"],
-                                    algorithms=["ECDSA-P-256", "ML-KEM-768", "ML-DSA-65"])
+    data = benchmark.run_benchmarks(
+        tmp_path,
+        iterations=5,
+        warmups=2,
+        profiles=["hybrid"],
+        algorithms=["ECDSA-P-256", "ML-KEM-768", "ML-DSA-65"],
+    )
     benchmark.validate_results(data)
     by_id = {e["id"]: e for e in data["results"]}
     assert data["environment"]["openssl"]["version_number"].startswith("3.0.")
@@ -461,41 +532,52 @@ def _has(flag: str) -> str:
 
 FAULTS = {
     "verify accepts everything": (
-        ["ECDSA-P-256"], _has("-verify")
+        ["ECDSA-P-256"],
+        _has("-verify")
         + 'if [ -n "$HIT" ]; then echo "Signature Verified Successfully"; exit 0; fi',
-        "tampered signature accepted"),
+        "tampered signature accepted",
+    ),
     "verify always fails": (
-        ["ML-DSA-65"], _has("-verify") + 'if [ -n "$HIT" ]; then exit 1; fi',
-        "pkeyutl failed"),
+        ["ML-DSA-65"],
+        _has("-verify") + 'if [ -n "$HIT" ]; then exit 1; fi',
+        "pkeyutl failed",
+    ),
     "decap returns wrong secret": (
-        ["ML-KEM-768"], _has("-decap")
-        + 'if [ -n "$HIT" ]; then head -c 32 /dev/urandom; exit 0; fi',
-        "does not match"),
+        ["ML-KEM-768"],
+        _has("-decap") + 'if [ -n "$HIT" ]; then head -c 32 /dev/urandom; exit 0; fi',
+        "does not match",
+    ),
     "decap crashes": (
-        ["ML-KEM-768"], _has("-decap") + 'if [ -n "$HIT" ]; then exit 3; fi',
-        "pkeyutl failed"),
+        ["ML-KEM-768"],
+        _has("-decap") + 'if [ -n "$HIT" ]; then exit 3; fi',
+        "pkeyutl failed",
+    ),
     "keygen emits no key": (
-        ["RSA-3072"], 'if [ "$1" = "genpkey" ]; then echo nothing; exit 0; fi',
-        "did not return"),
+        ["RSA-3072"],
+        'if [ "$1" = "genpkey" ]; then echo nothing; exit 0; fi',
+        "did not return",
+    ),
     "encap repeats secret": (
-        ["ML-KEM-768"], _has("-encap")
-        + 'if [ -n "$HIT" ]; then "$REAL" "$@" >/dev/null || exit 1; '
-          'printf "%032d" 0; exit 0; fi',
-        "repeated shared secret"),
+        ["ML-KEM-768"],
+        _has("-encap") + 'if [ -n "$HIT" ]; then "$REAL" "$@" >/dev/null || exit 1; '
+        'printf "%032d" 0; exit 0; fi',
+        "repeated shared secret",
+    ),
 }
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize("fault", list(FAULTS))
-def test_faulty_openssl_yields_error_without_samples(tmp_path: Path,
-                                                     monkeypatch: pytest.MonkeyPatch,
-                                                     fault: str) -> None:
+def test_faulty_openssl_yields_error_without_samples(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, fault: str
+) -> None:
     algorithms, body, reason = FAULTS[fault]
     caps = tls.capabilities()
     monkeypatch.setenv("CRYPTOAGILITY_OPENSSL", str(_wrapper(tmp_path, body)))
     workdir = tmp_path / "work"
-    data = benchmark.run_benchmarks(workdir, iterations=5, warmups=2, algorithms=algorithms,
-                                    include_tls=False, caps=caps)
+    data = benchmark.run_benchmarks(
+        workdir, iterations=5, warmups=2, algorithms=algorithms, include_tls=False, caps=caps
+    )
     benchmark.validate_results(data)
     entry = data["results"][1]
     assert entry["status"] == "ERROR", entry
@@ -511,8 +593,15 @@ def test_operation_timeout_is_error(tmp_path: Path, monkeypatch: pytest.MonkeyPa
     caps = tls.capabilities()
     body = _has("-sign") + 'if [ -n "$HIT" ]; then sleep 5; fi'
     monkeypatch.setenv("CRYPTOAGILITY_OPENSSL", str(_wrapper(tmp_path, body)))
-    data = benchmark.run_benchmarks(tmp_path / "w", iterations=5, warmups=2, timeout=1,
-                                    algorithms=["ECDSA-P-256"], include_tls=False, caps=caps)
+    data = benchmark.run_benchmarks(
+        tmp_path / "w",
+        iterations=5,
+        warmups=2,
+        timeout=1,
+        algorithms=["ECDSA-P-256"],
+        include_tls=False,
+        caps=caps,
+    )
     entry = data["results"][1]
     assert entry["status"] == "ERROR" and "timed out" in entry["reason"]
     assert entry["operations"] == {}
@@ -520,13 +609,15 @@ def test_operation_timeout_is_error(tmp_path: Path, monkeypatch: pytest.MonkeyPa
 
 
 @pytest.mark.integration
-def test_failed_tls_handshakes_are_error_not_samples(tmp_path: Path,
-                                                     monkeypatch: pytest.MonkeyPatch) -> None:
+def test_failed_tls_handshakes_are_error_not_samples(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     caps = tls.capabilities()
     body = 'if [ "$1" = "s_client" ]; then echo "garbage"; exit 1; fi'
     monkeypatch.setenv("CRYPTOAGILITY_OPENSSL", str(_wrapper(tmp_path, body)))
-    data = benchmark.run_benchmarks(tmp_path / "w", iterations=5, warmups=2,
-                                    profiles=["classical"], algorithms=[], caps=caps)
+    data = benchmark.run_benchmarks(
+        tmp_path / "w", iterations=5, warmups=2, profiles=["classical"], algorithms=[], caps=caps
+    )
     benchmark.validate_results(data)
     entry = {e["id"]: e for e in data["results"]}["tls:classical"]
     assert entry["status"] == "ERROR"
@@ -537,14 +628,17 @@ def test_failed_tls_handshakes_are_error_not_samples(tmp_path: Path,
 
 
 @pytest.mark.integration
-def test_missing_handshake_counters_are_error(tmp_path: Path,
-                                              monkeypatch: pytest.MonkeyPatch) -> None:
+def test_missing_handshake_counters_are_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     caps = tls.capabilities()
-    body = ('if [ "$1" = "s_client" ]; then "$REAL" "$@" | '
-            'sed "/SSL handshake has read/d"; exit 0; fi')
+    body = (
+        'if [ "$1" = "s_client" ]; then "$REAL" "$@" | sed "/SSL handshake has read/d"; exit 0; fi'
+    )
     monkeypatch.setenv("CRYPTOAGILITY_OPENSSL", str(_wrapper(tmp_path, body)))
-    data = benchmark.run_benchmarks(tmp_path / "w", iterations=5, warmups=2,
-                                    profiles=["hybrid"], algorithms=[], caps=caps)
+    data = benchmark.run_benchmarks(
+        tmp_path / "w", iterations=5, warmups=2, profiles=["hybrid"], algorithms=[], caps=caps
+    )
     entry = {e["id"]: e for e in data["results"]}["tls:hybrid"]
     assert entry["status"] == "ERROR"
     assert "counters missing" in entry["reason"]
@@ -561,22 +655,28 @@ def test_symlinked_workdir_and_runtime_rejected(tmp_path: Path) -> None:
     link = tmp_path / "link"
     link.symlink_to(real)
     with pytest.raises(ValueError):
-        benchmark.run_benchmarks(link, iterations=5, warmups=2, algorithms=["ECDSA-P-256"],
-                                 include_tls=False)
+        benchmark.run_benchmarks(
+            link, iterations=5, warmups=2, algorithms=["ECDSA-P-256"], include_tls=False
+        )
     work = tmp_path / "work"
     work.mkdir()
     (work / "benchmark-lab").symlink_to(real)
     with pytest.raises(ValueError):
-        benchmark.run_benchmarks(work, iterations=5, warmups=2, algorithms=["ECDSA-P-256"],
-                                 include_tls=False)
+        benchmark.run_benchmarks(
+            work, iterations=5, warmups=2, algorithms=["ECDSA-P-256"], include_tls=False
+        )
     assert list(real.iterdir()) == []
 
 
 @pytest.mark.integration
 def test_keys_never_outlive_successful_run(tmp_path: Path) -> None:
-    data = benchmark.run_benchmarks(tmp_path, iterations=5, warmups=2,
-                                    algorithms=["ML-KEM-768", "SLH-DSA-SHAKE-128f"],
-                                    include_tls=False)
+    data = benchmark.run_benchmarks(
+        tmp_path,
+        iterations=5,
+        warmups=2,
+        algorithms=["ML-KEM-768", "SLH-DSA-SHAKE-128f"],
+        include_tls=False,
+    )
     benchmark.validate_results(data)
     assert [e["status"] for e in data["results"]] == ["SUCCESS"] * 3
     leftovers = [p for p in tmp_path.rglob("*") if p.is_file() and p.name != ".gitignore"]

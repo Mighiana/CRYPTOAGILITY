@@ -133,8 +133,12 @@ def parse_json(raw: bytes) -> Any:
     except UnicodeDecodeError:
         raise EvidenceError("file is not valid UTF-8") from None
     try:
-        data = json.loads(text, object_pairs_hook=_no_duplicates,
-                          parse_constant=_reject_constant, parse_float=_finite_float)
+        data = json.loads(
+            text,
+            object_pairs_hook=_no_duplicates,
+            parse_constant=_reject_constant,
+            parse_float=_finite_float,
+        )
     except EvidenceError:
         raise
     except RecursionError:
@@ -175,16 +179,18 @@ def _int(value: Any, where: str, *, optional: bool = False, low: int = 0) -> Non
     if value is None and optional:
         return
     if isinstance(value, bool) or not isinstance(value, int) or value < low:
-        raise EvidenceError(f"{where} must be an integer >= {low}"
-                            + (" or null" if optional else ""))
+        raise EvidenceError(
+            f"{where} must be an integer >= {low}" + (" or null" if optional else "")
+        )
 
 
 def _num(value: Any, where: str, *, optional: bool = False) -> None:
     if value is None and optional:
         return
     if isinstance(value, bool) or not isinstance(value, int | float) or value < 0:
-        raise EvidenceError(f"{where} must be a non-negative number"
-                            + (" or null" if optional else ""))
+        raise EvidenceError(
+            f"{where} must be a non-negative number" + (" or null" if optional else "")
+        )
 
 
 def _bool(value: Any, where: str, *, optional: bool = False) -> None:
@@ -194,8 +200,7 @@ def _bool(value: Any, where: str, *, optional: bool = False) -> None:
         raise EvidenceError(f"{where} must be a boolean" + (" or null" if optional else ""))
 
 
-def _choice(value: Any, where: str, choices: tuple[str, ...], *, optional: bool = False
-            ) -> None:
+def _choice(value: Any, where: str, choices: tuple[str, ...], *, optional: bool = False) -> None:
     if value is None and optional:
         return
     if value not in choices:
@@ -228,9 +233,17 @@ def _counts(actual: list[str], declared: Any, choices: tuple[str, ...], where: s
 _ASSET_FIELDS = frozenset(f.name for f in fields(Asset))
 _ASSET_REQUIRED = ("asset_id", "asset_type", "source")
 _ASSET_TEXT = ("algorithm_family", "algorithm", "migration_status")
-_ASSET_OPTIONAL_TEXT = ("parameter_set", "signature_algorithm", "tls_version", "cipher_suite",
-                        "negotiated_group", "certificate_subject", "issuer", "expiry",
-                        "policy_result")
+_ASSET_OPTIONAL_TEXT = (
+    "parameter_set",
+    "signature_algorithm",
+    "tls_version",
+    "cipher_suite",
+    "negotiated_group",
+    "certificate_subject",
+    "issuer",
+    "expiry",
+    "policy_result",
+)
 
 
 def _asset(value: Any, where: str) -> None:
@@ -286,7 +299,8 @@ def validate_cbom(data: Any) -> dict[str, Any]:
     _int(summary.get("asset_count"), "summary.asset_count")
     _int(summary.get("error_count"), "summary.error_count")
     if summary["asset_count"] != len(data["assets"]) or (
-            summary["error_count"] != len(data.get("errors", []))):
+        summary["error_count"] != len(data.get("errors", []))
+    ):
         raise EvidenceError("cbom summary counts do not match the listed assets/errors")
     return data
 
@@ -306,14 +320,20 @@ def validate_policy(data: Any) -> dict[str, Any]:
         for name in ("asset_id", "asset_type", "source", "current_algorithm"):
             _str(finding.get(name), f"{where}.{name}")
         _choice(finding.get("outcome"), f"{where}.outcome", policy.OUTCOMES)
-        _choice(finding.get("known_outcome"), f"{where}.known_outcome", policy.OUTCOMES,
-                optional=True)
+        _choice(
+            finding.get("known_outcome"), f"{where}.known_outcome", policy.OUTCOMES, optional=True
+        )
         _choice(finding.get("evidence_status"), f"{where}.evidence_status", _EVIDENCE_STATUSES)
         _bool(finding.get("compliant"), f"{where}.compliant")
         _bool(finding.get("quantum_vulnerable"), f"{where}.quantum_vulnerable", optional=True)
         _str(finding.get("expiry_status"), f"{where}.expiry_status", optional=True)
-        for name in ("quantum_vulnerable_usages", "rule_ids", "reasons", "migration_options",
-                     "recommended_tests"):
+        for name in (
+            "quantum_vulnerable_usages",
+            "rule_ids",
+            "reasons",
+            "migration_options",
+            "recommended_tests",
+        ):
             _strs(finding.get(name), f"{where}.{name}")
         if not finding["reasons"]:
             raise EvidenceError(f"{where}.reasons must explain the outcome")
@@ -323,8 +343,12 @@ def validate_policy(data: Any) -> dict[str, Any]:
     _int(summary.get("total_assets"), "summary.total_assets")
     if summary["total_assets"] != len(findings):
         raise EvidenceError("summary.total_assets does not match the findings")
-    _counts([f["outcome"] for f in findings], summary.get("by_outcome"), policy.OUTCOMES,
-            "summary.by_outcome")
+    _counts(
+        [f["outcome"] for f in findings],
+        summary.get("by_outcome"),
+        policy.OUTCOMES,
+        "summary.by_outcome",
+    )
     for name in ("compliant", "evidence_incomplete", "quantum_vulnerable", "inventory_errors"):
         _int(summary.get(name), f"summary.{name}")
     return data
@@ -341,16 +365,27 @@ def validate_plan(data: Any) -> dict[str, Any]:
     for index, value in enumerate(items):
         where = f"items[{index}]"
         item = _obj(value, where)
-        for name in ("asset_id", "asset_type", "current_algorithm", "reason", "dependency",
-                     "recommended_test", "next_action"):
+        for name in (
+            "asset_id",
+            "asset_type",
+            "current_algorithm",
+            "reason",
+            "dependency",
+            "recommended_test",
+            "next_action",
+        ):
             _str(item.get(name), f"{where}.{name}")
         _choice(item.get("outcome"), f"{where}.outcome", policy.OUTCOMES)
         _choice(item.get("evidence_status"), f"{where}.evidence_status", _EVIDENCE_STATUSES)
         _choice(item.get("priority"), f"{where}.priority", policy.PRIORITIES)
         _bool(item.get("ready"), f"{where}.ready")
         _str(item.get("blocker"), f"{where}.blocker", optional=True)
-        _choice(item.get("blocker_kind"), f"{where}.blocker_kind", migration.BLOCKER_KINDS,
-                optional=True)
+        _choice(
+            item.get("blocker_kind"),
+            f"{where}.blocker_kind",
+            migration.BLOCKER_KINDS,
+            optional=True,
+        )
         if (item["blocker"] is None) != (item["blocker_kind"] is None):
             raise EvidenceError(f"{where} blocker and blocker_kind must be set together")
         if item["ready"] and item["blocker"] is not None:
@@ -362,10 +397,15 @@ def validate_plan(data: Any) -> dict[str, Any]:
     for name in ("total_assets", "ready_assets", "inventory_errors"):
         _int(summary.get(name), f"summary.{name}")
     if summary["total_assets"] != len(items) or (
-            summary["ready_assets"] != sum(1 for i in items if i["ready"])):
+        summary["ready_assets"] != sum(1 for i in items if i["ready"])
+    ):
         raise EvidenceError("plan summary counts do not match the items")
-    _counts([i["priority"] for i in items], summary.get("by_priority"), policy.PRIORITIES,
-            "summary.by_priority")
+    _counts(
+        [i["priority"] for i in items],
+        summary.get("by_priority"),
+        policy.PRIORITIES,
+        "summary.by_priority",
+    )
     lab = data.get("matrix")
     if lab is not None:
         lab = _obj(lab, "matrix")
@@ -379,12 +419,13 @@ def validate_plan(data: Any) -> dict[str, Any]:
     _choice(footprint.get("status"), "footprint.status", ("measured", "unknown"))
     _str(footprint.get("statement"), "footprint.statement")
     _str(footprint.get("label"), "footprint.label", optional=True)
-    _int(footprint.get("declared_budget_bytes"), "footprint.declared_budget_bytes",
-         optional=True)
-    _bool(footprint.get("within_declared_budget"), "footprint.within_declared_budget",
-          optional=True)
-    for index, m in enumerate(_arr(footprint.get("handshake_measurements"),
-                                   "footprint.handshake_measurements")):
+    _int(footprint.get("declared_budget_bytes"), "footprint.declared_budget_bytes", optional=True)
+    _bool(
+        footprint.get("within_declared_budget"), "footprint.within_declared_budget", optional=True
+    )
+    for index, m in enumerate(
+        _arr(footprint.get("handshake_measurements"), "footprint.handshake_measurements")
+    ):
         where = f"footprint.handshake_measurements[{index}]"
         m = _obj(m, where)
         _str(m.get("group_rule_id"), f"{where}.group_rule_id")
@@ -397,12 +438,30 @@ def validate_plan(data: Any) -> dict[str, Any]:
     return data
 
 
-_ROW_TEXT = ("negotiated_group", "negotiated_group_kind", "tls_version", "cipher_suite",
-             "certificate_type", "certificate_signature_algorithm", "peer_signature_type",
-             "failure_kind", "error_reason", "experiment", "server_profile", "server_group",
-             "server_certificate_key", "server_credential_variant", "client_binary_version")
-_ROW_INTS = ("certificate_der_bytes", "chain_der_bytes", "chain_length",
-             "handshake_bytes_read", "handshake_bytes_written")
+_ROW_TEXT = (
+    "negotiated_group",
+    "negotiated_group_kind",
+    "tls_version",
+    "cipher_suite",
+    "certificate_type",
+    "certificate_signature_algorithm",
+    "peer_signature_type",
+    "failure_kind",
+    "error_reason",
+    "experiment",
+    "server_profile",
+    "server_group",
+    "server_certificate_key",
+    "server_credential_variant",
+    "client_binary_version",
+)
+_ROW_INTS = (
+    "certificate_der_bytes",
+    "chain_der_bytes",
+    "chain_length",
+    "handshake_bytes_read",
+    "handshake_bytes_written",
+)
 
 
 def validate_matrix(data: Any) -> dict[str, Any]:
@@ -423,16 +482,23 @@ def validate_matrix(data: Any) -> dict[str, Any]:
         for name in _ROW_INTS:
             _int(row.get(name), f"{where}.{name}", optional=True)
         _num(row.get("client_process_ms"), f"{where}.client_process_ms", optional=True)
-        if row["status"] == tls.SUCCESS and not (row.get("negotiated_group")
-                                                 and row.get("tls_version")):
+        if row["status"] == tls.SUCCESS and not (
+            row.get("negotiated_group") and row.get("tls_version")
+        ):
             raise EvidenceError(f"{where} SUCCESS without a negotiated group and TLS version")
         if row["status"] == tls.UNSUPPORTED and row.get("network_attempted"):
             raise EvidenceError(f"{where} UNSUPPORTED rows must not attempt the network")
         if row.get("policy_pass") is True and not row.get("negotiated_group"):
             raise EvidenceError(f"{where} cannot pass policy without a negotiated connection")
     environment = _obj(data.get("environment", {}), "environment")
-    for name in ("latency_semantics", "standardization", "generated_at", "platform",
-                 "legacy_client", "hostname"):
+    for name in (
+        "latency_semantics",
+        "standardization",
+        "generated_at",
+        "platform",
+        "legacy_client",
+        "hostname",
+    ):
         _str(environment.get(name), f"environment.{name}", optional=True)
     _obj(environment.get("openssl", {}), "environment.openssl")
     _obj(data.get("policy", {}), "policy")

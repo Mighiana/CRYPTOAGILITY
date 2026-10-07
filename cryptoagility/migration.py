@@ -44,8 +44,12 @@ ESTIMATE_LABEL = (
     "ESTIMATE: derived only from byte counts measured in the local lab; not network, MTU, "
     "latency or field evidence."
 )
-_CONSTRAINT_KEYS = ("data_confidentiality_years", "system_lifetime_years", "update_difficulty",
-                    "bandwidth_budget_bytes")
+_CONSTRAINT_KEYS = (
+    "data_confidentiality_years",
+    "system_lifetime_years",
+    "update_difficulty",
+    "bandwidth_budget_bytes",
+)
 _PRIORITY_RANK = {priority: rank for rank, priority in enumerate(PRIORITIES)}
 _ESCALATION_CAP = "SHORT_TERM"
 
@@ -56,6 +60,7 @@ class MigrationError(PolicyError):
 
 # --------------------------------------------------------------------------- input validation
 
+
 def _bounded_int(value: Any, where: str, high: int) -> int:
     if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= high:
         raise MigrationError(f"{where} must be an integer between 0 and {high}")
@@ -63,8 +68,12 @@ def _bounded_int(value: Any, where: str, high: int) -> int:
 
 
 def _short_text(value: Any, where: str) -> str:
-    if not isinstance(value, str) or not value.strip() or len(value) > MAX_ROW_TEXT \
-            or not value.isprintable():
+    if (
+        not isinstance(value, str)
+        or not value.strip()
+        or len(value) > MAX_ROW_TEXT
+        or not value.isprintable()
+    ):
         raise MigrationError(f"{where} must be a short printable string")
     return value.strip()
 
@@ -85,7 +94,8 @@ def _constraint_block(value: Any, where: str) -> dict[str, Any]:
         block["update_difficulty"] = value["update_difficulty"]
     if "bandwidth_budget_bytes" in value:
         block["bandwidth_budget_bytes"] = _bounded_int(
-            value["bandwidth_budget_bytes"], f"{where}.bandwidth_budget_bytes", MAX_BYTES)
+            value["bandwidth_budget_bytes"], f"{where}.bandwidth_budget_bytes", MAX_BYTES
+        )
     return block
 
 
@@ -103,7 +113,8 @@ def validate_constraints(constraints: Any) -> dict[str, Any]:
         raise MigrationError("constraints must be a mapping")
     extra = {key: constraints[key] for key in ("assets", "measured_sizes") if key in constraints}
     defaults = _constraint_block(
-        {k: v for k, v in constraints.items() if k not in extra}, "constraints")
+        {k: v for k, v in constraints.items() if k not in extra}, "constraints"
+    )
     assets: dict[str, dict[str, Any]] = {}
     raw_assets = extra.get("assets", {})
     if not isinstance(raw_assets, dict) or len(raw_assets) > MAX_MATRIX_ROWS:
@@ -119,11 +130,13 @@ def validate_constraints(constraints: Any) -> dict[str, Any]:
     for entry in raw_sizes:
         if not isinstance(entry, dict) or set(entry) != {"label", "bytes", "source"}:
             raise MigrationError("measured_sizes entries need exactly label, bytes, source")
-        sizes.append({
-            "label": _short_text(entry["label"], "measured_sizes.label"),
-            "bytes": _bounded_int(entry["bytes"], "measured_sizes.bytes", MAX_BYTES),
-            "source": _short_text(entry["source"], "measured_sizes.source"),
-        })
+        sizes.append(
+            {
+                "label": _short_text(entry["label"], "measured_sizes.label"),
+                "bytes": _bounded_int(entry["bytes"], "measured_sizes.bytes", MAX_BYTES),
+                "source": _short_text(entry["source"], "measured_sizes.source"),
+            }
+        )
     return {"defaults": defaults, "assets": assets, "measured_sizes": sizes}
 
 
@@ -142,6 +155,7 @@ def _validate_matrix(matrix: Any) -> list[dict[str, Any]]:
 
 
 # --------------------------------------------------------------------------- lab evidence
+
 
 def _row_label(row: dict[str, Any], index: int) -> str:
     parts = []
@@ -164,31 +178,35 @@ def _matrix_evidence(engine: PolicyEngine, rows: list[dict[str, Any]]) -> dict[s
         cert = engine.classify("algorithms", row.get("certificate_type"))
         handshake = row.get("handshake_bytes")
         if handshake is not None:
-            handshake = _bounded_int(handshake, f"matrix.rows[{index}].handshake_bytes",
-                                     MAX_BYTES)
+            handshake = _bounded_int(handshake, f"matrix.rows[{index}].handshake_bytes", MAX_BYTES)
         reported = row.get("policy_pass")
-        evaluated.append({
-            "row": _row_label(row, index),
-            "status": "SUCCESS" if succeeded else "FAILED",
-            "outcome": result["outcome"],
-            "compliant": result["compliant"],
-            "violation": succeeded and not result["compliant"]
-            and result["evidence_status"] == EVIDENCE_COMPLETE,
-            "group_rule_id": result["group_rule_id"],
-            "group_quantum_vulnerable": result["group_quantum_vulnerable"],
-            "certificate_rule_id": cert["rule_id"] if cert else None,
-            "certificate_quantum_vulnerable": cert["quantum_vulnerable"] if cert else None,
-            "handshake_bytes": handshake if succeeded else None,
-            "reported_policy_pass": reported if isinstance(reported, bool) else None,
-            "reason": result["reasons"][0],
-        })
+        evaluated.append(
+            {
+                "row": _row_label(row, index),
+                "status": "SUCCESS" if succeeded else "FAILED",
+                "outcome": result["outcome"],
+                "compliant": result["compliant"],
+                "violation": succeeded
+                and not result["compliant"]
+                and result["evidence_status"] == EVIDENCE_COMPLETE,
+                "group_rule_id": result["group_rule_id"],
+                "group_quantum_vulnerable": result["group_quantum_vulnerable"],
+                "certificate_rule_id": cert["rule_id"] if cert else None,
+                "certificate_quantum_vulnerable": cert["quantum_vulnerable"] if cert else None,
+                "handshake_bytes": handshake if succeeded else None,
+                "reported_policy_pass": reported if isinstance(reported, bool) else None,
+                "reason": result["reasons"][0],
+            }
+        )
     return {
         "rows": evaluated,
         "violations": [r for r in evaluated if r["violation"]],
-        "pq_key_establishment": [r for r in evaluated if r["compliant"]
-                                 and r["group_quantum_vulnerable"] is False],
-        "pq_authentication": [r for r in evaluated if r["compliant"]
-                              and r["certificate_quantum_vulnerable"] is False],
+        "pq_key_establishment": [
+            r for r in evaluated if r["compliant"] and r["group_quantum_vulnerable"] is False
+        ],
+        "pq_authentication": [
+            r for r in evaluated if r["compliant"] and r["certificate_quantum_vulnerable"] is False
+        ],
     }
 
 
@@ -199,9 +217,14 @@ def _footprint(lab: dict[str, Any] | None, constraints: dict[str, Any]) -> dict[
             if row["compliant"] and row["handshake_bytes"] is not None and row["group_rule_id"]:
                 by_group.setdefault(row["group_rule_id"], []).append(row["handshake_bytes"])
     measurements = [
-        {"group_rule_id": group, "samples": len(values),
-         "median_handshake_bytes": median(values), "min": min(values), "max": max(values),
-         "source": "matrix rows (local loopback lab)"}
+        {
+            "group_rule_id": group,
+            "samples": len(values),
+            "median_handshake_bytes": median(values),
+            "min": min(values),
+            "max": max(values),
+            "source": "matrix rows (local loopback lab)",
+        }
         for group, values in sorted(by_group.items())
     ]
     sizes = constraints["measured_sizes"]
@@ -211,48 +234,69 @@ def _footprint(lab: dict[str, Any] | None, constraints: dict[str, Any]) -> dict[
     if budget is not None and measurements:
         within = all(m["max"] <= budget for m in measurements)
     if status == "unknown":
-        statement = ("Footprint unknown: no measured byte counts were supplied, so no size or "
-                     "bandwidth estimate is made.")
+        statement = (
+            "Footprint unknown: no measured byte counts were supplied, so no size or "
+            "bandwidth estimate is made."
+        )
     elif budget is None:
-        statement = (f"{ESTIMATE_LABEL} No bandwidth budget was declared, so no budget "
-                     "comparison is made.")
+        statement = (
+            f"{ESTIMATE_LABEL} No bandwidth budget was declared, so no budget comparison is made."
+        )
     elif within is None:
-        statement = (f"{ESTIMATE_LABEL} No measured handshake bytes, so the declared budget "
-                     "cannot be compared.")
+        statement = (
+            f"{ESTIMATE_LABEL} No measured handshake bytes, so the declared budget "
+            "cannot be compared."
+        )
     else:
-        statement = (f"{ESTIMATE_LABEL} Largest measured handshake "
-                     f"{'fits within' if within else 'exceeds'} the declared budget of "
-                     f"{budget} bytes.")
-    return {"status": status, "label": ESTIMATE_LABEL if status == "measured" else None,
-            "statement": statement, "handshake_measurements": measurements,
-            "measured_sizes": sizes, "declared_budget_bytes": budget,
-            "within_declared_budget": within}
+        statement = (
+            f"{ESTIMATE_LABEL} Largest measured handshake "
+            f"{'fits within' if within else 'exceeds'} the declared budget of "
+            f"{budget} bytes."
+        )
+    return {
+        "status": status,
+        "label": ESTIMATE_LABEL if status == "measured" else None,
+        "statement": statement,
+        "handshake_measurements": measurements,
+        "measured_sizes": sizes,
+        "declared_budget_bytes": budget,
+        "within_declared_budget": within,
+    }
 
 
 # --------------------------------------------------------------------------- planning
 
-def _escalations(finding: dict[str, Any], constraints: dict[str, Any],
-                 profile: dict[str, Any]) -> list[str]:
+
+def _escalations(
+    finding: dict[str, Any], constraints: dict[str, Any], profile: dict[str, Any]
+) -> list[str]:
     if finding["quantum_vulnerable"] is not True:
         return []
     usages = finding["quantum_vulnerable_usages"]
     factors = []
     confidentiality = constraints.get("data_confidentiality_years")
-    if (confidentiality is not None and "key_establishment" in usages
-            and confidentiality >= profile["long_confidentiality_years"]):
+    if (
+        confidentiality is not None
+        and "key_establishment" in usages
+        and confidentiality >= profile["long_confidentiality_years"]
+    ):
         factors.append(
             f"declared data confidentiality of {confidentiality} years meets the profile "
             f"threshold of {profile['long_confidentiality_years']} years "
-            "(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment)")
+            "(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment)"
+        )
     lifetime = constraints.get("system_lifetime_years")
     if lifetime is not None and lifetime >= profile["long_system_lifetime_years"]:
         factors.append(
             f"declared system lifetime of {lifetime} years meets the profile threshold of "
-            f"{profile['long_system_lifetime_years']} years")
+            f"{profile['long_system_lifetime_years']} years"
+        )
     difficulty = constraints.get("update_difficulty")
     if difficulty is not None and difficulty in profile["escalate_update_difficulty"]:
-        factors.append(f"declared update difficulty '{difficulty}' means replacement takes "
-                       "longer to roll out under this profile")
+        factors.append(
+            f"declared update difficulty '{difficulty}' means replacement takes "
+            "longer to roll out under this profile"
+        )
     return factors
 
 
@@ -264,10 +308,13 @@ def _escalate(priority: str, steps: int) -> str:
     return PRIORITIES[max(cap, rank - steps)]
 
 
-def _lab_dependency(usages: list[str], lab: dict[str, Any] | None, dependency: list[str],
-                    tests: list[str]) -> str | None:
-    needs = (("key_establishment", "pq_key_establishment", "quantum-resistant key establishment"),
-             ("signature", "pq_authentication", "post-quantum authentication"))
+def _lab_dependency(
+    usages: list[str], lab: dict[str, Any] | None, dependency: list[str], tests: list[str]
+) -> str | None:
+    needs = (
+        ("key_establishment", "pq_key_establishment", "quantum-resistant key establishment"),
+        ("signature", "pq_authentication", "post-quantum authentication"),
+    )
     for usage, key, label in needs:
         if usage not in usages:
             continue
@@ -277,29 +324,44 @@ def _lab_dependency(usages: list[str], lab: dict[str, Any] | None, dependency: l
             continue
         rows = lab[key]
         if rows:
-            dependency.append(f"Lab evidence: {len(rows)} policy-compliant matrix row(s) "
-                              f"demonstrate {label}, first {rows[0]['row']}")
+            dependency.append(
+                f"Lab evidence: {len(rows)} policy-compliant matrix row(s) "
+                f"demonstrate {label}, first {rows[0]['row']}"
+            )
         else:
             dependency.append(f"Lab matrix has no policy-compliant row demonstrating {label}")
-            tests.insert(0, f"Re-run the loopback matrix with a policy-compliant {label} "
-                            "profile and investigate failures")
+            tests.insert(
+                0,
+                f"Re-run the loopback matrix with a policy-compliant {label} "
+                "profile and investigate failures",
+            )
     if lab and lab["violations"]:
         first = lab["violations"][0]
-        return (f"Lab: {first['row']} negotiated successfully but failed policy "
-                f"({first['outcome']}): {first['reason']}")
+        return (
+            f"Lab: {first['row']} negotiated successfully but failed policy "
+            f"({first['outcome']}): {first['reason']}"
+        )
     return None
 
 
-def _item(finding: dict[str, Any], policy: dict[str, Any], constraints: dict[str, Any],
-          lab: dict[str, Any] | None, footprint: dict[str, Any]) -> dict[str, Any]:
+def _item(
+    finding: dict[str, Any],
+    policy: dict[str, Any],
+    constraints: dict[str, Any],
+    lab: dict[str, Any] | None,
+    footprint: dict[str, Any],
+) -> dict[str, Any]:
     planning = policy["planning"]
     profile = policy["profile"]
     outcome = finding["outcome"]
     type_spec = policy["asset_types"].get(finding["asset_type"])
     complete = finding["evidence_status"] == EVIDENCE_COMPLETE
     ready = complete and outcome in planning["ready_outcomes"]
-    dependency = [type_spec["dependency"] if type_spec else
-                  "Unknown: asset type is not recognised, so dependencies cannot be determined"]
+    dependency = [
+        type_spec["dependency"]
+        if type_spec
+        else "Unknown: asset type is not recognised, so dependencies cannot be determined"
+    ]
     tests = list(finding["recommended_tests"])
     if type_spec:
         tests.append(type_spec["recommended_test"])
@@ -308,8 +370,10 @@ def _item(finding: dict[str, Any], policy: dict[str, Any], constraints: dict[str
 
     if not complete:
         priority = "UNKNOWN"
-        basis = (f"evidence is {finding['evidence_status']}; the policy fails closed and no "
-                 "migration priority can be assigned until evidence is complete")
+        basis = (
+            f"evidence is {finding['evidence_status']}; the policy fails closed and no "
+            "migration priority can be assigned until evidence is complete"
+        )
         blocker, kind = "Evidence gap: " + finding["reasons"][0], "evidence"
         tests.insert(0, policy["unknown_evidence"]["recommended_test"])
         next_action = planning["unknown_next_action"]
@@ -319,26 +383,39 @@ def _item(finding: dict[str, Any], policy: dict[str, Any], constraints: dict[str
         priority = _escalate(base, len(factors))
         basis = f"outcome {outcome} maps to {base} under policy {policy['policy_id']}"
         if priority != base:
-            basis += (f"; escalated to {priority} (escalation capped at {_ESCALATION_CAP}) "
-                      "because " + "; ".join(factors))
+            basis += (
+                f"; escalated to {priority} (escalation capped at {_ESCALATION_CAP}) "
+                "because " + "; ".join(factors)
+            )
         elif factors:
-            basis += ("; constraint factors noted but already at or above the escalation cap: "
-                      + "; ".join(factors))
+            basis += (
+                "; constraint factors noted but already at or above the escalation cap: "
+                + "; ".join(factors)
+            )
         next_action = planning["next_actions"][outcome]
         if outcome not in policy["compliant_outcomes"]:
             blocker, kind = f"Policy: {outcome}. {finding['reasons'][0]}", "policy"
         if not ready and finding["quantum_vulnerable"]:
-            lab_blocker = _lab_dependency(finding["quantum_vulnerable_usages"], lab,
-                                          dependency, tests)
+            lab_blocker = _lab_dependency(
+                finding["quantum_vulnerable_usages"], lab, dependency, tests
+            )
             if blocker is None and lab_blocker is not None:
                 blocker, kind = lab_blocker, "lab"
-            if (blocker is None and profile["require_footprint_evidence"]
-                    and footprint["status"] == "unknown"):
-                blocker = (f"Footprint evidence absent: profile {profile['name']} requires "
-                           "measured byte counts before a target profile is selected")
+            if (
+                blocker is None
+                and profile["require_footprint_evidence"]
+                and footprint["status"] == "unknown"
+            ):
+                blocker = (
+                    f"Footprint evidence absent: profile {profile['name']} requires "
+                    "measured byte counts before a target profile is selected"
+                )
                 kind = "footprint"
-                tests.insert(0, "Run the local benchmark and loopback matrix to measure key, "
-                                "signature and handshake bytes for the candidate profiles")
+                tests.insert(
+                    0,
+                    "Run the local benchmark and loopback matrix to measure key, "
+                    "signature and handshake bytes for the candidate profiles",
+                )
     return {
         "asset_id": finding["asset_id"],
         "asset_type": finding["asset_type"],
@@ -357,8 +434,9 @@ def _item(finding: dict[str, Any], policy: dict[str, Any], constraints: dict[str
     }
 
 
-def _readiness(items: list[dict[str, Any]], inventory: Inventory,
-               lab: dict[str, Any] | None) -> tuple[str, list[str]]:
+def _readiness(
+    items: list[dict[str, Any]], inventory: Inventory, lab: dict[str, Any] | None
+) -> tuple[str, list[str]]:
     reasons: list[str] = []
     errors = inventory.errors if isinstance(inventory.errors, list) else [{}]
     hard = [i for i in items if i["blocker_kind"] in ("policy", "lab")]
@@ -366,17 +444,24 @@ def _readiness(items: list[dict[str, Any]], inventory: Inventory,
     pending = [i for i in items if not i["ready"]]
     violations = lab["violations"] if lab else []
     if violations:
-        reasons.append(f"{len(violations)} matrix row(s) negotiated successfully but failed "
-                       "policy; a successful handshake is not policy compliance.")
+        reasons.append(
+            f"{len(violations)} matrix row(s) negotiated successfully but failed "
+            "policy; a successful handshake is not policy compliance."
+        )
     if hard:
-        reasons.append(f"{len(hard)} asset(s) blocked by policy or lab evidence: "
-                       + ", ".join(i["asset_id"] for i in hard[:10]))
+        reasons.append(
+            f"{len(hard)} asset(s) blocked by policy or lab evidence: "
+            + ", ".join(i["asset_id"] for i in hard[:10])
+        )
     if unknown:
-        reasons.append(f"{len(unknown)} asset(s) have missing, unrecognised or footprint "
-                       "evidence gaps: " + ", ".join(i["asset_id"] for i in unknown[:10]))
+        reasons.append(
+            f"{len(unknown)} asset(s) have missing, unrecognised or footprint "
+            "evidence gaps: " + ", ".join(i["asset_id"] for i in unknown[:10])
+        )
     if errors:
-        reasons.append(f"{len(errors)} discovery error(s) recorded; inventory coverage is "
-                       "incomplete.")
+        reasons.append(
+            f"{len(errors)} discovery error(s) recorded; inventory coverage is incomplete."
+        )
     if not items:
         reasons.append("Inventory contains no assets; readiness cannot be determined.")
     if hard or violations:
@@ -384,11 +469,14 @@ def _readiness(items: list[dict[str, Any]], inventory: Inventory,
     if unknown or errors or not items:
         return "UNKNOWN", reasons
     if pending:
-        reasons.append(f"{len(items) - len(pending)} of {len(items)} asset(s) meet a policy "
-                       f"ready outcome; {len(pending)} still require migration work.")
+        reasons.append(
+            f"{len(items) - len(pending)} of {len(items)} asset(s) meet a policy "
+            f"ready outcome; {len(pending)} still require migration work."
+        )
         return "PARTIALLY_READY", reasons
-    reasons.append(f"All {len(items)} asset(s) have complete evidence and meet a policy ready "
-                   "outcome.")
+    reasons.append(
+        f"All {len(items)} asset(s) have complete evidence and meet a policy ready outcome."
+    )
     return "READY", reasons
 
 
@@ -435,7 +523,9 @@ def plan(
             "inventory_errors": evaluation["summary"]["inventory_errors"],
         },
         "items": items,
-        "matrix": None if lab is None else {
+        "matrix": None
+        if lab is None
+        else {
             "rows": lab["rows"],
             "violations": len(lab["violations"]),
             "pq_key_establishment_rows": len(lab["pq_key_establishment"]),
@@ -459,9 +549,12 @@ def _md(value: Any) -> str:
 
 def render_markdown(plan_result: dict[str, Any]) -> str:
     """Render a plan as Markdown; all untrusted text is escaped (no raw HTML or links)."""
-    if (not isinstance(plan_result, dict) or plan_result.get("schema_version") != SCHEMA_VERSION
-            or plan_result.get("readiness") not in READINESS
-            or not isinstance(plan_result.get("items"), list)):
+    if (
+        not isinstance(plan_result, dict)
+        or plan_result.get("schema_version") != SCHEMA_VERSION
+        or plan_result.get("readiness") not in READINESS
+        or not isinstance(plan_result.get("items"), list)
+    ):
         raise MigrationError("render_markdown() requires a plan produced by plan()")
     lines = [
         "# Migration plan",
@@ -479,18 +572,28 @@ def render_markdown(plan_result: dict[str, Any]) -> str:
     footprint = plan_result.get("footprint") or {}
     lines += ["", "## Footprint", "", _md(footprint.get("statement", "Footprint unknown."))]
     for m in footprint.get("handshake_measurements", []):
-        lines.append(f"- {_md(m['group_rule_id'])}: median {_md(m['median_handshake_bytes'])} "
-                     f"bytes over {_md(m['samples'])} sample(s) ({_md(m['source'])})")
+        lines.append(
+            f"- {_md(m['group_rule_id'])}: median {_md(m['median_handshake_bytes'])} "
+            f"bytes over {_md(m['samples'])} sample(s) ({_md(m['source'])})"
+        )
     for size in footprint.get("measured_sizes", []):
-        lines.append(f"- {_md(size['label'])}: {_md(size['bytes'])} bytes "
-                     f"({_md(size['source'])})")
+        lines.append(f"- {_md(size['label'])}: {_md(size['bytes'])} bytes ({_md(size['source'])})")
     lines += ["", "## Items", ""]
     if not plan_result["items"]:
         lines.append("No assets in inventory.")
     for item in plan_result["items"]:
         lines += [f"### {_md(item['asset_id'])}", "", "| Field | Value |", "|---|---|"]
-        for key in ("priority", "outcome", "current_algorithm", "evidence_status", "reason",
-                    "dependency", "recommended_test", "blocker", "next_action"):
+        for key in (
+            "priority",
+            "outcome",
+            "current_algorithm",
+            "evidence_status",
+            "reason",
+            "dependency",
+            "recommended_test",
+            "blocker",
+            "next_action",
+        ):
             lines.append(f"| {key} | {_md(item.get(key)) or '-'} |")
         options = item.get("migration_options") or []
         if options:

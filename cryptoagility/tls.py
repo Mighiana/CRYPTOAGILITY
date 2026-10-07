@@ -142,16 +142,28 @@ class TLSProfile:
 
 PROFILES: dict[str, TLSProfile] = {
     "classical": TLSProfile(
-        "classical", "X25519", "classical", "RSA-3072", "classical",
+        "classical",
+        "X25519",
+        "classical",
+        "RSA-3072",
+        "classical",
         "TLS 1.3, X25519 key establishment, synthetic RSA-3072 certificate chain",
     ),
     "hybrid": TLSProfile(
-        "hybrid", "X25519MLKEM768", "hybrid", "RSA-3072", "classical",
+        "hybrid",
+        "X25519MLKEM768",
+        "hybrid",
+        "RSA-3072",
+        "classical",
         "TLS 1.3, X25519MLKEM768 hybrid key establishment; authentication remains classical "
         "(synthetic RSA-3072 chain)",
     ),
     "pqc": TLSProfile(
-        "pqc", "MLKEM768", "pqc", "ML-DSA-65", "pqc",
+        "pqc",
+        "MLKEM768",
+        "pqc",
+        "ML-DSA-65",
+        "pqc",
         "TLS 1.3 experiment: pure MLKEM768 key establishment with a synthetic ML-DSA-65 chain",
     ),
 }
@@ -172,24 +184,40 @@ class ClientVariant:
 
 CLIENT_VARIANTS: dict[str, ClientVariant] = {
     "classical-only": ClientVariant(
-        "classical-only", ("X25519",), CLASSICAL_SIGALGS, CLASSICAL_CERT_TYPES,
+        "classical-only",
+        ("X25519",),
+        CLASSICAL_SIGALGS,
+        CLASSICAL_CERT_TYPES,
         description="Offers only X25519 and classical RSA-PSS/ECDSA signatures",
     ),
     "hybrid-only": ClientVariant(
-        "hybrid-only", ("X25519MLKEM768",), CLASSICAL_SIGALGS, CLASSICAL_CERT_TYPES,
+        "hybrid-only",
+        ("X25519MLKEM768",),
+        CLASSICAL_SIGALGS,
+        CLASSICAL_CERT_TYPES,
         description="Offers only X25519MLKEM768; explicit classical authentication",
     ),
     "pqc-only": ClientVariant(
-        "pqc-only", ("MLKEM768",), ("mldsa65",), ("ML-DSA-65",),
+        "pqc-only",
+        ("MLKEM768",),
+        ("mldsa65",),
+        ("ML-DSA-65",),
         description="Offers only MLKEM768 and accepts only ML-DSA-65 authentication",
     ),
     "modern-agile": ClientVariant(
-        "modern-agile", ("X25519MLKEM768", "MLKEM768", "X25519"),
-        ("mldsa65", *CLASSICAL_SIGALGS), ("ML-DSA-65", *CLASSICAL_CERT_TYPES),
+        "modern-agile",
+        ("X25519MLKEM768", "MLKEM768", "X25519"),
+        ("mldsa65", *CLASSICAL_SIGALGS),
+        ("ML-DSA-65", *CLASSICAL_CERT_TYPES),
         description="Prefers hybrid, then PQC, then classical; accepts ML-DSA-65 or classical",
     ),
     "system-legacy": ClientVariant(
-        "system-legacy", None, None, None, binary="system", strict_tls13=False,
+        "system-legacy",
+        None,
+        None,
+        None,
+        binary="system",
+        strict_tls13=False,
         description="Distribution OpenSSL s_client with its default groups and signatures",
     ),
 }
@@ -210,19 +238,35 @@ SERVER_SPECS: dict[str, ServerSpec] = {
     "hybrid": ServerSpec("hybrid", "hybrid", "RSA-3072"),
     "pqc": ServerSpec("pqc", "pqc", "ML-DSA-65"),
     "classical-expired-cert": ServerSpec(
-        "classical-expired-cert", "classical", "RSA-3072", "expired", "negative",
+        "classical-expired-cert",
+        "classical",
+        "RSA-3072",
+        "expired",
+        "negative",
         "Leaf validity ended in 2020",
     ),
     "classical-wrong-host-cert": ServerSpec(
-        "classical-wrong-host-cert", "classical", "RSA-3072", "wrong-host", "negative",
+        "classical-wrong-host-cert",
+        "classical",
+        "RSA-3072",
+        "wrong-host",
+        "negative",
         "Leaf SAN is wrong-host.test",
     ),
     "classical-untrusted-ca": ServerSpec(
-        "classical-untrusted-ca", "classical", "RSA-3072", "untrusted", "negative",
+        "classical-untrusted-ca",
+        "classical",
+        "RSA-3072",
+        "untrusted",
+        "negative",
         "Leaf issued by a synthetic root that is not in the client trust bundle",
     ),
     "pqc-group-rsa-cert": ServerSpec(
-        "pqc-group-rsa-cert", "pqc", "RSA-3072", "valid", "negative",
+        "pqc-group-rsa-cert",
+        "pqc",
+        "RSA-3072",
+        "valid",
+        "negative",
         "Misconfigured PQC profile: MLKEM768 group but RSA-3072 certificate",
     ),
 }
@@ -243,7 +287,10 @@ DEFAULT_POLICY: dict[str, Any] = {
     "allowed_group_kinds": ["hybrid"],
 }
 _POLICY_KEYS = {
-    "name", "required_tls_version", "allowed_group_kinds", "allowed_groups",
+    "name",
+    "required_tls_version",
+    "allowed_group_kinds",
+    "allowed_groups",
     "allowed_certificate_types",
 }
 
@@ -421,8 +468,20 @@ def _probe_certificate(spec: KeySpec) -> dict[str, Any]:
     """Self-signed throwaway certificate; the private key goes only to the null device."""
     try:
         out = openssl.run(
-            ["req", "-x509", "-newkey", spec.genpkey_args[1], *spec.genpkey_args[2:],
-             "-keyout", os.devnull, "-noenc", "-subj", "/CN=capability-probe.test", "-days", "1"],
+            [
+                "req",
+                "-x509",
+                "-newkey",
+                spec.genpkey_args[1],
+                *spec.genpkey_args[2:],
+                "-keyout",
+                os.devnull,
+                "-noenc",
+                "-subj",
+                "/CN=capability-probe.test",
+                "-days",
+                "1",
+            ],
             timeout=30,
         )
         info = certificate_info(_single_pem(out))
@@ -577,8 +636,9 @@ class LabPKI:
     .gitignore so nothing generated is committed.
     """
 
-    def __init__(self, workdir: Path, hostname: str = DEFAULT_HOSTNAME, *,
-                 keep_certificates: bool = False):
+    def __init__(
+        self, workdir: Path, hostname: str = DEFAULT_HOSTNAME, *, keep_certificates: bool = False
+    ):
         self.hostname = validate_hostname(hostname)
         self.keep_certificates = keep_certificates
         workdir = Path(workdir)
@@ -609,8 +669,12 @@ class LabPKI:
     def __enter__(self) -> LabPKI:
         return self
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc: BaseException | None,
-                 tb: TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: TracebackType | None,
+    ) -> None:
         self.close()
 
     def close(self) -> None:
@@ -638,12 +702,23 @@ class LabPKI:
         if slot not in self._roots:
             label = f"root-{slot}"
             key = self._key(key_type, label)
-            cert = self._cert(label, [
-                "-x509", "-new", "-key", str(key), "-days", "2",
-                "-subj", f"/O=CryptoAgility Lab Synthetic/CN=Synthetic {slot} Root",
-                "-addext", "basicConstraints=critical,CA:TRUE",
-                "-addext", "keyUsage=critical,keyCertSign,cRLSign",
-            ])
+            cert = self._cert(
+                label,
+                [
+                    "-x509",
+                    "-new",
+                    "-key",
+                    str(key),
+                    "-days",
+                    "2",
+                    "-subj",
+                    f"/O=CryptoAgility Lab Synthetic/CN=Synthetic {slot} Root",
+                    "-addext",
+                    "basicConstraints=critical,CA:TRUE",
+                    "-addext",
+                    "keyUsage=critical,keyCertSign,cRLSign",
+                ],
+            )
             self._roots[slot] = (cert, key)
             if trusted:
                 with self.trust_bundle.open("ab") as bundle:
@@ -655,13 +730,26 @@ class LabPKI:
             root_cert, root_key = self._root(key_type, True)
             label = f"intermediate-{key_type}"
             key = self._key(key_type, label)
-            cert = self._cert(label, [
-                "-new", "-key", str(key), "-CA", str(root_cert), "-CAkey", str(root_key),
-                "-days", "2",
-                "-subj", f"/O=CryptoAgility Lab Synthetic/CN=Synthetic {key_type} Issuing CA",
-                "-addext", "basicConstraints=critical,CA:TRUE,pathlen:0",
-                "-addext", "keyUsage=critical,keyCertSign,cRLSign",
-            ])
+            cert = self._cert(
+                label,
+                [
+                    "-new",
+                    "-key",
+                    str(key),
+                    "-CA",
+                    str(root_cert),
+                    "-CAkey",
+                    str(root_key),
+                    "-days",
+                    "2",
+                    "-subj",
+                    f"/O=CryptoAgility Lab Synthetic/CN=Synthetic {key_type} Issuing CA",
+                    "-addext",
+                    "basicConstraints=critical,CA:TRUE,pathlen:0",
+                    "-addext",
+                    "keyUsage=critical,keyCertSign,cRLSign",
+                ],
+            )
             self._intermediates[key_type] = (cert, key)
         return self._intermediates[key_type]
 
@@ -687,21 +775,44 @@ class LabPKI:
             issuer_cert, issuer_key = self._intermediate(key_type)
             chain = issuer_cert
         name = "wrong-host.test" if variant == "wrong-host" else self.hostname
-        validity = (["-not_before", "20200101000000Z", "-not_after", "20200102000000Z"]
-                    if variant == "expired" else ["-days", "1"])
-        cert = self._cert(f"leaf-{key_type}-{variant}", [
-            "-new", "-key", str(leaf_key), "-CA", str(issuer_cert), "-CAkey", str(issuer_key),
-            *validity,
-            "-subj", f"/O=CryptoAgility Lab Synthetic/CN={name}",
-            "-addext", f"subjectAltName=DNS:{name}",
-            "-addext", "basicConstraints=critical,CA:FALSE",
-            "-addext", "keyUsage=critical,digitalSignature",
-            "-addext", "extendedKeyUsage=serverAuth",
-        ])
+        validity = (
+            ["-not_before", "20200101000000Z", "-not_after", "20200102000000Z"]
+            if variant == "expired"
+            else ["-days", "1"]
+        )
+        cert = self._cert(
+            f"leaf-{key_type}-{variant}",
+            [
+                "-new",
+                "-key",
+                str(leaf_key),
+                "-CA",
+                str(issuer_cert),
+                "-CAkey",
+                str(issuer_key),
+                *validity,
+                "-subj",
+                f"/O=CryptoAgility Lab Synthetic/CN={name}",
+                "-addext",
+                f"subjectAltName=DNS:{name}",
+                "-addext",
+                "basicConstraints=critical,CA:FALSE",
+                "-addext",
+                "keyUsage=critical,digitalSignature",
+                "-addext",
+                "extendedKeyUsage=serverAuth",
+            ],
+        )
         leaf_len = pem_der_length(cert.read_bytes())
         chain_len = pem_der_length(chain.read_bytes()) if chain else 0
         credential = Credential(
-            key_type, variant, cert, leaf_key, chain, leaf_len, leaf_len + chain_len,
+            key_type,
+            variant,
+            cert,
+            leaf_key,
+            chain,
+            leaf_len,
+            leaf_len + chain_len,
             2 if chain else 1,
         )
         self._credentials[(key_type, variant)] = credential
@@ -737,8 +848,12 @@ class LoopbackServer:
             raise
         return self
 
-    def __exit__(self, exc_type: type[BaseException] | None, exc: BaseException | None,
-                 tb: TracebackType | None) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc: BaseException | None,
+        tb: TracebackType | None,
+    ) -> None:
         self.stop()
 
     def _record(self, line: str) -> None:
@@ -759,15 +874,29 @@ class LoopbackServer:
     def start(self) -> None:
         cred = self.credential
         argv = [
-            openssl.executable(), "s_server", "-accept", f"{LOOPBACK}:0",
-            "-cert", str(cred.certificate), "-key", str(cred.key),
-            "-tls1_3", "-groups", self.group, "-num_tickets", "0",
+            openssl.executable(),
+            "s_server",
+            "-accept",
+            f"{LOOPBACK}:0",
+            "-cert",
+            str(cred.certificate),
+            "-key",
+            str(cred.key),
+            "-tls1_3",
+            "-groups",
+            self.group,
+            "-num_tickets",
+            "0",
         ]
         if cred.chain is not None:
             argv += ["-cert_chain", str(cred.chain)]
         self.process = subprocess.Popen(
-            argv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            env=_env(), close_fds=True,
+            argv,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            env=_env(),
+            close_fds=True,
         )
         for stream, parse_accept in ((self.process.stdout, True), (self.process.stderr, False)):
             thread = threading.Thread(target=self._pump, args=(stream, parse_accept), daemon=True)
@@ -866,12 +995,15 @@ def parse_client_output(stdout: bytes) -> dict[str, Any]:
     """Extract public handshake facts from s_client stdout; secrets are discarded."""
     data = stdout[:MAX_PROCESS_OUTPUT]
     text = data.decode("utf-8", "replace")
-    group = (_search(r"^Negotiated TLS1\.3 group: (\S+)\s*$", text)
-             or _search(r"^(?:Peer|Server) Temp Key: ([^,\s]+)", text))
-    version = (_search(r"^\s*Protocol\s*:\s*(\S+)\s*$", text)
-               or _search(r"^New, (\S+), Cipher is", text))
-    cipher = (_search(r"^New, \S+, Cipher is (\S+)\s*$", text)
-              or _search(r"^\s*Cipher\s*:\s*(\S+)\s*$", text))
+    group = _search(r"^Negotiated TLS1\.3 group: (\S+)\s*$", text) or _search(
+        r"^(?:Peer|Server) Temp Key: ([^,\s]+)", text
+    )
+    version = _search(r"^\s*Protocol\s*:\s*(\S+)\s*$", text) or _search(
+        r"^New, (\S+), Cipher is", text
+    )
+    cipher = _search(r"^New, \S+, Cipher is (\S+)\s*$", text) or _search(
+        r"^\s*Cipher\s*:\s*(\S+)\s*$", text
+    )
     verify = re.search(r"^Verify return code: (\d{1,3}) ", text, re.MULTILINE)
     sizes = re.search(r"SSL handshake has read (\d+) bytes and written (\d+) bytes", text)
     certs = [m.group(0) for m in _PEM_CERT.finditer(data)][:10]
@@ -891,8 +1023,9 @@ def parse_client_output(stdout: bytes) -> dict[str, Any]:
 
 def binary_version(binary: str) -> str | None:
     try:
-        result = subprocess.run([binary, "version"], capture_output=True, timeout=10,
-                                check=False, env=_env())
+        result = subprocess.run(
+            [binary, "version"], capture_output=True, timeout=10, check=False, env=_env()
+        )
     except (OSError, subprocess.TimeoutExpired):
         return None
     if result.returncode:
@@ -914,9 +1047,16 @@ def find_legacy_openssl(path: str | None = None) -> str | None:
     return candidate
 
 
-def handshake(port: int, client: ClientVariant, trust_bundle: Path, *,
-              hostname: str = DEFAULT_HOSTNAME, timeout: float = 10.0,
-              server: LoopbackServer | None = None, binary: str | None = None) -> HandshakeResult:
+def handshake(
+    port: int,
+    client: ClientVariant,
+    trust_bundle: Path,
+    *,
+    hostname: str = DEFAULT_HOSTNAME,
+    timeout: float = 10.0,
+    server: LoopbackServer | None = None,
+    binary: str | None = None,
+) -> HandshakeResult:
     """One verified TLS client connection to 127.0.0.1:port via s_client.
 
     The client trusts only trust_bundle, verifies the hostname with strict X.509 checks and
@@ -930,23 +1070,44 @@ def handshake(port: int, client: ClientVariant, trust_bundle: Path, *,
     if exe is None:
         raise TLSLabError("Client binary unavailable")
     argv = [
-        exe, "s_client", "-connect", f"{LOOPBACK}:{port}", "-servername", hostname,
-        "-verify_hostname", hostname, "-verify_return_error", "-x509_strict",
-        "-CAfile", str(trust_bundle), "-no-CApath", "-no-CAstore", "-showcerts", "-no_ticket",
+        exe,
+        "s_client",
+        "-connect",
+        f"{LOOPBACK}:{port}",
+        "-servername",
+        hostname,
+        "-verify_hostname",
+        hostname,
+        "-verify_return_error",
+        "-x509_strict",
+        "-CAfile",
+        str(trust_bundle),
+        "-no-CApath",
+        "-no-CAstore",
+        "-showcerts",
+        "-no_ticket",
     ]
     if client.strict_tls13:
         argv.append("-tls1_3")
     if client.groups is not None:
         argv += ["-groups", ":".join(_require_token(g, "TLS group") for g in client.groups)]
     if client.sigalgs is not None:
-        argv += ["-sigalgs", ":".join(_require_token(s, "signature algorithm")
-                                      for s in client.sigalgs)]
+        argv += [
+            "-sigalgs",
+            ":".join(_require_token(s, "signature algorithm") for s in client.sigalgs),
+        ]
     result = HandshakeResult(client=client.name, returncode=None, completed=False)
     started = time.monotonic()
     t0 = time.perf_counter()
     try:
-        proc = subprocess.run(argv, stdin=subprocess.DEVNULL, capture_output=True,
-                              timeout=timeout, check=False, env=_env())
+        proc = subprocess.run(
+            argv,
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            timeout=timeout,
+            check=False,
+            env=_env(),
+        )
     except subprocess.TimeoutExpired:
         result.failure_kind = "timeout"
         result.error_reasons = ["client timed out"]
@@ -972,13 +1133,20 @@ def handshake(port: int, client: ClientVariant, trust_bundle: Path, *,
             result.chain_length = len(certs)
         except (openssl.OpenSSLError, ValueError):
             result.error_reasons.append("peer certificate could not be parsed")
-    result.completed = (proc.returncode == 0 and result.verify_code == 0
-                        and result.tls_version is not None and result.cipher_suite is not None
-                        and result.cipher_suite != "0000")
+    result.completed = (
+        proc.returncode == 0
+        and result.verify_code == 0
+        and result.tls_version is not None
+        and result.cipher_suite is not None
+        and result.cipher_suite != "0000"
+    )
     if not result.completed:
         reasons = extract_reasons(proc.stderr[:MAX_PROCESS_OUTPUT].decode("utf-8", "replace"))
-        reasons += [r for r in extract_reasons(proc.stdout[:MAX_PROCESS_OUTPUT].decode(
-            "utf-8", "replace")) if r not in reasons]
+        reasons += [
+            r
+            for r in extract_reasons(proc.stdout[:MAX_PROCESS_OUTPUT].decode("utf-8", "replace"))
+            if r not in reasons
+        ]
         if server is not None:
             deadline = time.monotonic() + 0.3
             while time.monotonic() < deadline and not server.reasons_since(started):
@@ -999,9 +1167,7 @@ def validate_policy(policy: dict[str, Any]) -> dict[str, Any]:
         raise ValueError("Invalid TLS policy")
     for key in ("allowed_group_kinds", "allowed_groups", "allowed_certificate_types"):
         value = policy.get(key)
-        if value is not None and (
-            not isinstance(value, list) or not all(_token(v) for v in value)
-        ):
+        if value is not None and (not isinstance(value, list) or not all(_token(v) for v in value)):
             raise ValueError(f"Invalid TLS policy field {key}")
     for key in ("name", "required_tls_version"):
         if policy.get(key) is not None and _token(policy[key]) is None:
@@ -1009,8 +1175,9 @@ def validate_policy(policy: dict[str, Any]) -> dict[str, Any]:
     return policy
 
 
-def evaluate_policy(observed: dict[str, Any],
-                    policy: dict[str, Any]) -> tuple[bool | None, list[str]]:
+def evaluate_policy(
+    observed: dict[str, Any], policy: dict[str, Any]
+) -> tuple[bool | None, list[str]]:
     """Policy compliance of an observed connection, independent of negotiation success."""
     group = observed.get("negotiated_group")
     if not group:
@@ -1021,8 +1188,9 @@ def evaluate_policy(observed: dict[str, Any],
         reasons.append(f"TLS version {observed.get('tls_version')} is not {required}")
     kinds = policy.get("allowed_group_kinds")
     if kinds is not None and group_kind(group) not in kinds:
-        reasons.append(f"negotiated {group_kind(group)} group {group}; policy requires "
-                       + "/".join(kinds))
+        reasons.append(
+            f"negotiated {group_kind(group)} group {group}; policy requires " + "/".join(kinds)
+        )
     groups = policy.get("allowed_groups")
     if groups is not None and not group_in(group, groups):
         reasons.append(f"negotiated group {group} not allowed")
@@ -1035,21 +1203,25 @@ def evaluate_policy(observed: dict[str, Any],
 # --------------------------------------------------------------------------- matrix
 
 
-def check_observation(result: HandshakeResult, spec: ServerSpec,
-                      client: ClientVariant) -> list[str]:
+def check_observation(
+    result: HandshakeResult, spec: ServerSpec, client: ClientVariant
+) -> list[str]:
     """Fail-closed comparison of what was negotiated against server profile and client."""
     profile = PROFILES[spec.profile]
     problems: list[str] = []
     if result.tls_version != "TLSv1.3":
         problems.append(f"TLS version {result.tls_version} is not TLSv1.3")
     if not same_group(result.negotiated_group, profile.group):
-        problems.append(f"negotiated group {result.negotiated_group} differs from required "
-                        f"{profile.group}")
+        problems.append(
+            f"negotiated group {result.negotiated_group} differs from required {profile.group}"
+        )
     if client.groups is not None and not group_in(result.negotiated_group, client.groups):
         problems.append("negotiated group was not offered by the client")
     if result.certificate_type != profile.certificate_key:
-        problems.append(f"certificate type {result.certificate_type} differs from profile "
-                        f"{profile.certificate_key}")
+        problems.append(
+            f"certificate type {result.certificate_type} differs from profile "
+            f"{profile.certificate_key}"
+        )
     accepted = client.accepted_certificate_types
     if accepted is not None and result.certificate_type not in accepted:
         problems.append(f"certificate type {result.certificate_type} not accepted by client")
@@ -1062,8 +1234,11 @@ def _client_missing(client: ClientVariant, caps: dict[str, Any], legacy: str | N
     groups = caps.get("tls13_groups", [])
     missing = [f"TLS 1.3 group {g}" for g in client.groups or () if not group_in(g, groups)]
     tls_sigalgs = set(caps.get("tls_signature_algorithms", []))
-    missing += [f"TLS signature algorithm {s}" for s in client.sigalgs or ()
-                if tls_sigalgs and s not in tls_sigalgs]
+    missing += [
+        f"TLS signature algorithm {s}"
+        for s in client.sigalgs or ()
+        if tls_sigalgs and s not in tls_sigalgs
+    ]
     return missing
 
 
@@ -1103,8 +1278,13 @@ def _row(spec: ServerSpec, client: ClientVariant, **values: Any) -> dict[str, An
     return row
 
 
-def result_row(spec: ServerSpec, client: ClientVariant, result: HandshakeResult,
-               policy: dict[str, Any], client_version: str | None = None) -> dict[str, Any]:
+def result_row(
+    spec: ServerSpec,
+    client: ClientVariant,
+    result: HandshakeResult,
+    policy: dict[str, Any],
+    client_version: str | None = None,
+) -> dict[str, Any]:
     """Matrix row for an attempted connection: status and policy_pass judged separately."""
     observed = {
         "negotiated_group": result.negotiated_group if result.completed else None,
@@ -1129,7 +1309,8 @@ def result_row(spec: ServerSpec, client: ClientVariant, result: HandshakeResult,
         reason = "; ".join(result.error_reasons) or None
     done = result.completed
     return _row(
-        spec, client,
+        spec,
+        client,
         status=status,
         network_attempted=True,
         negotiated_group=observed["negotiated_group"],
@@ -1204,7 +1385,10 @@ def run_matrix(
             missing, side = _client_missing(client, caps, legacy), "client"
         if missing:
             rows[(server_name, client_name)] = _row(
-                spec, client, status=UNSUPPORTED, failure_kind=f"{side}_unsupported_locally",
+                spec,
+                client,
+                status=UNSUPPORTED,
+                failure_kind=f"{side}_unsupported_locally",
                 error_reason=sanitize_reason(f"{side} unsupported locally: " + "; ".join(missing)),
                 policy_reasons=["no negotiated connection to evaluate"],
             )
@@ -1216,26 +1400,42 @@ def run_matrix(
                 spec = SERVER_SPECS[server_name]
                 try:
                     credential = pki.issue(spec.credential_key, spec.credential_variant)
-                    with LoopbackServer(credential, PROFILES[spec.profile].group,
-                                        timeout=timeout) as server:
+                    with LoopbackServer(
+                        credential, PROFILES[spec.profile].group, timeout=timeout
+                    ) as server:
                         assert server.port is not None
                         for client in variants:
                             system = client.binary == "system"
-                            result = handshake(server.port, client, pki.trust_bundle,
-                                               hostname=hostname, timeout=timeout,
-                                               server=server, binary=legacy if system else None)
+                            result = handshake(
+                                server.port,
+                                client,
+                                pki.trust_bundle,
+                                hostname=hostname,
+                                timeout=timeout,
+                                server=server,
+                                binary=legacy if system else None,
+                            )
                             rows[(server_name, client.name)] = result_row(
-                                spec, client, result, policy,
+                                spec,
+                                client,
+                                result,
+                                policy,
                                 legacy_version if system else pinned_version,
                             )
                 except (openssl.OpenSSLError, TLSLabError, OSError) as exc:
                     reason = sanitize_reason(str(exc)) or "lab setup failed"
                     for client in variants:
-                        rows.setdefault((server_name, client.name), _row(
-                            spec, client, status=ERROR, failure_kind="lab_error",
-                            error_reason=reason,
-                            policy_reasons=["no negotiated connection to evaluate"],
-                        ))
+                        rows.setdefault(
+                            (server_name, client.name),
+                            _row(
+                                spec,
+                                client,
+                                status=ERROR,
+                                failure_kind="lab_error",
+                                error_reason=reason,
+                                policy_reasons=["no negotiated connection to evaluate"],
+                            ),
+                        )
     return {
         "schema_version": SCHEMA_VERSION,
         "environment": {
