@@ -1,0 +1,40 @@
+# Local-only lab topology. Servers use disposable synthetic certificates generated at start-up;
+# only CA certificates (public) are shared via the pki volume. No ports are published to the host.
+x-lab-image: &lab-image
+  build: .
+  image: cryptoagility-lab:local
+  read_only: true
+  tmpfs: [/tmp]
+  security_opt: [no-new-privileges:true]
+  cap_drop: [ALL]
+
+services:
+  cryptoagility-tool:
+    <<: *lab-image
+    profiles: [tool]
+    volumes:
+      - ./results:/results
+
+  classical-server:
+    <<: *lab-image
+    entrypoint: ["/lab/docker/server.sh", "classical"]
+    volumes: [pki:/pki]
+
+  hybrid-server:
+    <<: *lab-image
+    entrypoint: ["/lab/docker/server.sh", "hybrid"]
+    volumes: [pki:/pki]
+
+  pqc-server:
+    <<: *lab-image
+    entrypoint: ["/lab/docker/server.sh", "pqc"]
+    volumes: [pki:/pki]
+
+  test-client:
+    <<: *lab-image
+    entrypoint: ["/lab/docker/client.sh"]
+    volumes: [pki:/pki:ro]
+    depends_on: [classical-server, hybrid-server, pqc-server]
+
+volumes:
+  pki:

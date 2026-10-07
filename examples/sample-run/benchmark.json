@@ -1,0 +1,1409 @@
+{
+  "capabilities": {
+    "available_not_benchmarked": [
+      "ML-DSA-44",
+      "ML-DSA-87",
+      "SLH-DSA-SHA2-128f",
+      "SLH-DSA-SHA2-192s",
+      "SLH-DSA-SHA2-192f",
+      "SLH-DSA-SHA2-256s",
+      "SLH-DSA-SHA2-256f",
+      "SLH-DSA-SHAKE-128s",
+      "SLH-DSA-SHAKE-128f",
+      "SLH-DSA-SHAKE-192s",
+      "SLH-DSA-SHAKE-192f",
+      "SLH-DSA-SHAKE-256s",
+      "SLH-DSA-SHAKE-256f",
+      "ML-KEM-512",
+      "ML-KEM-1024"
+    ],
+    "benchmarked_algorithms": [
+      "RSA-3072",
+      "ECDSA-P-256",
+      "ML-KEM-768",
+      "ML-DSA-65",
+      "SLH-DSA-SHA2-128s"
+    ],
+    "known_algorithms_available": [
+      "RSA-3072",
+      "ECDSA-P-256",
+      "ML-DSA-44",
+      "ML-DSA-65",
+      "ML-DSA-87",
+      "SLH-DSA-SHA2-128s",
+      "SLH-DSA-SHA2-128f",
+      "SLH-DSA-SHA2-192s",
+      "SLH-DSA-SHA2-192f",
+      "SLH-DSA-SHA2-256s",
+      "SLH-DSA-SHA2-256f",
+      "SLH-DSA-SHAKE-128s",
+      "SLH-DSA-SHAKE-128f",
+      "SLH-DSA-SHAKE-192s",
+      "SLH-DSA-SHAKE-192f",
+      "SLH-DSA-SHAKE-256s",
+      "SLH-DSA-SHAKE-256f",
+      "ML-KEM-512",
+      "ML-KEM-768",
+      "ML-KEM-1024"
+    ],
+    "standardization_note": "ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) are standardized algorithms; TLS 1.3 hybrid/PQC group code points and PQ X.509/TLS signature integrations are laboratory experiments. The OpenSSL default provider is not claimed FIPS 140 validated.",
+    "standardized": {
+      "ml_dsa": [
+        "ML-DSA-44",
+        "ML-DSA-65",
+        "ML-DSA-87"
+      ],
+      "ml_kem": [
+        "ML-KEM-1024",
+        "ML-KEM-512",
+        "ML-KEM-768"
+      ],
+      "slh_dsa": [
+        "SLH-DSA-SHA2-128f",
+        "SLH-DSA-SHA2-128s",
+        "SLH-DSA-SHA2-192f",
+        "SLH-DSA-SHA2-192s",
+        "SLH-DSA-SHA2-256f",
+        "SLH-DSA-SHA2-256s",
+        "SLH-DSA-SHAKE-128f",
+        "SLH-DSA-SHAKE-128s",
+        "SLH-DSA-SHAKE-192f",
+        "SLH-DSA-SHAKE-192s",
+        "SLH-DSA-SHAKE-256f",
+        "SLH-DSA-SHAKE-256s"
+      ]
+    },
+    "tls_group_classes": {
+      "classical": [
+        "secp256r1",
+        "secp384r1",
+        "secp521r1",
+        "x25519",
+        "x448",
+        "brainpoolP256r1tls13",
+        "brainpoolP384r1tls13",
+        "brainpoolP512r1tls13",
+        "ffdhe2048",
+        "ffdhe3072",
+        "ffdhe4096",
+        "ffdhe6144",
+        "ffdhe8192"
+      ],
+      "hybrid": [
+        "SecP256r1MLKEM768",
+        "X25519MLKEM768",
+        "SecP384r1MLKEM1024"
+      ],
+      "pqc": [
+        "MLKEM512",
+        "MLKEM768",
+        "MLKEM1024"
+      ]
+    },
+    "tls_profiles": {
+      "classical": {
+        "authentication": "classical",
+        "certificate_key": "RSA-3072",
+        "group": "X25519",
+        "group_kind": "classical",
+        "missing": [],
+        "supported": true
+      },
+      "hybrid": {
+        "authentication": "classical",
+        "certificate_key": "RSA-3072",
+        "group": "X25519MLKEM768",
+        "group_kind": "hybrid",
+        "missing": [],
+        "supported": true
+      },
+      "pqc": {
+        "authentication": "pqc",
+        "certificate_key": "ML-DSA-65",
+        "group": "MLKEM768",
+        "group_kind": "pqc",
+        "missing": [],
+        "supported": true
+      }
+    },
+    "unavailable_queries": [],
+    "x509": {
+      "ML-DSA-65": {
+        "certificate_type": "ML-DSA-65",
+        "signature_algorithm": "ML-DSA-65",
+        "supported": true
+      },
+      "RSA-3072": {
+        "certificate_type": "RSA-3072",
+        "signature_algorithm": "sha256WithRSAEncryption",
+        "supported": true
+      }
+    }
+  },
+  "environment": {
+    "container": {
+      "detected": false,
+      "indicators": [],
+      "note": "best-effort detection from local indicators",
+      "runtime": null,
+      "virtualization": "kvm"
+    },
+    "host": {
+      "architecture": "x86_64",
+      "cpu_model": "Intel(R) Xeon(R) Platinum 8375C CPU @ 2.90GHz",
+      "load_average_end": [
+        1.45,
+        0.97,
+        0.62
+      ],
+      "load_average_start": [
+        0.62,
+        0.78,
+        0.55
+      ],
+      "logical_cpus": 8,
+      "usable_cpus": 8
+    },
+    "openssl": {
+      "built_on": "Wed Oct 7 10:25:33 2026 UTC",
+      "config": "OPENSSL_CONF=/dev/null",
+      "oqs_provider_loaded": false,
+      "oqs_required": false,
+      "platform": "linux-x86_64",
+      "providers": [
+        {
+          "build_info": "3.5.9",
+          "id": "default",
+          "name": "OpenSSL Default Provider",
+          "status": "active",
+          "version": "3.5.9"
+        }
+      ],
+      "source": "checkout .tools (scripts/setup-openssl.sh)",
+      "version": "OpenSSL 3.5.9 29 Sep 2026 (Library: OpenSSL 3.5.9 29 Sep 2026)",
+      "version_number": "3.5.9"
+    },
+    "os": {
+      "distribution": "Ubuntu 22.04.5 LTS",
+      "platform": "Linux-6.8.0-1061-aws-x86_64-with-glibc2.35",
+      "release": "6.8.0-1061-aws",
+      "system": "Linux"
+    },
+    "python": {
+      "implementation": "CPython",
+      "version": "3.12.13"
+    },
+    "timestamp_utc": "2026-10-07T12:06:30Z",
+    "wall_time_s": 17.746
+  },
+  "kind": "cryptoagility.benchmark",
+  "methodology": {
+    "caveats": [
+      "One sample = one complete openssl CLI process timed with time.perf_counter_ns around cryptoagility.openssl.run: fork/exec, dynamic loading, provider initialisation (OPENSSL_CONF=/dev/null), PEM key parsing, file and pipe I/O, then the operation. It is not an isolated in-library primitive latency.",
+      "Compare operation timings with the baseline:openssl-version entry, which measures the same subprocess path for a command that performs no cryptography.",
+      "Samples are taken sequentially on a shared host without CPU pinning or frequency control; scheduler, cache and virtualisation noise are not removed.",
+      "Results describe this lab environment only; they are not production, hardware-module or network performance figures and do not rank algorithms in general.",
+      "Warmup samples are recorded but excluded from statistics.",
+      "Private key DER sizes are the OpenSSL default PKCS#8 encodings; ML-KEM and ML-DSA encodings from OpenSSL 3.5 can include both seed and expanded key.",
+      "ML-KEM (FIPS 203), ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) are standardized algorithms; TLS 1.3 hybrid/PQC group code points and PQ X.509/TLS signature integrations are laboratory experiments. The OpenSSL default provider is not claimed FIPS 140 validated."
+    ],
+    "execution": "sequential; one OpenSSL process or handshake at a time",
+    "handshake_bytes_definition": "handshake_bytes_read/written are the client-side OpenSSL BIO counters printed by s_client as 'SSL handshake has read N bytes and written M bytes' when it prints the session summary after the TLS 1.3 handshake: TLS record bytes (record headers, handshake messages, any compatibility ChangeCipherSpec) on the client connection. They exclude TCP/IP/Ethernet framing and are not derived from packet capture. Session tickets are disabled on both sides (-no_ticket, -num_tickets 0).",
+    "iterations": 20,
+    "message_bytes": 1024,
+    "operation_scope": "One sample = one complete openssl CLI process timed with time.perf_counter_ns around cryptoagility.openssl.run: fork/exec, dynamic loading, provider initialisation (OPENSSL_CONF=/dev/null), PEM key parsing, file and pipe I/O, then the operation. It is not an isolated in-library primitive latency.",
+    "p95_method": "nearest-rank on sorted samples; omitted when fewer than 20 samples",
+    "p95_min_samples": 20,
+    "sample_unit": "ns",
+    "statistics": [
+      "median",
+      "min",
+      "max",
+      "p95"
+    ],
+    "timeout_s": 60.0,
+    "timing_clock": "time.perf_counter_ns",
+    "tls_timing_scope": "TLS samples are tls.handshake client_process_ms (time.perf_counter around one whole s_client process, rounded by tls to 1 microsecond) converted to integer nanoseconds. client_process_ms is wall-clock time of one complete s_client process: start-up, trust loading, TCP connect, TLS 1.3 handshake, certificate verification and shutdown. It is not an isolated in-library handshake latency.",
+    "warmups": 3,
+    "warmups_excluded_from_statistics": true
+  },
+  "requested": {
+    "algorithms": [
+      "RSA-3072",
+      "ECDSA-P-256",
+      "ML-KEM-768",
+      "ML-DSA-65",
+      "SLH-DSA-SHA2-128s"
+    ],
+    "include_tls": true,
+    "profiles": [
+      "classical",
+      "hybrid",
+      "pqc"
+    ]
+  },
+  "results": [
+    {
+      "algorithm": "none",
+      "checks": {},
+      "description": "Subprocess floor: 'openssl version' performs no cryptography",
+      "id": "baseline:openssl-version",
+      "kind": "baseline",
+      "operations": {
+        "process": {
+          "samples_ns": [
+            1720832,
+            1828241,
+            1701220,
+            1695655,
+            1626080,
+            1667124,
+            1776664,
+            1665746,
+            1629163,
+            1682617,
+            1684054,
+            1608014,
+            1835143,
+            1759336,
+            1645154,
+            1693590,
+            1672737,
+            1765228,
+            1629830,
+            1611874
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 1.8351,
+            "max_ns": 1835143,
+            "median_ms": 1.6833,
+            "median_ns": 1683335.5,
+            "min_ms": 1.608,
+            "min_ns": 1608014,
+            "p95_ms": 1.8282,
+            "p95_ns": 1828241
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            1804628,
+            1821517,
+            1708196
+          ]
+        }
+      },
+      "profiles": [],
+      "reason": null,
+      "sizes": {},
+      "status": "SUCCESS"
+    },
+    {
+      "algorithm": "RSA-3072",
+      "checks": {
+        "every_signature_verified": true,
+        "modified_message_rejected": true,
+        "tampered_signature_rejected": true
+      },
+      "family": "classical",
+      "id": "signature:RSA-3072",
+      "interface": "openssl genpkey/pkey/pkeyutl CLI",
+      "kind": "signature",
+      "operations": {
+        "keygen": {
+          "samples_ns": [
+            59745266,
+            212909331,
+            116913889,
+            327972376,
+            120452910,
+            129538476,
+            68198509,
+            193496655,
+            249227438,
+            648446085,
+            166062091,
+            89629760,
+            130316502,
+            91583983,
+            406570235,
+            156218718,
+            47295051,
+            35706449,
+            55059874,
+            286325060
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 648.4461,
+            "max_ns": 648446085,
+            "median_ms": 129.9275,
+            "median_ns": 129927489.0,
+            "min_ms": 35.7064,
+            "min_ns": 35706449,
+            "p95_ms": 406.5702,
+            "p95_ns": 406570235
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            127198547,
+            378665851,
+            195217396
+          ]
+        },
+        "sign": {
+          "samples_ns": [
+            5153067,
+            5057651,
+            4921181,
+            4852849,
+            4848049,
+            5152112,
+            4927608,
+            4885727,
+            4948807,
+            4968796,
+            4822886,
+            4703889,
+            4728185,
+            4720353,
+            4797872,
+            4627164,
+            4782948,
+            4720215,
+            4578716,
+            5750341
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 5.7503,
+            "max_ns": 5750341,
+            "median_ms": 4.8504,
+            "median_ns": 4850449.0,
+            "min_ms": 4.5787,
+            "min_ns": 4578716,
+            "p95_ms": 5.1531,
+            "p95_ns": 5153067
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            5145317,
+            5150850,
+            5179190
+          ]
+        },
+        "verify": {
+          "samples_ns": [
+            2853871,
+            2839812,
+            3782636,
+            2951694,
+            2959844,
+            2900877,
+            3036629,
+            2951313,
+            2941811,
+            3793926,
+            2942330,
+            2877401,
+            2955694,
+            2847775,
+            2847081,
+            2961806,
+            2845767,
+            2811072,
+            2882295,
+            2797536
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 3.7939,
+            "max_ns": 3793926,
+            "median_ms": 2.9213,
+            "median_ns": 2921344.0,
+            "min_ms": 2.7975,
+            "min_ns": 2797536,
+            "p95_ms": 3.7826,
+            "p95_ns": 3782636
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            2804272,
+            2960512,
+            2953964
+          ]
+        }
+      },
+      "profiles": [
+        "classical",
+        "hybrid"
+      ],
+      "provider": "default",
+      "reason": null,
+      "scheme": "RSASSA-PSS, SHA-256, salt length = digest length",
+      "sizes": {
+        "message_bytes": 1024,
+        "private_key_der_bytes": 1767,
+        "public_key_der_bytes": 422,
+        "signature_bytes": {
+          "max": 384,
+          "min": 384
+        }
+      },
+      "standard": "RFC 8017 RSASSA-PSS",
+      "status": "SUCCESS"
+    },
+    {
+      "algorithm": "ECDSA-P-256",
+      "checks": {
+        "every_signature_verified": true,
+        "modified_message_rejected": true,
+        "tampered_signature_rejected": true
+      },
+      "family": "classical",
+      "id": "signature:ECDSA-P-256",
+      "interface": "openssl genpkey/pkey/pkeyutl CLI",
+      "kind": "signature",
+      "operations": {
+        "keygen": {
+          "samples_ns": [
+            3167626,
+            3077435,
+            3077075,
+            3122050,
+            3065976,
+            3120017,
+            3095658,
+            3046578,
+            3040145,
+            3171888,
+            3112455,
+            3146810,
+            3285283,
+            3188504,
+            3418116,
+            3229379,
+            3327291,
+            3293175,
+            3283558,
+            3301834
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 3.4181,
+            "max_ns": 3418116,
+            "median_ms": 3.1572,
+            "median_ns": 3157218.0,
+            "min_ms": 3.0401,
+            "min_ns": 3040145,
+            "p95_ms": 3.3273,
+            "p95_ns": 3327291
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3191527,
+            3072064,
+            3100595
+          ]
+        },
+        "sign": {
+          "samples_ns": [
+            3378930,
+            3320507,
+            3543370,
+            3162889,
+            3205365,
+            3229872,
+            3320157,
+            3496268,
+            3211916,
+            3254746,
+            3167080,
+            3123141,
+            3148198,
+            3142695,
+            3211971,
+            3255755,
+            3121062,
+            4296401,
+            3201240,
+            3330271
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 4.2964,
+            "max_ns": 4296401,
+            "median_ms": 3.2209,
+            "median_ns": 3220921.5,
+            "min_ms": 3.1211,
+            "min_ns": 3121062,
+            "p95_ms": 3.5434,
+            "p95_ns": 3543370
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3474546,
+            3420022,
+            3291552
+          ]
+        },
+        "verify": {
+          "samples_ns": [
+            2999393,
+            2824779,
+            2771040,
+            2854358,
+            2809377,
+            3518474,
+            2803678,
+            2822211,
+            2887231,
+            2978946,
+            3063706,
+            3050724,
+            3214154,
+            2948077,
+            4105143,
+            3050860,
+            3049511,
+            3044516,
+            2989327,
+            2974214
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 4.1051,
+            "max_ns": 4105143,
+            "median_ms": 2.9841,
+            "median_ns": 2984136.5,
+            "min_ms": 2.771,
+            "min_ns": 2771040,
+            "p95_ms": 3.5185,
+            "p95_ns": 3518474
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            2823585,
+            2794234,
+            3076807
+          ]
+        }
+      },
+      "profiles": [
+        "classical"
+      ],
+      "provider": "default",
+      "reason": null,
+      "scheme": "ECDSA over P-256 with SHA-256, DER-encoded signature",
+      "sizes": {
+        "message_bytes": 1024,
+        "private_key_der_bytes": 121,
+        "public_key_der_bytes": 91,
+        "signature_bytes": {
+          "max": 72,
+          "min": 70
+        }
+      },
+      "standard": "FIPS 186-5 ECDSA",
+      "status": "SUCCESS"
+    },
+    {
+      "algorithm": "ML-KEM-768",
+      "checks": {
+        "every_shared_secret_matched": true,
+        "shared_secret_values_published": false,
+        "shared_secrets_distinct": true,
+        "tampered_ciphertext": "implicit_rejection_different_secret",
+        "truncated_ciphertext_rejected": true
+      },
+      "family": "pqc",
+      "id": "kem:ML-KEM-768",
+      "interface": "openssl genpkey/pkey/pkeyutl CLI",
+      "kind": "kem",
+      "operations": {
+        "decapsulate": {
+          "samples_ns": [
+            2788680,
+            2751895,
+            2826371,
+            2946523,
+            2707866,
+            2759910,
+            2775140,
+            2743441,
+            2811032,
+            2860067,
+            2820795,
+            2877345,
+            2908004,
+            2813573,
+            2834531,
+            2850836,
+            2861033,
+            2820499,
+            2828432,
+            2723508
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 2.9465,
+            "max_ns": 2946523,
+            "median_ms": 2.8206,
+            "median_ns": 2820647.0,
+            "min_ms": 2.7079,
+            "min_ns": 2707866,
+            "p95_ms": 2.908,
+            "p95_ns": 2908004
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            2751679,
+            2772404,
+            5514052
+          ]
+        },
+        "encapsulate": {
+          "samples_ns": [
+            3288063,
+            3115946,
+            3154907,
+            3170731,
+            3261401,
+            3285084,
+            3186657,
+            3100490,
+            3306311,
+            3250685,
+            3261077,
+            3330369,
+            3171312,
+            3122436,
+            3085480,
+            3089355,
+            3192789,
+            3059210,
+            3079653,
+            5224592
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 5.2246,
+            "max_ns": 5224592,
+            "median_ms": 3.179,
+            "median_ns": 3178984.5,
+            "min_ms": 3.0592,
+            "min_ns": 3059210,
+            "p95_ms": 3.3304,
+            "p95_ns": 3330369
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3189677,
+            3281625,
+            3259685
+          ]
+        },
+        "keygen": {
+          "samples_ns": [
+            3260777,
+            3251745,
+            3311094,
+            3230847,
+            3192898,
+            3230626,
+            3374455,
+            3383796,
+            4286171,
+            3372247,
+            3433965,
+            3298201,
+            3798802,
+            6448374,
+            3442100,
+            3372791,
+            3445157,
+            3384091,
+            3464902,
+            5293218
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 6.4484,
+            "max_ns": 6448374,
+            "median_ms": 3.3791,
+            "median_ns": 3379125.5,
+            "min_ms": 3.1929,
+            "min_ns": 3192898,
+            "p95_ms": 5.2932,
+            "p95_ns": 5293218
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3303534,
+            3289832,
+            3382281
+          ]
+        }
+      },
+      "profiles": [
+        "hybrid",
+        "pqc"
+      ],
+      "provider": "default",
+      "reason": null,
+      "scheme": "ML-KEM encapsulation/decapsulation",
+      "sizes": {
+        "ciphertext_bytes": {
+          "max": 1088,
+          "min": 1088
+        },
+        "private_key_der_bytes": 2498,
+        "public_key_der_bytes": 1206,
+        "shared_secret_bytes": {
+          "max": 32,
+          "min": 32
+        }
+      },
+      "standard": "FIPS 203",
+      "status": "SUCCESS"
+    },
+    {
+      "algorithm": "ML-DSA-65",
+      "checks": {
+        "every_signature_verified": true,
+        "modified_message_rejected": true,
+        "tampered_signature_rejected": true
+      },
+      "family": "pqc",
+      "id": "signature:ML-DSA-65",
+      "interface": "openssl genpkey/pkey/pkeyutl CLI",
+      "kind": "signature",
+      "operations": {
+        "keygen": {
+          "samples_ns": [
+            3448433,
+            3360807,
+            3388081,
+            3467963,
+            3330839,
+            3339153,
+            3372552,
+            3369286,
+            3282962,
+            3347810,
+            3388125,
+            3311079,
+            3316919,
+            3384052,
+            3410139,
+            3481465,
+            3626203,
+            3825368,
+            3672302,
+            3645388
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 3.8254,
+            "max_ns": 3825368,
+            "median_ms": 3.3861,
+            "median_ns": 3386066.5,
+            "min_ms": 3.283,
+            "min_ns": 3282962,
+            "p95_ms": 3.6723,
+            "p95_ns": 3672302
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3379256,
+            3442386,
+            3382449
+          ]
+        },
+        "sign": {
+          "samples_ns": [
+            4676063,
+            4660377,
+            5424883,
+            3823139,
+            4021223,
+            4646868,
+            3964915,
+            4306076,
+            4758464,
+            4094812,
+            4629614,
+            4572627,
+            3748513,
+            4179452,
+            4661344,
+            4201617,
+            4230648,
+            3908870,
+            4689710,
+            5292002
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 5.4249,
+            "max_ns": 5424883,
+            "median_ms": 4.4394,
+            "median_ns": 4439351.5,
+            "min_ms": 3.7485,
+            "min_ns": 3748513,
+            "p95_ms": 5.292,
+            "p95_ns": 5292002
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            4421788,
+            4372818,
+            6210647
+          ]
+        },
+        "verify": {
+          "samples_ns": [
+            2984949,
+            2918161,
+            3267194,
+            3048319,
+            3008569,
+            3132544,
+            3134282,
+            3103920,
+            3111216,
+            5973540,
+            3125787,
+            3154309,
+            3343768,
+            3079524,
+            3090271,
+            3018268,
+            3054527,
+            3122502,
+            2995792,
+            3028486
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 5.9735,
+            "max_ns": 5973540,
+            "median_ms": 3.0971,
+            "median_ns": 3097095.5,
+            "min_ms": 2.9182,
+            "min_ns": 2918161,
+            "p95_ms": 3.3438,
+            "p95_ns": 3343768
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3104644,
+            2907167,
+            2876653
+          ]
+        }
+      },
+      "profiles": [
+        "pqc"
+      ],
+      "provider": "default",
+      "reason": null,
+      "scheme": "pure ML-DSA, empty context",
+      "sizes": {
+        "message_bytes": 1024,
+        "private_key_der_bytes": 4098,
+        "public_key_der_bytes": 1974,
+        "signature_bytes": {
+          "max": 3309,
+          "min": 3309
+        }
+      },
+      "standard": "FIPS 204",
+      "status": "SUCCESS"
+    },
+    {
+      "algorithm": "SLH-DSA-SHA2-128s",
+      "checks": {
+        "every_signature_verified": true,
+        "modified_message_rejected": true,
+        "tampered_signature_rejected": true
+      },
+      "family": "pqc",
+      "id": "signature:SLH-DSA-SHA2-128s",
+      "interface": "openssl genpkey/pkey/pkeyutl CLI",
+      "kind": "signature",
+      "operations": {
+        "keygen": {
+          "samples_ns": [
+            52967066,
+            52815645,
+            62734672,
+            53815219,
+            53952498,
+            53620420,
+            64586497,
+            53188175,
+            53586812,
+            56135211,
+            53239516,
+            64181773,
+            58979100,
+            53871886,
+            53669777,
+            52943356,
+            54464269,
+            58605967,
+            60105011,
+            52960987
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 64.5865,
+            "max_ns": 64586497,
+            "median_ms": 53.8436,
+            "median_ns": 53843552.5,
+            "min_ms": 52.8156,
+            "min_ns": 52815645,
+            "p95_ms": 64.1818,
+            "p95_ns": 64181773
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            59344610,
+            53179004,
+            53029998
+          ]
+        },
+        "sign": {
+          "samples_ns": [
+            405339580,
+            383729825,
+            383478995,
+            387510068,
+            388400983,
+            395270857,
+            382969983,
+            395377575,
+            387929030,
+            382584157,
+            387224559,
+            410436624,
+            383007906,
+            401716321,
+            385911131,
+            396857625,
+            389789215,
+            392825866,
+            385519923,
+            393232930
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 410.4366,
+            "max_ns": 410436624,
+            "median_ms": 388.165,
+            "median_ns": 388165006.5,
+            "min_ms": 382.5842,
+            "min_ns": 382584157,
+            "p95_ms": 405.3396,
+            "p95_ns": 405339580
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            389610313,
+            397884064,
+            404009939
+          ]
+        },
+        "verify": {
+          "samples_ns": [
+            3441705,
+            3411121,
+            3616619,
+            3454375,
+            3403845,
+            3549189,
+            3351819,
+            3262838,
+            3253292,
+            3153831,
+            3240567,
+            3159678,
+            3174289,
+            3152065,
+            3251630,
+            3159825,
+            3254744,
+            3146100,
+            3144778,
+            3106726
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 3.6166,
+            "max_ns": 3616619,
+            "median_ms": 3.2525,
+            "median_ns": 3252461.0,
+            "min_ms": 3.1067,
+            "min_ns": 3106726,
+            "p95_ms": 3.5492,
+            "p95_ns": 3549189
+          },
+          "status": "SUCCESS",
+          "timing_source": "time.perf_counter_ns",
+          "warmup_samples_ns": [
+            3710861,
+            3644052,
+            3591803
+          ]
+        }
+      },
+      "profiles": [
+        "pqc"
+      ],
+      "provider": "default",
+      "reason": null,
+      "scheme": "pure SLH-DSA, empty context",
+      "sizes": {
+        "message_bytes": 1024,
+        "private_key_der_bytes": 84,
+        "public_key_der_bytes": 50,
+        "signature_bytes": {
+          "max": 7856,
+          "min": 7856
+        }
+      },
+      "standard": "FIPS 205",
+      "status": "SUCCESS"
+    },
+    {
+      "algorithm": "X25519",
+      "authentication": "classical",
+      "certificate_key": "RSA-3072",
+      "certificate_signature_algorithm": "sha256WithRSAEncryption",
+      "certificate_type": "RSA-3072",
+      "checks": {
+        "client": "classical-only",
+        "every_handshake_verified_and_profile_matched": true,
+        "trust": "synthetic lab root only, hostname and strict X.509 verification"
+      },
+      "cipher_suites": [
+        "TLS_AES_256_GCM_SHA384"
+      ],
+      "client_variant": "classical-only",
+      "group": "X25519",
+      "group_kind": "classical",
+      "id": "tls:classical",
+      "kind": "tls_handshake",
+      "negotiated_group": "X25519",
+      "negotiated_group_kind": "classical",
+      "network_attempted": true,
+      "operations": {
+        "handshake": {
+          "samples_ns": [
+            5625000,
+            5665000,
+            5439000,
+            5457000,
+            5483000,
+            5601000,
+            5432000,
+            5496000,
+            5497000,
+            6147000,
+            5844000,
+            6160000,
+            5829000,
+            5567000,
+            5442000,
+            5302000,
+            5730000,
+            5735000,
+            5970000,
+            5759000
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 6.16,
+            "max_ns": 6160000,
+            "median_ms": 5.613,
+            "median_ns": 5613000.0,
+            "min_ms": 5.302,
+            "min_ns": 5302000,
+            "p95_ms": 6.147,
+            "p95_ns": 6147000
+          },
+          "status": "SUCCESS",
+          "timing_source": "TLS samples are tls.handshake client_process_ms (time.perf_counter around one whole s_client process, rounded by tls to 1 microsecond) converted to integer nanoseconds. client_process_ms is wall-clock time of one complete s_client process: start-up, trust loading, TCP connect, TLS 1.3 handshake, certificate verification and shutdown. It is not an isolated in-library handshake latency.",
+          "warmup_samples_ns": [
+            7329000,
+            5687000,
+            5655000
+          ]
+        }
+      },
+      "peer_signature_types": [
+        "rsa_pss_rsae_sha256"
+      ],
+      "policy": {
+        "name": "hybrid-key-establishment-required",
+        "pass": false,
+        "reasons": [
+          "negotiated classical group X25519; policy requires hybrid"
+        ]
+      },
+      "profiles": [
+        "classical"
+      ],
+      "reason": null,
+      "sizes": {
+        "handshake_bytes_definition": "handshake_bytes_read/written are the client-side OpenSSL BIO counters printed by s_client as 'SSL handshake has read N bytes and written M bytes' when it prints the session summary after the TLS 1.3 handshake: TLS record bytes (record headers, handshake messages, any compatibility ChangeCipherSpec) on the client connection. They exclude TCP/IP/Ethernet framing and are not derived from packet capture. Session tickets are disabled on both sides (-no_ticket, -num_tickets 0).",
+        "handshake_bytes_read": {
+          "max": 3056,
+          "min": 3056
+        },
+        "handshake_bytes_total": {
+          "max": 3342,
+          "min": 3342
+        },
+        "handshake_bytes_written": {
+          "max": 286,
+          "min": 286
+        },
+        "leaf_certificate_der_bytes": 1201,
+        "observed_chain_der_bytes": 2367,
+        "served_chain_der_bytes": 2367,
+        "served_chain_length": 2
+      },
+      "status": "SUCCESS",
+      "tls_version": "TLSv1.3"
+    },
+    {
+      "algorithm": "X25519MLKEM768",
+      "authentication": "classical",
+      "certificate_key": "RSA-3072",
+      "certificate_signature_algorithm": "sha256WithRSAEncryption",
+      "certificate_type": "RSA-3072",
+      "checks": {
+        "client": "hybrid-only",
+        "every_handshake_verified_and_profile_matched": true,
+        "trust": "synthetic lab root only, hostname and strict X.509 verification"
+      },
+      "cipher_suites": [
+        "TLS_AES_256_GCM_SHA384"
+      ],
+      "client_variant": "hybrid-only",
+      "group": "X25519MLKEM768",
+      "group_kind": "hybrid",
+      "id": "tls:hybrid",
+      "kind": "tls_handshake",
+      "negotiated_group": "X25519MLKEM768",
+      "negotiated_group_kind": "hybrid",
+      "network_attempted": true,
+      "operations": {
+        "handshake": {
+          "samples_ns": [
+            5533000,
+            5490000,
+            5651000,
+            5710000,
+            5728000,
+            5475000,
+            5535000,
+            6062000,
+            5997000,
+            6098000,
+            6095000,
+            5785000,
+            5681000,
+            5699000,
+            5865000,
+            6123000,
+            7684000,
+            6087000,
+            6214000,
+            14610000
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 14.61,
+            "max_ns": 14610000,
+            "median_ms": 5.825,
+            "median_ns": 5825000.0,
+            "min_ms": 5.475,
+            "min_ns": 5475000,
+            "p95_ms": 7.684,
+            "p95_ns": 7684000
+          },
+          "status": "SUCCESS",
+          "timing_source": "TLS samples are tls.handshake client_process_ms (time.perf_counter around one whole s_client process, rounded by tls to 1 microsecond) converted to integer nanoseconds. client_process_ms is wall-clock time of one complete s_client process: start-up, trust loading, TCP connect, TLS 1.3 handshake, certificate verification and shutdown. It is not an isolated in-library handshake latency.",
+          "warmup_samples_ns": [
+            7189000,
+            5861000,
+            5607000
+          ]
+        }
+      },
+      "peer_signature_types": [
+        "rsa_pss_rsae_sha256"
+      ],
+      "policy": {
+        "name": "hybrid-key-establishment-required",
+        "pass": true,
+        "reasons": []
+      },
+      "profiles": [
+        "hybrid"
+      ],
+      "reason": null,
+      "sizes": {
+        "handshake_bytes_definition": "handshake_bytes_read/written are the client-side OpenSSL BIO counters printed by s_client as 'SSL handshake has read N bytes and written M bytes' when it prints the session summary after the TLS 1.3 handshake: TLS record bytes (record headers, handshake messages, any compatibility ChangeCipherSpec) on the client connection. They exclude TCP/IP/Ethernet framing and are not derived from packet capture. Session tickets are disabled on both sides (-no_ticket, -num_tickets 0).",
+        "handshake_bytes_read": {
+          "max": 4144,
+          "min": 4144
+        },
+        "handshake_bytes_total": {
+          "max": 5606,
+          "min": 5606
+        },
+        "handshake_bytes_written": {
+          "max": 1462,
+          "min": 1462
+        },
+        "leaf_certificate_der_bytes": 1201,
+        "observed_chain_der_bytes": 2367,
+        "served_chain_der_bytes": 2367,
+        "served_chain_length": 2
+      },
+      "status": "SUCCESS",
+      "tls_version": "TLSv1.3"
+    },
+    {
+      "algorithm": "MLKEM768",
+      "authentication": "pqc",
+      "certificate_key": "ML-DSA-65",
+      "certificate_signature_algorithm": "ML-DSA-65",
+      "certificate_type": "ML-DSA-65",
+      "checks": {
+        "client": "pqc-only",
+        "every_handshake_verified_and_profile_matched": true,
+        "trust": "synthetic lab root only, hostname and strict X.509 verification"
+      },
+      "cipher_suites": [
+        "TLS_AES_256_GCM_SHA384"
+      ],
+      "client_variant": "pqc-only",
+      "group": "MLKEM768",
+      "group_kind": "pqc",
+      "id": "tls:pqc",
+      "kind": "tls_handshake",
+      "negotiated_group": "MLKEM768",
+      "negotiated_group_kind": "pqc",
+      "network_attempted": true,
+      "operations": {
+        "handshake": {
+          "samples_ns": [
+            5453000,
+            5923000,
+            5710000,
+            5640000,
+            7299000,
+            6418000,
+            5578000,
+            5718000,
+            5659000,
+            6349000,
+            6114000,
+            6020000,
+            5735000,
+            5422000,
+            5116000,
+            7664000,
+            5311000,
+            5229000,
+            5745000,
+            6511000
+          ],
+          "statistics": {
+            "count": 20,
+            "max_ms": 7.664,
+            "max_ns": 7664000,
+            "median_ms": 5.7265,
+            "median_ns": 5726500.0,
+            "min_ms": 5.116,
+            "min_ns": 5116000,
+            "p95_ms": 7.299,
+            "p95_ns": 7299000
+          },
+          "status": "SUCCESS",
+          "timing_source": "TLS samples are tls.handshake client_process_ms (time.perf_counter around one whole s_client process, rounded by tls to 1 microsecond) converted to integer nanoseconds. client_process_ms is wall-clock time of one complete s_client process: start-up, trust loading, TCP connect, TLS 1.3 handshake, certificate verification and shutdown. It is not an isolated in-library handshake latency.",
+          "warmup_samples_ns": [
+            5659000,
+            5396000,
+            6158000
+          ]
+        }
+      },
+      "peer_signature_types": [
+        "mldsa65"
+      ],
+      "policy": {
+        "name": "hybrid-key-establishment-required",
+        "pass": false,
+        "reasons": [
+          "negotiated pqc group MLKEM768; policy requires hybrid"
+        ]
+      },
+      "profiles": [
+        "pqc"
+      ],
+      "reason": null,
+      "sizes": {
+        "handshake_bytes_definition": "handshake_bytes_read/written are the client-side OpenSSL BIO counters printed by s_client as 'SSL handshake has read N bytes and written M bytes' when it prints the session summary after the TLS 1.3 handshake: TLS record bytes (record headers, handshake messages, any compatibility ChangeCipherSpec) on the client connection. They exclude TCP/IP/Ethernet framing and are not derived from packet capture. Session tickets are disabled on both sides (-no_ticket, -num_tickets 0).",
+        "handshake_bytes_read": {
+          "max": 15986,
+          "min": 15986
+        },
+        "handshake_bytes_total": {
+          "max": 17408,
+          "min": 17408
+        },
+        "handshake_bytes_written": {
+          "max": 1422,
+          "min": 1422
+        },
+        "leaf_certificate_der_bytes": 5675,
+        "observed_chain_der_bytes": 11316,
+        "served_chain_der_bytes": 11316,
+        "served_chain_length": 2
+      },
+      "status": "SUCCESS",
+      "tls_version": "TLSv1.3"
+    }
+  ],
+  "schema_version": "1.0",
+  "statuses": [
+    "SUCCESS",
+    "UNSUPPORTED",
+    "ERROR"
+  ],
+  "summary": {
+    "ERROR": 0,
+    "SUCCESS": 9,
+    "UNSUPPORTED": 0
+  }
+}
