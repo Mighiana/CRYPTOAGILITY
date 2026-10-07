@@ -373,6 +373,24 @@ def test_constrained_footprint_uses_measured_matrix_bytes(constrained: dict) -> 
     ]
     assert footprint["within_declared_budget"] is False
     assert "exceeds the declared budget of 3150 bytes" in footprint["statement"]
+
+
+def test_footprint_uses_run_matrix_read_and_written_counters(constrained: dict) -> None:
+    lab = matrix(
+        row("X25519MLKEM768", handshake_bytes_read=3200, handshake_bytes_written=1300),
+        row("X25519MLKEM768", status="FAILED", handshake_bytes_read=None),
+    )
+    result = plan(
+        inv(endpoint("ep", "X25519")),
+        constrained,
+        lab,
+        constraints={"bandwidth_budget_bytes": 5000},
+        now=NOW,
+    )
+    footprint = result["footprint"]
+    assert footprint["status"] == "measured"
+    assert footprint["handshake_measurements"][0]["median_handshake_bytes"] == 4500
+    assert footprint["within_declared_budget"] is True
     assert item(result, "ep")["blocker"] is None
     assert result["readiness"] == "PARTIALLY_READY"
 

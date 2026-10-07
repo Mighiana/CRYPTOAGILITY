@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from cryptoagility import cli, lab, scenario, tls
+from cryptoagility.policy import PolicyError
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -162,6 +163,41 @@ def test_mismatched_client_fails_instead_of_downgrading(capsys: pytest.CaptureFi
     )
     row = json.loads(capsys.readouterr().out)["rows"][0]
     assert row["status"] == tls.FAIL_NEGOTIATION and row["negotiated_group"] is None
+
+
+@pytest.mark.integration
+def test_test_can_gate_on_tls_policy(capsys: pytest.CaptureFixture[str]) -> None:
+    assert cli.main(["test", "--profile", "classical", "--json"]) == 0
+    row = json.loads(capsys.readouterr().out)["rows"][0]
+    assert row["status"] == tls.SUCCESS and row["policy_pass"] is False
+    gated = ["test", "--profile", "classical", "--fail-on-noncompliant", "--json"]
+    assert cli.main(gated) == cli.EXIT_GATE
+    capsys.readouterr()
+    hybrid = ["test", "--profile", "hybrid", "--fail-on-noncompliant", "--json"]
+    assert cli.main(hybrid) == 0
+
+
+def test_failed_lab_rerun_keeps_previous_results(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    results = tmp_path / "results"
+    results.mkdir()
+    previous = {"inventory.json": "{}", "policy.json": "{}", "report.html": "<html></html>"}
+    for name, body in previous.items():
+        (results / name).write_text(body)
+    bad = tmp_path / "bad.yaml"
+    bad.write_text("not: a policy\n")
+    with pytest.raises(PolicyError):
+        lab.run(results, policy_path=bad, log=lambda _: None)
+
+    def broken() -> dict:
+        raise RuntimeError("capability probe failed")
+
+    monkeypatch.setattr(tls, "capabilities", broken)
+    with pytest.raises(RuntimeError):
+        lab.run(results, policy_path=cli.DEFAULT_POLICY, log=lambda _: None)
+    assert {p.name: p.read_text() for p in results.iterdir()} == previous
+    assert [p.name for p in results.iterdir() if p.name.startswith(".lab-staging-")] == []
 
 
 @pytest.mark.integration

@@ -672,6 +672,25 @@ def test_closed_port_and_bad_cafile(pki, tmp_path: Path) -> None:
         inventory.inspect_endpoint("127.0.0.1", 4433, cafile=pki["leaf_key"])
 
 
+def test_cafile_is_passed_to_openssl_as_validated_copy(tmp_path: Path, monkeypatch) -> None:
+    ca = tmp_path / "ca.pem"
+    ca.write_bytes(b"-----BEGIN CERTIFICATE-----\nAAAA\n-----END CERTIFICATE-----\n")
+    seen: list[tuple[str, bytes]] = []
+
+    def fake_run(args: list[str], **_: object) -> bytes:
+        path = args[args.index("-CAfile") + 1]
+        seen.append((path, Path(path).read_bytes()))
+        ca.write_bytes(b"swapped after validation")
+        raise openssl.OpenSSLError("no server")
+
+    monkeypatch.setattr(openssl, "run", fake_run)
+    inv = inventory.inspect_endpoint("127.0.0.1", 4433, cafile=ca, probe=False)
+    assert [e["code"] for e in inv.errors] == ["tls_connection_failed"]
+    [(path, data)] = seen
+    assert Path(path) != ca.resolve() and not Path(path).exists()
+    assert data.startswith(b"-----BEGIN CERTIFICATE-----")
+
+
 @requires_openssl
 @pytest.mark.integration
 @pytest.mark.skipif(not openssl_has("signature", "ML-DSA-65"), reason="ML-DSA unavailable")

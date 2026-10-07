@@ -2,40 +2,24 @@
 
 - Readiness: **BLOCKED**
 - Policy: default (profile general)
-- Generated: 2026-10-07T12:14:36.270431\+00:00
+- Generated: 2026-10-07T14:35:53.410894\+00:00
 - No numerical score is produced; priorities are explained per item.
 
 ## Reasons
 
-- 9 asset\(s\) blocked by policy or lab evidence: certs/rsa2048-expired-reporting.pem \(RSA / 2048 bits / RSA-2048\), certs/rsa2048-legacy-portal-sha1.pem \(RSA / 2048 bits / RSA-2048\), services/03-legacy-portal.yaml \(TLSv1.1\), services/03-legacy-portal.yaml \(3DES\), services/03-legacy-portal.yaml \(rsa\_pkcs1\_sha1\), services/03-legacy-portal.yaml \(AES-128-CBC\), certs/rsa2048-customer-api.pem \(RSA / 2048 bits / RSA-2048\), certs/rsa2048-public-web.pem \(RSA / 2048 bits / RSA-2048\), services/07-backup-archive.yaml \(ffdhe2048 / ffdhe2048\)
+- 9 asset\(s\) blocked by policy or lab evidence: certs/rsa2048-legacy-portal-sha1.pem \(RSA / 2048 bits / RSA-2048\), certs/rsa2048-expired-reporting.pem \(RSA / 2048 bits / RSA-2048\), services/03-legacy-portal.yaml \(TLSv1.1\), services/03-legacy-portal.yaml \(3DES\), services/03-legacy-portal.yaml \(rsa\_pkcs1\_sha1\), services/03-legacy-portal.yaml \(AES-128-CBC\), certs/rsa2048-customer-api.pem \(RSA / 2048 bits / RSA-2048\), certs/rsa2048-public-web.pem \(RSA / 2048 bits / RSA-2048\), services/07-backup-archive.yaml \(ffdhe2048 / ffdhe2048\)
 - 1 asset\(s\) have missing, unrecognised or footprint evidence gaps: clients/legacy-batch-client.cnf \(unrecognized\)
 
 ## Footprint
 
-Footprint unknown: no measured byte counts were supplied, so no size or bandwidth estimate is made.
+ESTIMATE: derived only from byte counts measured in the local lab; not network, MTU, latency or field evidence. No bandwidth budget was declared, so no budget comparison is made.
+- grp-hybrid-x25519-mlkem768: median 5613.0 bytes over 2 sample(s) (matrix rows \(local loopback lab\))
+- grp-mlkem: median 18163.5 bytes over 2 sample(s) (matrix rows \(local loopback lab\))
+- grp-x25519: median 3448 bytes over 3 sample(s) (matrix rows \(local loopback lab\))
 
 ## Items
 
-### cert-417a0a1a9f96c7fb175d6020
-
-| Field | Value |
-|---|---|
-| priority | IMMEDIATE |
-| outcome | DEPRECATED |
-| current_algorithm | RSA / 2048 bits / RSA-2048 |
-| evidence_status | complete |
-| reason | Priority IMMEDIATE: outcome DEPRECATED maps to IMMEDIATE under policy default; constraint factors noted but already at or above the escalation cap: declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: expiry: certificate expired at 2024-01-01T00:00:00\+00:00. An expired certificate is not a valid trust dependency under this policy. |
-| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
-| recommended_test | Issue a synthetic certificate with the target key and signature algorithm and verify chain validation in each client used with this certificate |
-| blocker | Policy: DEPRECATED. expiry: certificate expired at 2024-01-01T00:00:00\+00:00. An expired certificate is not a valid trust dependency under this policy. |
-| next_action | Replace or disable the dependency; it is below the policy minimum. |
-
-Migration options:
-
-- Replace the certificate immediately
-- Investigate why expiry was not detected by certificate tracking
-
-### cert-cfe5f0356153855d9710908c
+### cert-11eec10c69b79a1579481b32
 
 | Field | Value |
 |---|---|
@@ -53,6 +37,25 @@ Migration options:
 
 - Re-issue the certificate with a SHA-2 based signature immediately
 - Identify and update any client that still requires the weak signature
+
+### cert-89b7c4a3d2227b32bedb9d2b
+
+| Field | Value |
+|---|---|
+| priority | IMMEDIATE |
+| outcome | DEPRECATED |
+| current_algorithm | RSA / 2048 bits / RSA-2048 |
+| evidence_status | complete |
+| reason | Priority IMMEDIATE: outcome DEPRECATED maps to IMMEDIATE under policy default; constraint factors noted but already at or above the escalation cap: declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: expiry: certificate expired at 2024-01-01T00:00:00\+00:00. An expired certificate is not a valid trust dependency under this policy. |
+| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
+| recommended_test | Issue a synthetic certificate with the target key and signature algorithm and verify chain validation in each client used with this certificate |
+| blocker | Policy: DEPRECATED. expiry: certificate expired at 2024-01-01T00:00:00\+00:00. An expired certificate is not a valid trust dependency under this policy. |
+| next_action | Replace or disable the dependency; it is below the policy minimum. |
+
+Migration options:
+
+- Replace the certificate immediately
+- Investigate why expiry was not detected by certificate tracking
 
 ### cfg-6805aec3378554525ce42c04
 
@@ -128,7 +131,30 @@ Migration options:
 
 - Remove the cipher and require an AEAD suite
 
-### cert-08ead4d20c1f853bf67c83bc
+### cert-1854fe350d77b5cf9357d0e4
+
+| Field | Value |
+|---|---|
+| priority | SHORT\_TERM |
+| outcome | ACCEPTABLE\_FOR\_NOW |
+| current_algorithm | RSA / 3072 bits / RSA-3072 |
+| evidence_status | complete |
+| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed RSA with key\_size=3072 \(band min\_bits=3072\); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning. |
+| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
+| recommended_test | Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client |
+| blocker | - |
+| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
+
+Migration options:
+
+- Re-issue with RSA-3072 or larger as an interim classical step
+- Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
+- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+- Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
+- Plan CA migration to an ML-DSA signature profile once relying parties are tested
+- Keep issuance profiles configurable to allow a staged CA transition
+
+### cert-25cf4018a6c728447189fe59
 
 | Field | Value |
 |---|---|
@@ -150,29 +176,7 @@ Migration options:
 - Plan CA migration to an ML-DSA signature profile once relying parties are tested
 - Keep issuance profiles configurable to allow a staged CA transition
 
-### cert-0949639e67c5b1a68da827ad
-
-| Field | Value |
-|---|---|
-| priority | SHORT\_TERM |
-| outcome | ACCEPTABLE\_FOR\_NOW |
-| current_algorithm | ECDSA / 256 bits / P-256 |
-| evidence_status | complete |
-| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning. |
-| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
-| recommended_test | Issue a synthetic certificate with the target key and signature algorithm and verify chain validation in each client used with this certificate |
-| blocker | - |
-| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
-
-Migration options:
-
-- Keep the permitted curve as an interim classical step while PQ profiles are tested
-- Plan a hybrid transition for key establishment \(for example X25519MLKEM768 where supported\)
-- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
-- Plan CA migration to an ML-DSA signature profile once relying parties are tested
-- Keep issuance profiles configurable to allow a staged CA transition
-
-### cert-14bfe518d75f015561144dbc
+### cert-2c4f6caaa994823d4c181589
 
 | Field | Value |
 |---|---|
@@ -195,96 +199,7 @@ Migration options:
 - Plan CA migration to an ML-DSA signature profile once relying parties are tested
 - Keep issuance profiles configurable to allow a staged CA transition
 
-### cert-668be2cac4b60b08a92853c5
-
-| Field | Value |
-|---|---|
-| priority | SHORT\_TERM |
-| outcome | ACCEPTABLE\_FOR\_NOW |
-| current_algorithm | RSA / 3072 bits / RSA-3072 |
-| evidence_status | complete |
-| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed RSA with key\_size=3072 \(band min\_bits=3072\); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning. |
-| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
-| recommended_test | Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client |
-| blocker | - |
-| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
-
-Migration options:
-
-- Re-issue with RSA-3072 or larger as an interim classical step
-- Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
-- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
-- Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
-- Plan CA migration to an ML-DSA signature profile once relying parties are tested
-- Keep issuance profiles configurable to allow a staged CA transition
-
-### cert-8aabf8ad826eaf4f35a887e3
-
-| Field | Value |
-|---|---|
-| priority | SHORT\_TERM |
-| outcome | MIGRATION\_REQUIRED |
-| current_algorithm | RSA / 2048 bits / RSA-2048 |
-| evidence_status | complete |
-| reason | Priority SHORT\_TERM: outcome MIGRATION\_REQUIRED maps to SHORT\_TERM under policy default; constraint factors noted but already at or above the escalation cap: declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed RSA with key\_size=2048 \(band min\_bits=2048\); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required. |
-| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
-| recommended_test | Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client |
-| blocker | Policy: MIGRATION\_REQUIRED. algorithm: observed RSA with key\_size=2048 \(band min\_bits=2048\); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required. |
-| next_action | Test the policy-compliant target profile in the lab, then plan the change with the asset owner. |
-
-Migration options:
-
-- Re-issue with RSA-3072 or larger as an interim classical step
-- Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
-- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
-- Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
-
-### cert-a9779dadf66e253cbcfe840d
-
-| Field | Value |
-|---|---|
-| priority | SHORT\_TERM |
-| outcome | ACCEPTABLE\_FOR\_NOW |
-| current_algorithm | RSA / 3072 bits / RSA-3072 |
-| evidence_status | complete |
-| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed RSA with key\_size=3072 \(band min\_bits=3072\); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning. |
-| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
-| recommended_test | Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client |
-| blocker | - |
-| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
-
-Migration options:
-
-- Re-issue with RSA-3072 or larger as an interim classical step
-- Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
-- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
-- Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
-- Plan CA migration to an ML-DSA signature profile once relying parties are tested
-- Keep issuance profiles configurable to allow a staged CA transition
-
-### cert-dffa3c0f50f97f1264506537
-
-| Field | Value |
-|---|---|
-| priority | SHORT\_TERM |
-| outcome | ACCEPTABLE\_FOR\_NOW |
-| current_algorithm | ECDSA / 384 bits / P-384 |
-| evidence_status | complete |
-| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed ECDSA parameter set P-384; rule ec: Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term PQ migration planning. |
-| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
-| recommended_test | Issue a synthetic certificate with the target key and signature algorithm and verify chain validation in each client used with this certificate |
-| blocker | - |
-| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
-
-Migration options:
-
-- Keep the permitted curve as an interim classical step while PQ profiles are tested
-- Plan a hybrid transition for key establishment \(for example X25519MLKEM768 where supported\)
-- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
-- Plan CA migration to an ML-DSA signature profile once relying parties are tested
-- Keep issuance profiles configurable to allow a staged CA transition
-
-### cert-e5dce64304fdcccb2e089290
+### cert-347495844929e984cc91ad68
 
 | Field | Value |
 |---|---|
@@ -307,7 +222,52 @@ Migration options:
 - Plan CA migration to an ML-DSA signature profile once relying parties are tested
 - Keep issuance profiles configurable to allow a staged CA transition
 
-### cert-ed909fe554de3a7eb6e6402f
+### cert-579149dcd569007d47fc51ef
+
+| Field | Value |
+|---|---|
+| priority | SHORT\_TERM |
+| outcome | ACCEPTABLE\_FOR\_NOW |
+| current_algorithm | ECDSA / 256 bits / P-256 |
+| evidence_status | complete |
+| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning. |
+| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
+| recommended_test | Issue a synthetic certificate with the target key and signature algorithm and verify chain validation in each client used with this certificate |
+| blocker | - |
+| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
+
+Migration options:
+
+- Keep the permitted curve as an interim classical step while PQ profiles are tested
+- Plan a hybrid transition for key establishment \(for example X25519MLKEM768 where supported\)
+- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+- Plan CA migration to an ML-DSA signature profile once relying parties are tested
+- Keep issuance profiles configurable to allow a staged CA transition
+
+### cert-77d3056bb6013acde4c036af
+
+| Field | Value |
+|---|---|
+| priority | SHORT\_TERM |
+| outcome | ACCEPTABLE\_FOR\_NOW |
+| current_algorithm | RSA / 3072 bits / RSA-3072 |
+| evidence_status | complete |
+| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed RSA with key\_size=3072 \(band min\_bits=3072\); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning. |
+| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
+| recommended_test | Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client |
+| blocker | - |
+| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
+
+Migration options:
+
+- Re-issue with RSA-3072 or larger as an interim classical step
+- Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
+- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+- Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
+- Plan CA migration to an ML-DSA signature profile once relying parties are tested
+- Keep issuance profiles configurable to allow a staged CA transition
+
+### cert-79443cbc63931cf7f7693f7e
 
 | Field | Value |
 |---|---|
@@ -327,6 +287,49 @@ Migration options:
 - Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
 - Evaluate an ML-DSA certificate profile in the PQC-capable test environment
 - Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
+
+### cert-9a1077038b43ed323881f053
+
+| Field | Value |
+|---|---|
+| priority | SHORT\_TERM |
+| outcome | MIGRATION\_REQUIRED |
+| current_algorithm | RSA / 2048 bits / RSA-2048 |
+| evidence_status | complete |
+| reason | Priority SHORT\_TERM: outcome MIGRATION\_REQUIRED maps to SHORT\_TERM under policy default; constraint factors noted but already at or above the escalation cap: declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed RSA with key\_size=2048 \(band min\_bits=2048\); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required. |
+| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
+| recommended_test | Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client |
+| blocker | Policy: MIGRATION\_REQUIRED. algorithm: observed RSA with key\_size=2048 \(band min\_bits=2048\); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required. |
+| next_action | Test the policy-compliant target profile in the lab, then plan the change with the asset owner. |
+
+Migration options:
+
+- Re-issue with RSA-3072 or larger as an interim classical step
+- Plan a hybrid transition \(classical plus ML-KEM key establishment\) for TLS paths
+- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+- Redesign the certificate/profile so the algorithm is configurable rather than hard-coded
+
+### cert-e7a9922c59aa3e5cb3d19d51
+
+| Field | Value |
+|---|---|
+| priority | SHORT\_TERM |
+| outcome | ACCEPTABLE\_FOR\_NOW |
+| current_algorithm | ECDSA / 384 bits / P-384 |
+| evidence_status | complete |
+| reason | Priority SHORT\_TERM: outcome ACCEPTABLE\_FOR\_NOW maps to MEDIUM\_TERM under policy default; escalated to SHORT\_TERM \(escalation capped at SHORT\_TERM\) because declared data confidentiality of 12 years meets the profile threshold of 10 years \(harvest-now-decrypt-later exposure for quantum-vulnerable key establishment\); declared system lifetime of 15 years meets the profile threshold of 15 years. Evidence: algorithm: observed ECDSA parameter set P-384; rule ec: Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term PQ migration planning. |
+| dependency | Issuing CA signature profile and every relying party's trust store and certificate parser; Lab evidence: 4 policy-compliant matrix row\(s\) demonstrate quantum-resistant key establishment, first row 6 \(hybrid-only / hybrid\); Lab evidence: 2 policy-compliant matrix row\(s\) demonstrate post-quantum authentication, first row 12 \(pqc-only / pqc\) |
+| recommended_test | Issue a synthetic certificate with the target key and signature algorithm and verify chain validation in each client used with this certificate |
+| blocker | - |
+| next_action | Schedule PQ migration planning and add the target profile to the lab test matrix. |
+
+Migration options:
+
+- Keep the permitted curve as an interim classical step while PQ profiles are tested
+- Plan a hybrid transition for key establishment \(for example X25519MLKEM768 where supported\)
+- Evaluate an ML-DSA certificate profile in the PQC-capable test environment
+- Plan CA migration to an ML-DSA signature profile once relying parties are tested
+- Keep issuance profiles configurable to allow a staged CA transition
 
 ### cfg-053e6100185ca43f6803a03a
 
@@ -1253,7 +1256,7 @@ Migration options:
 - Enable TLS 1.3 and confirm every client negotiates it
 - Keep TLS 1.2 only for clients documented as unable to upgrade
 
-### cert-a4f07d27c5ddbf4674757d96
+### cert-cc93ba704f7ab337985f8f71
 
 | Field | Value |
 |---|---|

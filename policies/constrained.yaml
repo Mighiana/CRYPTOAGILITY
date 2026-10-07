@@ -606,6 +606,14 @@ certificates:
     migration_options:
       - Replace the certificate immediately
       - Investigate why expiry was not detected by certificate tracking
+  not_yet_valid:
+    outcome: DEPRECATED
+    reason: >-
+      A certificate whose validity period has not started is not a usable trust dependency
+      under this policy.
+    migration_options:
+      - Do not rely on the certificate until its validity period starts
+      - Check the issuing process and the host clock for a wrong notBefore date
 
 planning:
   outcome_priority:

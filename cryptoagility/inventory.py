@@ -34,6 +34,7 @@ import os
 import re
 import socket
 import stat
+import tempfile
 import unicodedata
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -1293,7 +1294,6 @@ def inspect_endpoint(
     name = server_name if server_name is not None else display
     if not isinstance(name, str) or not (_HOSTNAME.match(name) or _is_ip(name)):
         raise ValueError("Invalid server_name")
-    trust: list[str] = []
     if cafile is not None:
         ca = Path(cafile)
         try:
@@ -1302,7 +1302,28 @@ def inspect_endpoint(
             raise ValueError("cafile must be a readable regular non-symlink file") from exc
         if b"-----BEGIN CERTIFICATE-----" not in ca_data:
             raise ValueError("cafile must contain PEM certificates")
-        trust = ["-CAfile", str(ca.resolve())]
+    else:
+        ca_data = None
+    with tempfile.TemporaryDirectory(prefix="cryptoagility-inspect-") as work:
+        trust: list[str] = []
+        if ca_data is not None:
+            # OpenSSL reads the bytes validated above, not a path that could be swapped later.
+            pinned = Path(work) / "ca.pem"
+            pinned.write_bytes(ca_data)
+            trust = ["-CAfile", str(pinned)]
+        return _inspect(connect, display, port, name, trust, float(timeout), probe, now)
+
+
+def _inspect(
+    connect: str,
+    display: str,
+    port: int,
+    name: str,
+    trust: list[str],
+    timeout: float,
+    probe: bool,
+    now: datetime | None,
+) -> Inventory:
     source = clean_text(f"tls://{display}:{port}", 300)
     base = [*_name_args(name), *trust]
     try:
