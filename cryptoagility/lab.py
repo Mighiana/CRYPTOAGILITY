@@ -56,11 +56,39 @@ def run(
 
 
 def _publish(staging: Path, results: Path) -> None:
-    """Replace the previous result set only once a complete new one exists."""
-    for stale in (*reporting.EVIDENCE_FILES.values(), *EXTRA_OUTPUTS):
-        (results / stale).unlink(missing_ok=True)
-    for produced in sorted(staging.iterdir()):
-        os.replace(produced, results / produced.name)
+    """Swap in a complete new result set, restoring the previous one if any step fails.
+
+    Each file moves with an atomic rename, but the set as a whole is not switched atomically,
+    so a concurrent reader can briefly see a mix; a failed swap never leaves one behind.
+    """
+    produced = sorted(p.name for p in staging.iterdir())
+    managed = sorted({*reporting.EVIDENCE_FILES.values(), *EXTRA_OUTPUTS, *produced})
+    backup = Path(tempfile.mkdtemp(prefix=".lab-previous-", dir=results))
+    moved: list[str] = []
+    placed: list[str] = []
+    try:
+        for name in managed:
+            if (results / name).is_symlink() or (results / name).exists():
+                os.replace(results / name, backup / name)
+                moved.append(name)
+        for name in produced:
+            os.replace(staging / name, results / name)
+            placed.append(name)
+    except BaseException:
+        for name in placed:
+            _remove(results / name)
+        for name in moved:
+            os.replace(backup / name, results / name)
+        backup.rmdir()
+        raise
+    shutil.rmtree(backup)
+
+
+def _remove(path: Path) -> None:
+    if path.is_dir() and not path.is_symlink():
+        shutil.rmtree(path)
+    else:
+        path.unlink(missing_ok=True)
 
 
 def _run(

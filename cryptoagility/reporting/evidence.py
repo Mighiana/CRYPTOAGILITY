@@ -418,6 +418,7 @@ def validate_plan(data: Any) -> dict[str, Any]:
     footprint = _obj(data.get("footprint"), "footprint")
     _choice(footprint.get("status"), "footprint.status", ("measured", "unknown"))
     _str(footprint.get("statement"), "footprint.statement")
+    _bool(footprint.get("candidate_measured"), "footprint.candidate_measured", optional=True)
     _str(footprint.get("label"), "footprint.label", optional=True)
     _int(footprint.get("declared_budget_bytes"), "footprint.declared_budget_bytes", optional=True)
     _bool(

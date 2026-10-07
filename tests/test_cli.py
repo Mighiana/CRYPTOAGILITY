@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -198,6 +199,51 @@ def test_failed_lab_rerun_keeps_previous_results(
         lab.run(results, policy_path=cli.DEFAULT_POLICY, log=lambda _: None)
     assert {p.name: p.read_text() for p in results.iterdir()} == previous
     assert [p.name for p in results.iterdir() if p.name.startswith(".lab-staging-")] == []
+
+
+def _publish_fixture(tmp_path: Path) -> tuple[Path, Path, dict[str, str]]:
+    results = tmp_path / "results"
+    staging = results / ".lab-staging-test"
+    staging.mkdir(parents=True)
+    previous = {"inventory.json": "old", "policy.json": "old", "report.html": "old"}
+    for name, body in previous.items():
+        (results / name).write_text(body)
+    for name in ("inventory.json", "matrix.json", "policy.json", "report.html"):
+        (staging / name).write_text("new")
+    return results, staging, previous
+
+
+def test_failed_publish_restores_previous_results(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    results, staging, previous = _publish_fixture(tmp_path)
+    real_replace = os.replace
+
+    def flaky(src: Path, dst: Path) -> None:
+        if Path(src) == staging / "policy.json":
+            raise OSError("disk full")
+        real_replace(src, dst)
+
+    monkeypatch.setattr(lab.os, "replace", flaky)
+    with pytest.raises(OSError, match="disk full"):
+        lab._publish(staging, results)
+    kept = {p.name: p.read_text() for p in results.iterdir() if p.is_file()}
+    assert kept == previous
+    assert [p.name for p in results.iterdir() if p.name.startswith(".lab-previous-")] == []
+
+
+def test_publish_replaces_stale_directory_in_place_of_output(tmp_path: Path) -> None:
+    results, staging, _ = _publish_fixture(tmp_path)
+    (results / "benchmark.json").mkdir()
+    lab._publish(staging, results)
+    published = {p.name: p.read_text() for p in results.iterdir() if p.is_file()}
+    assert published == dict.fromkeys(
+        ("inventory.json", "matrix.json", "policy.json", "report.html"), "new"
+    )
+    assert not (results / "benchmark.json").exists()
+    assert [p.name for p in results.iterdir() if p.name.startswith(".lab-")] == [
+        ".lab-staging-test"
+    ]
 
 
 @pytest.mark.integration
