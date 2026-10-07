@@ -16,3 +16,4 @@ lab/generated/
 *.pfx
 *.pcap
 *.pcapng
+.lab-*

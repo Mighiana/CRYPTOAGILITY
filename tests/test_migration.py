@@ -395,6 +395,30 @@ def test_footprint_uses_run_matrix_read_and_written_counters(constrained: dict) 
     assert result["readiness"] == "PARTIALLY_READY"
 
 
+def test_classical_only_measurements_keep_candidate_footprint_blocker(constrained: dict) -> None:
+    lab = matrix(
+        row("X25519", handshake_bytes_read=2000, handshake_bytes_written=900),
+        row("X25519MLKEM768"),
+    )
+    result = plan(
+        inv(endpoint("ep", "X25519")),
+        constrained,
+        lab,
+        constraints={"bandwidth_budget_bytes": 5000},
+        now=NOW,
+    )
+    footprint = result["footprint"]
+    assert footprint["status"] == "measured"
+    assert footprint["candidate_measured"] is False
+    assert [m["group_rule_id"] for m in footprint["handshake_measurements"]] == ["grp-x25519"]
+    assert "Only quantum-vulnerable handshakes were measured" in footprint["statement"]
+    ep = item(result, "ep")
+    assert ep["blocker_kind"] == "footprint"
+    assert "hybrid or post-quantum candidate" in ep["blocker"]
+    assert result["readiness"] == "UNKNOWN"
+    assert footprint["statement"] in result["reasons"]
+
+
 @pytest.mark.parametrize(
     "bad",
     [

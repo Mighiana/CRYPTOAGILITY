@@ -217,10 +217,13 @@ def _matrix_evidence(engine: PolicyEngine, rows: list[dict[str, Any]]) -> dict[s
 
 def _footprint(lab: dict[str, Any] | None, constraints: dict[str, Any]) -> dict[str, Any]:
     by_group: dict[str, list[int]] = {}
+    candidate_groups: set[str] = set()
     if lab:
         for row in lab["rows"]:
             if row["compliant"] and row["handshake_bytes"] is not None and row["group_rule_id"]:
                 by_group.setdefault(row["group_rule_id"], []).append(row["handshake_bytes"])
+                if row["group_quantum_vulnerable"] is False:
+                    candidate_groups.add(row["group_rule_id"])
     measurements = [
         {
             "group_rule_id": group,
@@ -235,6 +238,7 @@ def _footprint(lab: dict[str, Any] | None, constraints: dict[str, Any]) -> dict[
     sizes = constraints["measured_sizes"]
     budget = constraints["defaults"].get("bandwidth_budget_bytes")
     status = "measured" if measurements or sizes else "unknown"
+    candidate_measured = bool(candidate_groups or sizes)
     within = None
     if budget is not None and measurements:
         within = all(m["max"] <= budget for m in measurements)
@@ -258,8 +262,14 @@ def _footprint(lab: dict[str, Any] | None, constraints: dict[str, Any]) -> dict[
             f"{'fits within' if within else 'exceeds'} the declared budget of "
             f"{budget} bytes."
         )
+    if status == "measured" and not candidate_measured:
+        statement += (
+            " Only quantum-vulnerable handshakes were measured, so the footprint of a hybrid "
+            "or post-quantum candidate profile is unknown."
+        )
     return {
         "status": status,
+        "candidate_measured": candidate_measured,
         "label": ESTIMATE_LABEL if status == "measured" else None,
         "statement": statement,
         "handshake_measurements": measurements,
@@ -409,11 +419,12 @@ def _item(
             if (
                 blocker is None
                 and profile["require_footprint_evidence"]
-                and footprint["status"] == "unknown"
+                and not footprint["candidate_measured"]
             ):
                 blocker = (
                     f"Footprint evidence absent: profile {profile['name']} requires "
-                    "measured byte counts before a target profile is selected"
+                    "measured byte counts for a hybrid or post-quantum candidate before a "
+                    "target profile is selected"
                 )
                 kind = "footprint"
                 tests.insert(
@@ -514,7 +525,7 @@ def plan(
         items.append(_item(finding, validated, merged, lab, footprint))
     items.sort(key=lambda i: (_PRIORITY_RANK[i["priority"]], i["asset_id"]))
     readiness, reasons = _readiness(items, inventory, lab)
-    if footprint["status"] == "unknown" and validated["profile"]["require_footprint_evidence"]:
+    if not footprint["candidate_measured"] and validated["profile"]["require_footprint_evidence"]:
         reasons.append(footprint["statement"])
     by_priority = {priority: 0 for priority in PRIORITIES}
     for item in items:

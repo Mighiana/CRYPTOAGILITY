@@ -7,12 +7,14 @@ run from local measurements; nothing is copied from a previous run.
 
 from __future__ import annotations
 
+import fcntl
 import os
 import shutil
 import sys
 import tempfile
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +24,7 @@ from cryptoagility.cli import read_yaml, write_json, write_text
 DEFAULT_CONSTRAINTS = scenario.ROOT / "scenario" / "constraints.yaml"
 REPORT_NAME = "report.html"
 EXTRA_OUTPUTS = ("cbom.csv", "migration-plan.md", REPORT_NAME)
+PUBLISH_LOCK = ".lab-publish.lock"
 
 
 def _stderr(message: str) -> None:
@@ -47,7 +50,7 @@ def run(
     staging = Path(tempfile.mkdtemp(prefix=".lab-staging-", dir=results))
     try:
         summary = _run(staging, pol, constraints, iterations, warmups, include_benchmark, log)
-        _publish(staging, results)
+        _publish(staging, results, log)
     finally:
         shutil.rmtree(staging, ignore_errors=True)
     summary["results"] = str(results)
@@ -55,12 +58,58 @@ def run(
     return summary
 
 
-def _publish(staging: Path, results: Path) -> None:
-    """Replace the previous result set only once a complete new one exists."""
-    for stale in (*reporting.EVIDENCE_FILES.values(), *EXTRA_OUTPUTS):
-        (results / stale).unlink(missing_ok=True)
-    for produced in sorted(staging.iterdir()):
-        os.replace(produced, results / produced.name)
+@contextmanager
+def _exclusive(results: Path) -> Iterator[None]:
+    fd = os.open(results / PUBLISH_LOCK, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        yield
+    finally:
+        os.close(fd)
+
+
+def _publish(staging: Path, results: Path, log: Callable[[str], None] = _stderr) -> None:
+    """Swap in a complete new result set, restoring the previous one if any step fails.
+
+    Each file moves with an atomic rename, but the set as a whole is not switched atomically,
+    so a concurrent reader can briefly see a mix; a failed swap never leaves one behind.
+    Concurrent lab runs on one results directory publish one at a time under a file lock.
+    """
+    with _exclusive(results):
+        _swap(staging, results, log)
+
+
+def _swap(staging: Path, results: Path, log: Callable[[str], None]) -> None:
+    produced = sorted(p.name for p in staging.iterdir())
+    managed = sorted({*reporting.EVIDENCE_FILES.values(), *EXTRA_OUTPUTS, *produced})
+    backup = Path(tempfile.mkdtemp(prefix=".lab-previous-", dir=results))
+    moved: list[str] = []
+    placed: list[str] = []
+    try:
+        for name in managed:
+            if (results / name).is_symlink() or (results / name).exists():
+                os.replace(results / name, backup / name)
+                moved.append(name)
+        for name in produced:
+            os.replace(staging / name, results / name)
+            placed.append(name)
+    except BaseException:
+        for name in placed:
+            _remove(results / name)
+        for name in moved:
+            os.replace(backup / name, results / name)
+        backup.rmdir()
+        raise
+    shutil.rmtree(backup, ignore_errors=True)
+    if backup.exists():
+        log(f"warning: new results are published but the old copy in {backup} was not removed")
+
+
+def _remove(path: Path) -> None:
+    if path.is_dir() and not path.is_symlink():
+        shutil.rmtree(path)
+    else:
+        path.unlink(missing_ok=True)
 
 
 def _run(
