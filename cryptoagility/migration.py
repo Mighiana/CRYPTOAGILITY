@@ -443,20 +443,27 @@ def _readiness(
     unknown = [i for i in items if i["blocker_kind"] in ("evidence", "footprint")]
     pending = [i for i in items if not i["ready"]]
     violations = lab["violations"] if lab else []
+    sources = {
+        getattr(a, "asset_id", None): str(getattr(a, "source", "")) for a in inventory.assets
+    }
+
+    def names(group: list[dict[str, Any]]) -> str:
+        return ", ".join(
+            f"{sources.get(i['asset_id']) or i['asset_id']} ({i['current_algorithm']})"
+            for i in group[:10]
+        )
+
     if violations:
         reasons.append(
             f"{len(violations)} matrix row(s) negotiated successfully but failed "
             "policy; a successful handshake is not policy compliance."
         )
     if hard:
-        reasons.append(
-            f"{len(hard)} asset(s) blocked by policy or lab evidence: "
-            + ", ".join(i["asset_id"] for i in hard[:10])
-        )
+        reasons.append(f"{len(hard)} asset(s) blocked by policy or lab evidence: " + names(hard))
     if unknown:
         reasons.append(
             f"{len(unknown)} asset(s) have missing, unrecognised or footprint "
-            "evidence gaps: " + ", ".join(i["asset_id"] for i in unknown[:10])
+            "evidence gaps: " + names(unknown)
         )
     if errors:
         reasons.append(

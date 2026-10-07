@@ -1,8 +1,8 @@
 {
-  "evaluated_at": "2026-10-07T12:06:29.391959+00:00",
+  "evaluated_at": "2026-10-07T12:14:16.940454+00:00",
   "findings": [
     {
-      "asset_id": "cert-d09169d2232f33448edec57e",
+      "asset_id": "cert-08ead4d20c1f853bf67c83bc",
       "asset_type": "certificate",
       "checks": [
         {
@@ -24,9 +24,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:29Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -51,7 +51,7 @@
       "reasons": [
         "algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
         "signature_algorithm: observed ecdsa-with-SHA256; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [],
       "rule_ids": [
@@ -61,7 +61,7 @@
       "source": "certs/ecdsa-p256-mobile.pem"
     },
     {
-      "asset_id": "cert-c26f104eb83826b076ae5088",
+      "asset_id": "cert-0949639e67c5b1a68da827ad",
       "asset_type": "certificate",
       "checks": [
         {
@@ -83,9 +83,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:29Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -110,7 +110,7 @@
       "reasons": [
         "algorithm: observed ECDSA parameter set P-256; rule ec: Permitted NIST curve. Elliptic-curve cryptography is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
         "signature_algorithm: observed ecdsa-with-SHA256; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [],
       "rule_ids": [
@@ -120,7 +120,7 @@
       "source": "certs/ecdsa-p256-telemetry.pem"
     },
     {
-      "asset_id": "cert-a1cb19938b4a12bb78326e6a",
+      "asset_id": "cert-dffa3c0f50f97f1264506537",
       "asset_type": "certificate",
       "checks": [
         {
@@ -142,9 +142,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:29Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -169,7 +169,7 @@
       "reasons": [
         "algorithm: observed ECDSA parameter set P-384; rule ec: Permitted NIST curve; quantum-vulnerable public-key cryptography requiring long-term PQ migration planning.",
         "signature_algorithm: observed ecdsa-with-SHA384; rule sig-ecdsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [],
       "rule_ids": [
@@ -179,7 +179,7 @@
       "source": "certs/ecdsa-p384-admin.pem"
     },
     {
-      "asset_id": "cert-1ce7eddf7c2dad7db1e0a573",
+      "asset_id": "cert-a4f07d27c5ddbf4674757d96",
       "asset_type": "certificate",
       "checks": [
         {
@@ -209,9 +209,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:29Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -232,7 +232,7 @@
         "algorithm: certificate context; rule ml-dsa: PQ X.509 certificate profiles are treated as laboratory interoperability experiments; FIPS 204 standardizes the algorithm, not every certificate or client implementation.",
         "signature_algorithm: observed ML-DSA-65; rule sig-ml-dsa: Standardized PQ signature algorithm used in an X.509 certificate; this policy treats PQ certificate profiles as laboratory interoperability experiments. Reference: NIST FIPS 204.",
         "algorithm: observed ML-DSA-65 parameter set ML-DSA-65; rule ml-dsa: Standardized parameter set (NIST security category 3) approved by this policy. Reference: NIST FIPS 204.",
-        "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [],
       "rule_ids": [
@@ -242,7 +242,7 @@
       "source": "certs/mldsa65-pilot.pem"
     },
     {
-      "asset_id": "cert-70c265862caefb1e8c6f3d31",
+      "asset_id": "cert-8aabf8ad826eaf4f35a887e3",
       "asset_type": "certificate",
       "checks": [
         {
@@ -264,9 +264,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:27Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:27+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -290,7 +290,7 @@
       "reasons": [
         "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
         "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:27+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [
         "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
@@ -302,7 +302,7 @@
       "source": "certs/rsa2048-customer-api.pem"
     },
     {
-      "asset_id": "cert-8b2c002f84a5a0e4caeb59de",
+      "asset_id": "cert-14bfe518d75f015561144dbc",
       "asset_type": "certificate",
       "checks": [
         {
@@ -324,9 +324,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2028-10-06T12:06:27Z",
+          "observed": "2028-10-06T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2028-10-06T12:06:27+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2028-10-06T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -352,7 +352,7 @@
       "reasons": [
         "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
         "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2028-10-06T12:06:27+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2028-10-06T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [
         "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
@@ -364,7 +364,7 @@
       "source": "certs/rsa2048-customer-api.pem"
     },
     {
-      "asset_id": "cert-93150cb681a00b3d938e60a3",
+      "asset_id": "cert-417a0a1a9f96c7fb175d6020",
       "asset_type": "certificate",
       "checks": [
         {
@@ -420,7 +420,7 @@
       "source": "certs/rsa2048-expired-reporting.pem"
     },
     {
-      "asset_id": "cert-bf0eec5376b86e24908ae775",
+      "asset_id": "cert-cfe5f0356153855d9710908c",
       "asset_type": "certificate",
       "checks": [
         {
@@ -442,9 +442,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:27Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:27+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -466,7 +466,7 @@
       "reasons": [
         "signature_algorithm: observed sha1WithRSAEncryption; rule sig-weak-hash: Signature uses a hash function this policy no longer permits for certificate signatures.",
         "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
-        "expiry: certificate valid until 2027-10-07T12:06:27+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [],
       "rule_ids": [
@@ -476,7 +476,7 @@
       "source": "certs/rsa2048-legacy-portal-sha1.pem"
     },
     {
-      "asset_id": "cert-ce6ab388a172789a9ce1d08f",
+      "asset_id": "cert-ed909fe554de3a7eb6e6402f",
       "asset_type": "certificate",
       "checks": [
         {
@@ -498,9 +498,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:27Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:27+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -524,7 +524,7 @@
       "reasons": [
         "algorithm: observed RSA with key_size=2048 (band min_bits=2048); rule rsa: Below this policy's 3072-bit classical minimum. Quantum-vulnerable public-key dependency identified; migration is required.",
         "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:27+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [
         "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
@@ -536,7 +536,7 @@
       "source": "certs/rsa2048-public-web.pem"
     },
     {
-      "asset_id": "cert-2e6de5bf81a922c539b7254f",
+      "asset_id": "cert-a9779dadf66e253cbcfe840d",
       "asset_type": "certificate",
       "checks": [
         {
@@ -558,9 +558,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:28Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:28+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -586,7 +586,7 @@
       "reasons": [
         "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
         "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:28+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [
         "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
@@ -598,7 +598,7 @@
       "source": "certs/rsa3072-identity.pem"
     },
     {
-      "asset_id": "cert-5ec1d53dd1f8d4e9eb07ec22",
+      "asset_id": "cert-668be2cac4b60b08a92853c5",
       "asset_type": "certificate",
       "checks": [
         {
@@ -620,9 +620,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:28Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:28+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -648,7 +648,7 @@
       "reasons": [
         "algorithm: observed RSA with key_size=3072 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
         "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:28+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [
         "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
@@ -660,7 +660,7 @@
       "source": "certs/rsa3072-payments.pem"
     },
     {
-      "asset_id": "cert-eccea5b909690841339bfc8b",
+      "asset_id": "cert-e5dce64304fdcccb2e089290",
       "asset_type": "certificate",
       "checks": [
         {
@@ -682,9 +682,9 @@
         {
           "check": "expiry",
           "evidence": "complete",
-          "observed": "2027-10-07T12:06:29Z",
+          "observed": "2027-10-07T12:14:16Z",
           "outcome": "APPROVED",
-          "reason": "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current.",
+          "reason": "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current.",
           "rule_id": null
         }
       ],
@@ -710,7 +710,7 @@
       "reasons": [
         "algorithm: observed RSA with key_size=4096 (band min_bits=3072); rule rsa: Meets this policy's 3072-bit classical minimum. RSA is quantum-vulnerable public-key cryptography and requires long-term PQ migration planning.",
         "signature_algorithm: observed sha256WithRSAEncryption; rule sig-rsa-sha2: Permitted classical signature with a SHA-2 hash; quantum-vulnerable and requires long-term PQ migration planning for the issuing CA.",
-        "expiry: certificate valid until 2027-10-07T12:06:29+00:00. Certificate validity period is current."
+        "expiry: certificate valid until 2027-10-07T12:14:16+00:00. Certificate validity period is current."
       ],
       "recommended_tests": [
         "Exercise the target RSA-3072 or ML-DSA profile in the local TLS lab with each client"
